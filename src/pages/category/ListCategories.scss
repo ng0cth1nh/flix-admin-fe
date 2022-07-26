@@ -1,0 +1,9 @@
+.list-categories {
+  display: flex;
+  .list-categories-container {
+    flex: 6;
+    .table-container{
+        margin: 30px 50px;
+    }
+  }
+}

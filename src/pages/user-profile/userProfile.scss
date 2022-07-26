@@ -1,0 +1,53 @@
+.user-profile {
+  display: flex;
+  .user-profile-container {
+    flex: 6;
+    .body {
+      padding: 30px;
+      width: 70%;
+      margin: 20px auto 0px auto;
+      -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+      box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+      h2 {
+        color: rgb(5, 5, 94);
+      }
+      .avatar-container {
+        display: flex;
+        margin-top: 20px;
+        align-items: flex-end;
+        .avatar {
+          width: 200px;
+          height: 200px;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        .file-button {
+          display: flex;
+          color: white;
+          background-color: rgb(31, 31, 237);
+          width: 100px;
+          height: 35px;
+          font-size: 16px;
+          justify-content: center;
+          align-items: center;
+          cursor: pointer;
+          border-radius: 10px;
+          margin-left: 20px;
+          margin-bottom: 10px;
+        }
+      }
+      .account-information {
+        margin-top: 30px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        h3 {
+          color: rgba(117, 113, 113, 0.774);
+          margin-bottom: 20px;
+          width: 100%;
+        }
+      }
+    }
+  }
+}
