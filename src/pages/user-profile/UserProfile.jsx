@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { TextField, Button } from "@mui/material";
@@ -6,7 +6,6 @@ import "./userProfile.scss";
 
 const UserProfile = () => {
   const [avatar, setAvatar] = useState(null);
-  // const theme = useTheme();
   return (
     <div className="user-profile">
       <Sidebar />
@@ -25,9 +24,9 @@ const UserProfile = () => {
               className="avatar"
             />
             <div>
-              <label htmlFor="file" className="file-button">
-                Chọn ảnh
-              </label>
+              <Button variant="outlined" sx={{textTransform:'none'}}>
+                <label htmlFor="file">Chọn ảnh</label>
+              </Button>
               <input
                 type="file"
                 id="file"
@@ -74,9 +73,18 @@ const UserProfile = () => {
               }}
               required
             />
-            {/* <div style={{ width: "100%", backgroundColor: "red" }}> */}
-              {/* <Button variant="contained" >Medium</Button> */}
-            {/* </div> */}
+            <div style={{ width: "100%", display: "flex" }}>
+              <Button
+                variant="contained"
+                sx={{
+                  textTransform: "none",
+                  marginLeft: "auto",
+                  marginRight: "20px",
+                }}
+              >
+                Cập nhật thông tin
+              </Button>
+            </div>
           </div>
           <div className="account-information">
             <h3>Đổi mật khẩu</h3>
@@ -119,6 +127,18 @@ const UserProfile = () => {
               }}
               required
             />
+            <div style={{ width: "100%", display: "flex" }}>
+              <Button
+                variant="contained"
+                sx={{
+                  textTransform: "none",
+                  marginLeft: "auto",
+                  marginRight: "20px",
+                }}
+              >
+                Thay đổi mật khẩu
+              </Button>
+            </div>
           </div>
         </div>
       </div>

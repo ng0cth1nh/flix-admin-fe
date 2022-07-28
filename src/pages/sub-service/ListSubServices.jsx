@@ -1,9 +1,9 @@
-import "./ListCategories.scss";
+import "./ListSubServices.scss";
 import { useState } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 import {
   TableContainer,
@@ -18,26 +18,25 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 const columns = [
-  { id: "index", label: "#", width: "10%", align: "center" },
-  {
-    id: "image",
-    label: "ẢNH MINH HỌA",
-    width: "15%",
-    align: "center",
-    format: (value) => (
-      <img alt="category" src={value} style={{ width: 50, height: 50 }} />
-    ),
-  },
+  { id: "index", label: "#", width: "5%", align: "center" },
   {
     id: "name",
-    label: "TÊN DANH MỤC",
-    width: "20%",
+    label: "TÊN DỊCH VỤ CON",
+    width: "15%",
     align: "center",
+  },
+  {
+    id: "price",
+    label: "PHÍ KIỂM TRA",
+    width: "15%",
+    align: "center",
+    format: (value) =>
+      typeof value === "number" ? value.toLocaleString("en-US") + " đ" : value,
   },
   {
     id: "description",
     label: "MÔ TẢ",
-    width: "25%",
+    width: "35%",
     align: "center",
   },
   {
@@ -64,7 +63,7 @@ const columns = [
     format: (value) => (
       <Button variant="contained" sx={{ textTransform: "none" }} size="small">
         <Link
-          to={`/categories/category?id=${value}`}
+          to={`/categories/${value.categoryId}/services/${value.serviceId}/subservices/subservice?id=${value.id}`}
           style={{ textDecoration: "none", color: "white" }}
         >
           Cập nhật
@@ -74,113 +73,113 @@ const columns = [
   },
 ];
 
-function createData(id, image, name, description, status) {
-  return { id, image, name, description, status };
+function createData(id, name, price, description, status) {
+  return { id, name, price, description, status };
 }
 
 const rows = [
   createData(
     "India",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     1324171354,
+    120000,
     60483973,
     true
   ),
   createData(
     "China",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     1403500365,
+    120000,
     60483973,
     false
   ),
   createData(
     "Italy",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     60483973,
+    120000,
     60483973,
     true
   ),
   createData(
     "United States",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     327167434,
+    120000,
     60483973,
     true
   ),
   createData(
     "Canada",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     37602103,
+    120000,
     37602103,
     true
   ),
   createData(
     "Australia",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     25475400,
+    120000,
     60483973,
     false
   ),
   createData(
     "Germany",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     83019200,
+    120000,
     60483973,
     true
   ),
   createData(
     "Ireland",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     4857000,
+    120000,
     60483973,
     false
   ),
   createData(
     "Mexico",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",
+    120000,
     "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj fdjsfjsdklfj fjdsjfklsdjf fkdlsjklsdfjkljadsfkjklsad",
     true
   ),
   createData(
     "Japan",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     126317000,
+    120000,
     60483973,
     true
   ),
   createData(
     "France",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     67022000,
+    120000,
     60483973,
     false
   ),
   createData(
     "United Kingdom",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     67545757,
+    120000,
     60483973,
     true
   ),
   createData(
     "Russia",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     146793744,
+    120000,
     60483973,
     true
   ),
   createData(
     "Nigeria",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     200962417,
+    120000,
     60483973,
     true
   ),
   createData(
     "Brazil",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
     210147125,
+    120000,
     60483973,
     false
   ),
@@ -192,14 +191,11 @@ const useStyles = makeStyles({
     },
   },
 });
-const ListCategories = () => {
+const ListSubServices = () => {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const navigate = useNavigate();
-  const handleRowClick = (id) => {
-    navigate(`/categories/${id}/services`);
-  };
+  const { categoryId, serviceId } = useParams();
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -210,9 +206,9 @@ const ListCategories = () => {
     setPage(0);
   };
   return (
-    <div className="list-categories">
+    <div className="list-subservices">
       <Sidebar />
-      <div className="list-categories-container">
+      <div className="list-subservices-container">
         <Navbar />
         <div className="table-container">
           <div
@@ -223,7 +219,7 @@ const ListCategories = () => {
               marginBottom: "10px",
             }}
           >
-            <h1>Danh mục</h1>
+            <h1>Dịch vụ con</h1>
             <div style={{ display: "flex" }}>
               <div className="search">
                 <input type="text" placeholder="Tìm kiếm..." />
@@ -231,7 +227,7 @@ const ListCategories = () => {
               </div>
               <Button variant="contained" color="success">
                 <Link
-                  to={`/categories/category`}
+                  to={`/categories/${categoryId}/services/${serviceId}/subservices/subservice`}
                   style={{ textDecoration: "none", color: "white" }}
                 >
                   Thêm
@@ -262,9 +258,6 @@ const ListCategories = () => {
                       <TableRow
                         hover
                         role="checkbox"
-                        sx={{
-                          cursor: "pointer",
-                        }}
                         tabIndex={-1}
                         key={row.id}
                       >
@@ -274,9 +267,6 @@ const ListCategories = () => {
                               <TableCell
                                 key={column.id}
                                 align={column.align}
-                                onClick={() => {
-                                  handleRowClick(row["id"]);
-                                }}
                               >
                                 {page * rowsPerPage + index + 1}
                               </TableCell>
@@ -284,19 +274,12 @@ const ListCategories = () => {
                           } else {
                             const value =
                               column.id === "action"
-                                ? row["id"]
+                                ? { categoryId, serviceId, id: row["id"] }
                                 : row[column.id];
                             return (
                               <TableCell
                                 key={column.id}
                                 align={column.align}
-                                onClick={
-                                  column.id !== "action"
-                                    ? () => {
-                                        handleRowClick(row["id"]);
-                                      }
-                                    : null
-                                }
                               >
                                 {column.format ? column.format(value) : value}
                               </TableCell>
@@ -324,4 +307,4 @@ const ListCategories = () => {
   );
 };
 
-export default ListCategories;
+export default ListSubServices;

@@ -12,29 +12,14 @@ import { productInputs, userInputs } from "./formSource";
 import Single from "./pages/single/Single";
 import New from "./pages/new/New";
 import UserProfile from "./pages/user-profile/UserProfile";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
 import ListCategories from "./pages/category/ListCategories";
+import SingleCategory from "./pages/category/SingleCategory";
+import ListServices from "./pages/service/ListServices";
+import SingleService from "./pages/service/SingleService";
+import ListSubServices from "./pages/sub-service/ListSubServices";
+import SingleSubService from "./pages/sub-service/SingleSubService";
 
 function App() {
-  console.log("createTheme", createTheme);
-  const theme = createTheme({
-    palette: {
-      background: {
-        paper: "#fff",
-      },
-      text: {
-        primary: 'black',
-        header: "#0941b0",
-        // : "#46505A",
-      },
-      action: {
-        active: "#001E3C",
-      },
-      status: {
-        success: "#009688",
-      },
-    },
-  });
   let routes;
   if (true) {
     routes = (
@@ -51,12 +36,17 @@ function App() {
         </Route>
         <Route path="/categories">
           <Route index element={<ListCategories />} />
-          <Route path=":userId" element={<Single />} />
-          <Route
-            path="new"
-            element={<New inputs={userInputs} title="Add New User" />}
-          />
+          <Route path="category" exact element={<SingleCategory />} />
+          <Route path=":categoryId/services">
+            <Route index element={<ListServices />} />
+            <Route path="service" element={<SingleService />} />
+            <Route path=":serviceId/subservices">
+              <Route index element={<ListSubServices />} />
+              <Route path="subservice" element={<SingleSubService />} />
+            </Route>
+          </Route>
         </Route>
+
         <Route path="/products">
           <Route index element={<List />} />
           <Route path=":productId" element={<Single />} />
@@ -78,9 +68,9 @@ function App() {
     );
   }
   return (
-    <ThemeProvider theme={theme}>
+    // <ThemeProvider theme={theme}>
     <Router>{routes}</Router>
-    </ThemeProvider>
+    // </ThemeProvider>
   );
 }
 
