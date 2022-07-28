@@ -18,6 +18,7 @@ import ListServices from "./pages/service/ListServices";
 import SingleService from "./pages/service/SingleService";
 import ListSubServices from "./pages/sub-service/ListSubServices";
 import SingleSubService from "./pages/sub-service/SingleSubService";
+import ListFeedbacks from "./pages/feedback/ListFeedbacks";
 
 function App() {
   let routes;
@@ -34,6 +35,11 @@ function App() {
             element={<New inputs={userInputs} title="Add New User" />}
           />
         </Route>
+        <Route path="/feedbacks">
+          <Route index element={<ListFeedbacks />} />
+          {/* <Route path="category" exact element={< />} /> */}
+        </Route>
+
         <Route path="/categories">
           <Route index element={<ListCategories />} />
           <Route path="category" exact element={<SingleCategory />} />
