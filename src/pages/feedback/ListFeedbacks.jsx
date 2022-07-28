@@ -28,9 +28,6 @@ const columns = [
     label: "SỐ ĐIỆN THOẠI",
     width: "20%",
     align: "center",
-    format: (value) => (
-      <img alt="service" src={value} style={{ width: 50, height: 50 }} />
-    ),
   },
   {
     id: "type",
@@ -91,7 +88,7 @@ function createData(id, phone, type, title, date, status) {
 const rows = [
   createData(
     "India",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     1324171354,
     120000,
     60483973,
@@ -99,7 +96,7 @@ const rows = [
   ),
   createData(
     "China",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     1403500365,
     120000,
     60483973,
@@ -107,7 +104,7 @@ const rows = [
   ),
   createData(
     "Italy",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     60483973,
     120000,
     "20/10/2022",
@@ -115,7 +112,7 @@ const rows = [
   ),
   createData(
     "United States",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     327167434,
     120000,
     60483973,
@@ -123,7 +120,7 @@ const rows = [
   ),
   createData(
     "Canada",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     37602103,
     120000,
     37602103,
@@ -131,7 +128,7 @@ const rows = [
   ),
   createData(
     "Australia",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     25475400,
     120000,
     60483973,
@@ -139,7 +136,7 @@ const rows = [
   ),
   createData(
     "Germany",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     83019200,
     120000,
     60483973,
@@ -147,7 +144,7 @@ const rows = [
   ),
   createData(
     "Ireland",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     4857000,
     120000,
     60483973,
@@ -155,7 +152,7 @@ const rows = [
   ),
   createData(
     "Mexico",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",
     120000,
     "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj fdjsfjsdklfj fjdsjfklsdjf fkdlsjklsdfjkljadsfkjklsad",
@@ -163,7 +160,7 @@ const rows = [
   ),
   createData(
     "Japan",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     126317000,
     120000,
     60483973,
@@ -171,7 +168,7 @@ const rows = [
   ),
   createData(
     "France",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     67022000,
     120000,
     60483973,
@@ -179,7 +176,7 @@ const rows = [
   ),
   createData(
     "United Kingdom",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     67545757,
     120000,
     60483973,
@@ -187,7 +184,7 @@ const rows = [
   ),
   createData(
     "Russia",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     146793744,
     120000,
     60483973,
@@ -195,7 +192,7 @@ const rows = [
   ),
   createData(
     "Nigeria",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     200962417,
     120000,
     60483973,
@@ -203,7 +200,7 @@ const rows = [
   ),
   createData(
     "Brazil",
-    "https://ss-images.saostar.vn/wp700/pc/1656656545169/saostar-lsn58axg5w0uq4au.jpg",
+    "0865390055",
     210147125,
     120000,
     60483973,
