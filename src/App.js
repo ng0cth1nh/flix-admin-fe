@@ -22,6 +22,7 @@ import ListFeedbacks from "./pages/feedback/ListFeedbacks";
 import FeedbackDetail from "./pages/feedback/FeedbackDetail";
 import NewFeedback from "./pages/feedback/NewFeedback";
 import UpdateFeedback from "./pages/feedback/UpdateFeedback";
+import ListCustomers from "./pages/customer/ListCustomers";
 
 function App() {
   let routes;
@@ -37,6 +38,9 @@ function App() {
             path="new"
             element={<New inputs={userInputs} title="Add New User" />}
           />
+        </Route>
+        <Route path="/customers">
+          <Route index element={<ListCustomers />} />
         </Route>
         <Route path="/feedbacks">
           <Route index element={<ListFeedbacks />} />

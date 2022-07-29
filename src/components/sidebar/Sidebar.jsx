@@ -7,7 +7,6 @@ import SpatialAudioOffIcon from "@mui/icons-material/SpatialAudioOff";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import HandymanIcon from "@mui/icons-material/Handyman";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
 import PaidIcon from "@mui/icons-material/Paid";
@@ -30,10 +29,10 @@ const Sidebar = () => {
             <span>Dashboard</span>
           </li>
           <p className="title">THÔNG TIN KHÁCH HÀNG</p>
-          <Link to="/users" style={{ textDecoration: "none" }}>
+          <Link to="/customers" style={{ textDecoration: "none" }}>
             <li>
               <PersonOutlineIcon className="icon" />
-              <span>Người dùng</span>
+              <span>Khách hàng</span>
             </li>
           </Link>
           <Link to="/products" style={{ textDecoration: "none" }}>
@@ -43,10 +42,12 @@ const Sidebar = () => {
             </li>
           </Link>
           <p className="title">QUẢN LÍ DỊCH VỤ</p>
-          <li>
-            <CategoryIcon className="icon" />
-            <span>Danh mục</span>
-          </li>
+          <Link to="/categories" style={{ textDecoration: "none" }}>
+            <li>
+              <CategoryIcon className="icon" />
+              <span>Danh mục</span>
+            </li>
+          </Link>
           <li>
             <SpatialAudioOffIcon className="icon" />
             <span>Yêu cầu</span>
