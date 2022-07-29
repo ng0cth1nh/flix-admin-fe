@@ -31,7 +31,7 @@ const columns = [
     width: "15%",
     align: "center",
     format: (value) =>
-      typeof value === "number" ? value.toLocaleString("en-US") + " đ" : value,
+      typeof value === "number" ? value.toLocaleString("en-US") + " vnđ" : value,
   },
   {
     id: "description",
@@ -88,7 +88,7 @@ const rows = [
   createData(
     "China",
     1403500365,
-    120000,
+    12000000,
     60483973,
     false
   ),

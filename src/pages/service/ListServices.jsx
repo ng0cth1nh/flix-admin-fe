@@ -37,15 +37,15 @@ const columns = [
   {
     id: "price",
     label: "PHÍ KIỂM TRA",
-    width: "10%",
+    width: "15%",
     align: "center",
     format: (value) =>
-      typeof value === "number" ? value.toLocaleString("en-US") + " đ" : value,
+      typeof value === "number" ? value.toLocaleString("en-US") + " vnđ" : value,
   },
   {
     id: "description",
     label: "MÔ TẢ",
-    width: "25%",
+    width: "20%",
     align: "center",
   },
   {

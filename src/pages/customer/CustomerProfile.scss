@@ -1,0 +1,43 @@
+.customer-profile {
+  display: flex;
+  .customer-profile-container {
+    flex: 6;
+    .body {
+      padding: 30px;
+      width: 70%;
+      margin: 20px auto 20px auto;
+      -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+      box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+      display: flex;
+      .avatar-container {
+        margin-top: 20px;
+        margin-right: 50px;
+
+        width: 300px;
+        align-items: flex-end;
+        .avatar {
+          width: 300px;
+          height: 200px;
+          object-fit: cover;
+          margin-bottom: 20px;
+        }
+      }
+      .category-information {
+        margin-top: 20px;
+        flex: 1;
+        h4 {
+          color: rgb(5, 5, 94);
+          margin-bottom: 10px;
+        }
+        .row-field {
+          display: flex;
+          margin-top: 20px;
+          .row-title {
+            width: 100px;
+            margin-right: 100px;
+          }
+        }
+      }
+    }
+  }
+}

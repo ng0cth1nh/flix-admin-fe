@@ -23,6 +23,7 @@ import FeedbackDetail from "./pages/feedback/FeedbackDetail";
 import NewFeedback from "./pages/feedback/NewFeedback";
 import UpdateFeedback from "./pages/feedback/UpdateFeedback";
 import ListCustomers from "./pages/customer/ListCustomers";
+import CustomerProfile from "./pages/customer/CustomerProfile";
 
 function App() {
   let routes;
@@ -41,6 +42,7 @@ function App() {
         </Route>
         <Route path="/customers">
           <Route index element={<ListCustomers />} />
+          <Route path="profile/:customerId" exact element={<CustomerProfile />} />
         </Route>
         <Route path="/feedbacks">
           <Route index element={<ListFeedbacks />} />
