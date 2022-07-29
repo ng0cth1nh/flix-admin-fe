@@ -1,12 +1,7 @@
 import React, { useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import {
-  TextField,
-  Button,
-  Typography,
-  TextareaAutosize,
-} from "@mui/material";
+import { TextField, Button, Typography, TextareaAutosize } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import "./FeedbackDetail.scss";
 const listImage = [
@@ -86,7 +81,12 @@ const FeedbackDetail = () => {
                 placeholder="Nội dung"
                 defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
       ut labore et dolore magna aliqua."
-                style={{ width: "97%", marginTop: "10px", padding: "10px" }}
+                style={{
+                  width: "97%",
+                  marginTop: "10px",
+                  padding: "10px",
+                  resize: "none",
+                }}
                 disabled
               />
             </div>
@@ -111,7 +111,7 @@ const FeedbackDetail = () => {
                 display: "flex",
                 marginTop: "40px",
                 justifyContent: "space-between",
-                alignItems: 'center',
+                alignItems: "center",
               }}
             >
               <Typography sx={{ fontSize: "14px" }}>Trạng thái</Typography>
@@ -138,7 +138,7 @@ const FeedbackDetail = () => {
                 marginTop: "20px",
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: 'center',
+                alignItems: "center",
               }}
             >
               <Typography sx={{ fontSize: "14px" }}>
@@ -152,7 +152,7 @@ const FeedbackDetail = () => {
                 marginTop: "20px",
                 display: "flex",
                 justifyContent: "space-between",
-                alignItems: 'center',
+                alignItems: "center",
               }}
             >
               <Typography sx={{ fontSize: "14px" }}>

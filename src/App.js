@@ -20,6 +20,7 @@ import ListSubServices from "./pages/sub-service/ListSubServices";
 import SingleSubService from "./pages/sub-service/SingleSubService";
 import ListFeedbacks from "./pages/feedback/ListFeedbacks";
 import FeedbackDetail from "./pages/feedback/FeedbackDetail";
+import NewFeedback from "./pages/feedback/NewFeedback";
 
 function App() {
   let routes;
@@ -38,7 +39,8 @@ function App() {
         </Route>
         <Route path="/feedbacks">
           <Route index element={<ListFeedbacks />} />
-          <Route path="feedback" exact element={<FeedbackDetail />} />
+          <Route path="feedback/new" exact element={<NewFeedback />} />
+          <Route path="feedback/:feedbackId" element={<FeedbackDetail />} />
         </Route>
 
         <Route path="/categories">
