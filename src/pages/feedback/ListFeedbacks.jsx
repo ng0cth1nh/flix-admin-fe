@@ -3,7 +3,7 @@ import { useState } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 import {
   TableContainer,
@@ -71,10 +71,10 @@ const columns = [
     format: (value) => (
       <Button variant="contained" sx={{ textTransform: "none" }} size="small">
         <Link
-          to={`/categories/${value.categoryId}/feedbacks/service?id=${value.id}`}
+          to={`/feedbacks/feedback/view/${value}`}
           style={{ textDecoration: "none", color: "white" }}
         >
-          Cập nhật
+          Xem chi tiết
         </Link>
       </Button>
     ),
@@ -86,70 +86,14 @@ function createData(id, phone, type, title, date, status) {
 }
 
 const rows = [
-  createData(
-    "India",
-    "0865390055",
-    1324171354,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "China",
-    "0865390055",
-    1403500365,
-    120000,
-    60483973,
-    false
-  ),
-  createData(
-    "Italy",
-    "0865390055",
-    60483973,
-    120000,
-    "20/10/2022",
-    true
-  ),
-  createData(
-    "United States",
-    "0865390055",
-    327167434,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "Canada",
-    "0865390055",
-    37602103,
-    120000,
-    37602103,
-    true
-  ),
-  createData(
-    "Australia",
-    "0865390055",
-    25475400,
-    120000,
-    60483973,
-    false
-  ),
-  createData(
-    "Germany",
-    "0865390055",
-    83019200,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "Ireland",
-    "0865390055",
-    4857000,
-    120000,
-    60483973,
-    false
-  ),
+  createData("India", "0865390055", 1324171354, 120000, 60483973, true),
+  createData("China", "0865390055", 1403500365, 120000, 60483973, false),
+  createData("Italy", "0865390055", 60483973, 120000, "20/10/2022", true),
+  createData("United States", "0865390055", 327167434, 120000, 60483973, true),
+  createData("Canada", "0865390055", 37602103, 120000, 37602103, true),
+  createData("Australia", "0865390055", 25475400, 120000, 60483973, false),
+  createData("Germany", "0865390055", 83019200, 120000, 60483973, true),
+  createData("Ireland", "0865390055", 4857000, 120000, 60483973, false),
   createData(
     "Mexico",
     "0865390055",
@@ -158,54 +102,12 @@ const rows = [
     "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj fdjsfjsdklfj fjdsjfklsdjf fkdlsjklsdfjkljadsfkjklsad",
     true
   ),
-  createData(
-    "Japan",
-    "0865390055",
-    126317000,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "France",
-    "0865390055",
-    67022000,
-    120000,
-    60483973,
-    false
-  ),
-  createData(
-    "United Kingdom",
-    "0865390055",
-    67545757,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "Russia",
-    "0865390055",
-    146793744,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "Nigeria",
-    "0865390055",
-    200962417,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "Brazil",
-    "0865390055",
-    210147125,
-    120000,
-    60483973,
-    false
-  ),
+  createData("Japan", "0865390055", 126317000, 120000, 60483973, true),
+  createData("France", "0865390055", 67022000, 120000, 60483973, false),
+  createData("United Kingdom", "0865390055", 67545757, 120000, 60483973, true),
+  createData("Russia", "0865390055", 146793744, 120000, 60483973, true),
+  createData("Nigeria", "0865390055", 200962417, 120000, 60483973, true),
+  createData("Brazil", "0865390055", 210147125, 120000, 60483973, false),
 ];
 const useStyles = makeStyles({
   root: {
@@ -221,7 +123,6 @@ const ListFeedbacks = () => {
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
 
-  const { categoryId } = useParams();
   const handleChangeStatusFilter = (event) => {
     setStatusFilter(event.target.value);
   };
@@ -259,7 +160,7 @@ const ListFeedbacks = () => {
               </div>
               <Button variant="contained" color="success">
                 <Link
-                  to={`/categories/${categoryId}/feedbacks/service`}
+                  to={"/feedbacks/feedback/new"}
                   style={{ textDecoration: "none", color: "white" }}
                 >
                   Thêm
@@ -338,24 +239,16 @@ const ListFeedbacks = () => {
                         {columns.map((column) => {
                           if (column.id === "index") {
                             return (
-                              <TableCell
-                                key={column.id}
-                                align={column.align}
-                              >
+                              <TableCell key={column.id} align={column.align}>
                                 {page * rowsPerPage + index + 1}
                               </TableCell>
                             );
                           } else {
-                            const value =
-                              column.id === "action"
-                                ? { categoryId, id: row["id"] }
-                                : row[column.id];
+                            const value = column.id === "action"
+                            ? row["id"]
+                            : row[column.id];
                             return (
-                              <TableCell
-                                key={column.id}
-                                align={column.align}
-                               
-                              >
+                              <TableCell key={column.id} align={column.align}>
                                 {column.format ? column.format(value) : value}
                               </TableCell>
                             );

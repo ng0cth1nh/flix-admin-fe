@@ -12,14 +12,11 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
 import "./NewFeedback.scss";
 
 const NewFeedback = () => {
-  const { search } = useLocation();
   const [listImage, setListImage] = useState([]);
   const [requestTypeId, setRequestTypeId] = useState("");
-  const id = new URLSearchParams(search).get("id");
   const handleChange = (event) => {
     setRequestTypeId(event.target.value);
   };
@@ -37,7 +34,6 @@ const NewFeedback = () => {
               label="Số điện thoại"
               margin="normal"
               error={false}
-              defaultValue="50045898"
               variant="outlined"
               sx={{
                 width: "40%",
@@ -67,7 +63,6 @@ const NewFeedback = () => {
               label="Mã đặt lịch"
               margin="normal"
               error={false}
-              defaultValue="dfsdkfhjsd37"
               variant="outlined"
               sx={{
                 width: "40%",
@@ -78,7 +73,6 @@ const NewFeedback = () => {
               label="Tiêu đề"
               margin="normal"
               error={false}
-              defaultValue="sửa chữa bị hỏng"
               variant="outlined"
               sx={{
                 width: "40%",
@@ -91,8 +85,6 @@ const NewFeedback = () => {
                 maxRows={7}
                 aria-label="maximum height"
                 placeholder="Nội dung"
-                defaultValue="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-      ut labore et dolore magna aliqua."
                 style={{
                   width: "97%",
                   marginTop: "10px",

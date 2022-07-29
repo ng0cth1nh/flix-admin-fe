@@ -1,0 +1,28 @@
+.update-feedback {
+  display: flex;
+  .update-feedback-container {
+    flex: 6;
+    .body {
+      padding: 30px;
+      width: 70%;
+      margin: 20px auto 20px auto;
+      -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+      box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+      h1 {
+        color: rgb(5, 5, 94);
+      }
+      .feedback-information {
+        margin-top: 30px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        h3 {
+          color: rgba(117, 113, 113, 0.774);
+          margin-bottom: 20px;
+          width: 100%;
+        }
+      }
+    }
+  }
+}

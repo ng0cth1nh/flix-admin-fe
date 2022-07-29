@@ -1,21 +1,19 @@
 import "./sidebar.scss";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
-import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import CreditCardIcon from "@mui/icons-material/CreditCard";
-import StoreIcon from "@mui/icons-material/Store";
-import InsertChartIcon from "@mui/icons-material/InsertChart";
-import SettingsApplicationsIcon from "@mui/icons-material/SettingsApplications";
+import EngineeringIcon from "@mui/icons-material/Engineering";
+import CategoryIcon from "@mui/icons-material/Category";
+import SpatialAudioOffIcon from "@mui/icons-material/SpatialAudioOff";
+import FeedbackIcon from "@mui/icons-material/Feedback";
+import HandymanIcon from "@mui/icons-material/Handyman";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import SettingsSystemDaydreamOutlinedIcon from "@mui/icons-material/SettingsSystemDaydreamOutlined";
-import PsychologyOutlinedIcon from "@mui/icons-material/PsychologyOutlined";
+import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import PaidIcon from "@mui/icons-material/Paid";
 import { Link } from "react-router-dom";
 
-
 const Sidebar = () => {
-
   return (
     <div className="sidebar">
       <div className="top">
@@ -26,62 +24,62 @@ const Sidebar = () => {
       <hr />
       <div className="center">
         <ul>
-          <p className="title">MAIN</p>
+          <p className="title">TRANG CHỦ</p>
           <li>
             <DashboardIcon className="icon" />
             <span>Dashboard</span>
           </li>
-          <p className="title">LISTS</p>
+          <p className="title">THÔNG TIN KHÁCH HÀNG</p>
           <Link to="/users" style={{ textDecoration: "none" }}>
             <li>
               <PersonOutlineIcon className="icon" />
-              <span>Users</span>
+              <span>Người dùng</span>
             </li>
           </Link>
           <Link to="/products" style={{ textDecoration: "none" }}>
             <li>
-              <StoreIcon className="icon" />
-              <span>Products</span>
+              <EngineeringIcon className="icon" />
+              <span>Thợ sửa chữa</span>
+            </li>
+          </Link>
+          <p className="title">QUẢN LÍ DỊCH VỤ</p>
+          <li>
+            <CategoryIcon className="icon" />
+            <span>Danh mục</span>
+          </li>
+          <li>
+            <SpatialAudioOffIcon className="icon" />
+            <span>Yêu cầu</span>
+          </li>
+          <Link to="/feedbacks" style={{ textDecoration: "none" }}>
+            <li>
+              <FeedbackIcon className="icon" />
+              <span>Phản hồi</span>
             </li>
           </Link>
           <li>
-            <CreditCardIcon className="icon" />
-            <span>Orders</span>
+            <HandymanIcon className="icon" />
+            <span>Linh kiện</span>
           </li>
           <li>
-            <LocalShippingIcon className="icon" />
-            <span>Delivery</span>
-          </li>
-          <p className="title">USEFUL</p>
-          <li>
-            <InsertChartIcon className="icon" />
-            <span>Stats</span>
+            <ConfirmationNumberIcon className="icon" />
+            <span>Phiếu giảm giá</span>
           </li>
           <li>
-            <NotificationsNoneIcon className="icon" />
-            <span>Notifications</span>
+            <PaidIcon className="icon" />
+            <span>Giao dịch</span>
           </li>
-          <p className="title">SERVICE</p>
-          <li>
-            <SettingsSystemDaydreamOutlinedIcon className="icon" />
-            <span>System Health</span>
-          </li>
-          <li>
-            <PsychologyOutlinedIcon className="icon" />
-            <span>Logs</span>
-          </li>
-          <li>
-            <SettingsApplicationsIcon className="icon" />
-            <span>Settings</span>
-          </li>
-          <p className="title">USER</p>
-          <li>
-            <AccountCircleOutlinedIcon className="icon" />
-            <span>Profile</span>
-          </li>
+
+          <p className="title">TÀI KHOẢN</p>
+          <Link to="/userProfile" style={{ textDecoration: "none" }}>
+            <li>
+              <AccountCircleOutlinedIcon className="icon" />
+              <span>Thông tin tài khoản</span>
+            </li>
+          </Link>
           <li>
             <ExitToAppIcon className="icon" />
-            <span>Logout</span>
+            <span>Đăng xuất</span>
           </li>
         </ul>
       </div>

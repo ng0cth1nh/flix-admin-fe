@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { TextField, Button, Typography, TextareaAutosize } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import "./FeedbackDetail.scss";
 const listImage = [
   "https://media.conglyxahoi.net/news/2022/07/01/H%E1%BB%93%20Ho%C3%A0i%20Anh%20-%20g%C6%B0%C6%A1ng%20m%E1%BA%B7t%20quen%20thu%E1%BB%99c%20v%E1%BB%9Bi%20kh%C3%A1n%20gi%E1%BA%A3%20Vi%E1%BB%87t.jpg",
@@ -14,8 +14,7 @@ const listImage = [
 ];
 
 const FeedbackDetail = () => {
-  const { search } = useLocation();
-  const id = new URLSearchParams(search).get("id");
+  const { feedbackId } = useParams();
   return (
     <div className="single-feedback">
       <Sidebar />
@@ -169,7 +168,12 @@ const FeedbackDetail = () => {
                   marginRight: "20px",
                 }}
               >
-                Cập nhật
+                <Link
+                  to={`/feedbacks/feedback/update/${feedbackId}`}
+                  style={{ textDecoration: "none",color:"white" }}
+                >
+                  Cập nhật
+                </Link>
               </Button>
             </div>
           </div>
