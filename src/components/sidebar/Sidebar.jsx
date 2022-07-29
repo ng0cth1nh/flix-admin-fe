@@ -35,7 +35,7 @@ const Sidebar = () => {
               <span>Khách hàng</span>
             </li>
           </Link>
-          <Link to="/products" style={{ textDecoration: "none" }}>
+          <Link to="/repairers" style={{ textDecoration: "none" }}>
             <li>
               <EngineeringIcon className="icon" />
               <span>Thợ sửa chữa</span>

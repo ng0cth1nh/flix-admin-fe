@@ -1,16 +1,12 @@
 import Home from "./pages/main/home/Home";
 import Login from "./pages/auth/login/Login";
 import ForgotPassword from "./pages/auth/forgotPassword/ForgotPassword";
-import List from "./pages/list/List";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
 } from "react-router-dom";
-import { productInputs, userInputs } from "./formSource";
-import Single from "./pages/single/Single";
-import New from "./pages/new/New";
 import UserProfile from "./pages/user-profile/UserProfile";
 import ListCategories from "./pages/category/ListCategories";
 import SingleCategory from "./pages/category/SingleCategory";
@@ -24,6 +20,8 @@ import NewFeedback from "./pages/feedback/NewFeedback";
 import UpdateFeedback from "./pages/feedback/UpdateFeedback";
 import ListCustomers from "./pages/customer/ListCustomers";
 import CustomerProfile from "./pages/customer/CustomerProfile";
+import ListRepairers from "./pages/repairer/ListRepairers";
+import RepairerProfile from "./pages/repairer/RepairerProfile";
 
 function App() {
   let routes;
@@ -32,17 +30,13 @@ function App() {
       <Routes>
         <Route path="/" index element={<Home />} />
         <Route path="/userProfile" element={<UserProfile />} />
-        <Route path="/users">
-          <Route index element={<List />} />
-          <Route path=":userId" element={<Single />} />
-          <Route
-            path="new"
-            element={<New inputs={userInputs} title="Add New User" />}
-          />
-        </Route>
         <Route path="/customers">
           <Route index element={<ListCustomers />} />
           <Route path="profile/:customerId" exact element={<CustomerProfile />} />
+        </Route>
+        <Route path="/repairers">
+          <Route index element={<ListRepairers />} />
+          <Route path="profile/:repairerId" exact element={<RepairerProfile />} />
         </Route>
         <Route path="/feedbacks">
           <Route index element={<ListFeedbacks />} />
@@ -64,14 +58,6 @@ function App() {
           </Route>
         </Route>
 
-        <Route path="/products">
-          <Route index element={<List />} />
-          <Route path=":productId" element={<Single />} />
-          <Route
-            path="new"
-            element={<New inputs={productInputs} title="Add New Product" />}
-          />
-        </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
