@@ -8,7 +8,7 @@ import {
   TextareaAutosize,
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
-import "./SingleFeedback.scss";
+import "./FeedbackDetail.scss";
 const listImage = [
   "https://media.conglyxahoi.net/news/2022/07/01/H%E1%BB%93%20Ho%C3%A0i%20Anh%20-%20g%C6%B0%C6%A1ng%20m%E1%BA%B7t%20quen%20thu%E1%BB%99c%20v%E1%BB%9Bi%20kh%C3%A1n%20gi%E1%BA%A3%20Vi%E1%BB%87t.jpg",
   "https://image-us.24h.com.vn/upload/1-2022/images/2022-03-22/1647915882-6fc57fcee4a29bee3a77cc289c352bb5-width660height824.jpg",
@@ -18,7 +18,7 @@ const listImage = [
   "https://www.invert.vn/media/ar/anh-ong-nano.jpeg",
 ];
 
-const SingleFeedback = () => {
+const FeedbackDetail = () => {
   const { search } = useLocation();
   const id = new URLSearchParams(search).get("id");
   return (
@@ -179,4 +179,4 @@ const SingleFeedback = () => {
   );
 };
 
-export default SingleFeedback;
+export default FeedbackDetail;
