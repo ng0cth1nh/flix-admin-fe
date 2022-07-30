@@ -22,6 +22,7 @@ import ListCustomers from "./pages/customer/ListCustomers";
 import CustomerProfile from "./pages/customer/CustomerProfile";
 import ListRepairers from "./pages/repairer/ListRepairers";
 import RepairerProfile from "./pages/repairer/RepairerProfile";
+import ListRequests from "./pages/request/ListRequests";
 
 function App() {
   let routes;
@@ -38,13 +39,6 @@ function App() {
           <Route index element={<ListRepairers />} />
           <Route path="profile/:repairerId" exact element={<RepairerProfile />} />
         </Route>
-        <Route path="/feedbacks">
-          <Route index element={<ListFeedbacks />} />
-          <Route path="feedback/new" exact element={<NewFeedback />} />
-          <Route path="feedback/update/:feedbackId" exact element={<UpdateFeedback />} />
-          <Route path="feedback/view/:feedbackId" exact element={<FeedbackDetail />} />
-        </Route>
-
         <Route path="/categories">
           <Route index element={<ListCategories />} />
           <Route path="category" exact element={<SingleCategory />} />
@@ -57,6 +51,18 @@ function App() {
             </Route>
           </Route>
         </Route>
+        <Route path="/requests">
+          <Route index element={<ListRequests />} />
+          {/* <Route path=":requestId" exact element={< />} /> */}
+        </Route>
+        <Route path="/feedbacks">
+          <Route index element={<ListFeedbacks />} />
+          <Route path="feedback/new" exact element={<NewFeedback />} />
+          <Route path="feedback/update/:feedbackId" exact element={<UpdateFeedback />} />
+          <Route path="feedback/view/:feedbackId" exact element={<FeedbackDetail />} />
+        </Route>
+
+       
 
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

@@ -48,10 +48,12 @@ const Sidebar = () => {
               <span>Danh mục</span>
             </li>
           </Link>
-          <li>
-            <SpatialAudioOffIcon className="icon" />
-            <span>Yêu cầu</span>
-          </li>
+          <Link to="/requests" style={{ textDecoration: "none" }}>
+            <li>
+              <SpatialAudioOffIcon className="icon" />
+              <span>Yêu cầu</span>
+            </li>
+          </Link>
           <Link to="/feedbacks" style={{ textDecoration: "none" }}>
             <li>
               <FeedbackIcon className="icon" />
