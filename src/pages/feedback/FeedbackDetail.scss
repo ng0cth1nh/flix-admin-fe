@@ -20,14 +20,10 @@
           width: 28%;
           margin-top: 20px;
           img {
-            width: 80%;
-            aspect-ratio: 1;
+            width: 100%;
+            aspect-ratio: 1.2;
             -webkit-transition: 0.4s ease;
             transition: 0.4s ease;
-          }
-          img:hover {
-            -webkit-transform: scale(2);
-            transform: scale(2);
           }
         }
       }

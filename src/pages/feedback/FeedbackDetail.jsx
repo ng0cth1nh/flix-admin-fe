@@ -2,6 +2,7 @@ import React from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { TextField, Button, Typography, TextareaAutosize } from "@mui/material";
+import { MapInteractionCSS } from "react-map-interaction";
 import { useParams, Link } from "react-router-dom";
 import "./FeedbackDetail.scss";
 const listImage = [
@@ -99,7 +100,9 @@ const FeedbackDetail = () => {
               <div className="file">
                 {listImage.map((image) => (
                   <div className="image-container">
-                    <img src={image} alt="Ảnh minh họa" />
+                    <MapInteractionCSS>
+                      <img src={image} alt="Ảnh minh họa" />
+                    </MapInteractionCSS>
                   </div>
                 ))}
               </div>
@@ -170,7 +173,7 @@ const FeedbackDetail = () => {
               >
                 <Link
                   to={`/feedbacks/feedback/update/${feedbackId}`}
-                  style={{ textDecoration: "none",color:"white" }}
+                  style={{ textDecoration: "none", color: "white" }}
                 >
                   Cập nhật
                 </Link>
