@@ -25,6 +25,7 @@ import RepairerProfile from "./pages/repairer/RepairerProfile";
 import ListRequests from "./pages/request/ListRequests";
 import RequestDetail from "./pages/request/RequestDetail";
 import ListTransactions from "./pages/transaction/ListTransactions";
+import TransactionDetail from "./pages/transaction/TransactionDetail";
 
 function App() {
   let routes;
@@ -65,7 +66,7 @@ function App() {
         </Route>
         <Route path="/transactions">
           <Route index element={<ListTransactions />} />
-          {/* <Route path=":transactionId" exact element={< RequestDetail/>} /> */}
+          <Route path=":transactionId" exact element={< TransactionDetail/>} />
         </Route>
 
        
