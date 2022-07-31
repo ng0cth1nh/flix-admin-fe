@@ -23,6 +23,7 @@ import CustomerProfile from "./pages/customer/CustomerProfile";
 import ListRepairers from "./pages/repairer/ListRepairers";
 import RepairerProfile from "./pages/repairer/RepairerProfile";
 import ListRequests from "./pages/request/ListRequests";
+import RequestDetail from "./pages/request/RequestDetail";
 
 function App() {
   let routes;
@@ -53,7 +54,7 @@ function App() {
         </Route>
         <Route path="/requests">
           <Route index element={<ListRequests />} />
-          {/* <Route path=":requestId" exact element={< />} /> */}
+          <Route path=":requestId" exact element={< RequestDetail/>} />
         </Route>
         <Route path="/feedbacks">
           <Route index element={<ListFeedbacks />} />

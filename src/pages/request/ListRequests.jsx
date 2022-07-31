@@ -91,7 +91,7 @@ const columns = [
     format: (value) => (
       <Button variant="contained" sx={{ textTransform: "none" }} size="small">
         <Link
-          to={`/requests/profile/${value}`}
+          to={`/requests/${value}`}
           style={{ textDecoration: "none", color: "white" }}
         >
           Xem chi tiết
