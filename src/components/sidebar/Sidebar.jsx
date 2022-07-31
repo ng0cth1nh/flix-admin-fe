@@ -68,10 +68,12 @@ const Sidebar = () => {
             <ConfirmationNumberIcon className="icon" />
             <span>Phiếu giảm giá</span>
           </li>
-          <li>
-            <PaidIcon className="icon" />
-            <span>Giao dịch</span>
-          </li>
+          <Link to="/transactions" style={{ textDecoration: "none" }}>
+            <li>
+              <PaidIcon className="icon" />
+              <span>Giao dịch</span>
+            </li>
+          </Link>
 
           <p className="title">TÀI KHOẢN</p>
           <Link to="/userProfile" style={{ textDecoration: "none" }}>

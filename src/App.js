@@ -24,6 +24,7 @@ import ListRepairers from "./pages/repairer/ListRepairers";
 import RepairerProfile from "./pages/repairer/RepairerProfile";
 import ListRequests from "./pages/request/ListRequests";
 import RequestDetail from "./pages/request/RequestDetail";
+import ListTransactions from "./pages/transaction/ListTransactions";
 
 function App() {
   let routes;
@@ -61,6 +62,10 @@ function App() {
           <Route path="feedback/new" exact element={<NewFeedback />} />
           <Route path="feedback/update/:feedbackId" exact element={<UpdateFeedback />} />
           <Route path="feedback/view/:feedbackId" exact element={<FeedbackDetail />} />
+        </Route>
+        <Route path="/transactions">
+          <Route index element={<ListTransactions />} />
+          {/* <Route path=":transactionId" exact element={< RequestDetail/>} /> */}
         </Route>
 
        
