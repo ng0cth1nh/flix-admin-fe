@@ -26,6 +26,7 @@ import ListRequests from "./pages/request/ListRequests";
 import RequestDetail from "./pages/request/RequestDetail";
 import ListTransactions from "./pages/transaction/ListTransactions";
 import TransactionDetail from "./pages/transaction/TransactionDetail";
+import WithdrawRequest from "./pages/request/WithdrawRequest";
 
 function App() {
   let routes;
@@ -68,6 +69,8 @@ function App() {
           <Route index element={<ListTransactions />} />
           <Route path=":transactionId" exact element={< TransactionDetail/>} />
         </Route>
+        <Route path="/withdraws" exact element={<WithdrawRequest />} />
+
 
        
 

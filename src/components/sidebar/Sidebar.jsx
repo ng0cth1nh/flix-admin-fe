@@ -9,6 +9,7 @@ import HandymanIcon from "@mui/icons-material/Handyman";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 import PaidIcon from "@mui/icons-material/Paid";
 import { Link } from "react-router-dom";
 
@@ -72,6 +73,12 @@ const Sidebar = () => {
             <li>
               <PaidIcon className="icon" />
               <span>Giao dịch</span>
+            </li>
+          </Link>
+          <Link to="/withdraws" style={{ textDecoration: "none" }}>
+            <li>
+              <CreditCardIcon className="icon" />
+              <span>Yêu cầu rút tiền</span>
             </li>
           </Link>
 
