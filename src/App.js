@@ -27,6 +27,7 @@ import RequestDetail from "./pages/request/RequestDetail";
 import ListTransactions from "./pages/transaction/ListTransactions";
 import TransactionDetail from "./pages/transaction/TransactionDetail";
 import WithdrawRequest from "./pages/request/WithdrawRequest";
+import ListAccessories from "./pages/accessories/ListAccessories";
 
 function App() {
   let routes;
@@ -64,6 +65,10 @@ function App() {
           <Route path="feedback/new" exact element={<NewFeedback />} />
           <Route path="feedback/update/:feedbackId" exact element={<UpdateFeedback />} />
           <Route path="feedback/view/:feedbackId" exact element={<FeedbackDetail />} />
+        </Route>
+        <Route path="/accessories">
+          <Route index element={<ListAccessories />} />
+          {/* <Route path="profile/:repairerId" exact element={<RepairerProfile />} /> */}
         </Route>
         <Route path="/transactions">
           <Route index element={<ListTransactions />} />

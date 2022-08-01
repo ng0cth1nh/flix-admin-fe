@@ -61,10 +61,12 @@ const Sidebar = () => {
               <span>Phản hồi</span>
             </li>
           </Link>
+          <Link to="/accessories" style={{ textDecoration: "none" }}>
           <li>
             <HandymanIcon className="icon" />
             <span>Linh kiện</span>
           </li>
+          </Link>
           <li>
             <ConfirmationNumberIcon className="icon" />
             <span>Phiếu giảm giá</span>

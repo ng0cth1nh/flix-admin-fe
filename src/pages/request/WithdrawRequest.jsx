@@ -18,6 +18,10 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Modal,
+  Typography,
+  TextareaAutosize,
+  Box,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 const columns = [
@@ -57,39 +61,19 @@ const columns = [
     label: "THAO TÁC",
     width: "20%",
     align: "center",
-    format: (value) => (
-      <div style={{ display: "flex", justifyContent: "space-around" }}>
-        <Button
-          variant="contained"
-          sx={{ textTransform: "none" }}
-          size="small"
-          color="success"
-        >
-          <Link
-            to={`/transactions/${value}`}
-            style={{ textDecoration: "none", color: "white" }}
-          >
-            Chấp nhận
-          </Link>
-        </Button>
-        <Button
-          variant="contained"
-          sx={{ textTransform: "none" }}
-          size="small"
-          color="error"
-        >
-          <Link
-            to={`/transactions/${value}`}
-            style={{ textDecoration: "none", color: "white" }}
-          >
-            Từ chối
-          </Link>
-        </Button>
-      </div>
-    ),
   },
 ];
-
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 500,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 function createData(id, name, phone, money, type, txCode, amount) {
   return {
     id,
@@ -212,6 +196,8 @@ const useStyles = makeStyles({
 });
 const WithdrawRequest = () => {
   const classes = useStyles();
+  const [open, setOpen] = useState(false);
+  const [banReason, setBanReson] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [typeFilter, setTypeFilter] = useState("");
@@ -317,6 +303,35 @@ const WithdrawRequest = () => {
                                 {page * rowsPerPage + index + 1}
                               </TableCell>
                             );
+                          } else if (column.id === "action") {
+                            return (
+                              <TableCell key={column.id} align={column.align}>
+                                <div
+                                  style={{
+                                    display: "flex",
+                                    justifyContent: "space-around",
+                                  }}
+                                >
+                                  <Button
+                                    variant="contained"
+                                    sx={{ textTransform: "none" }}
+                                    size="small"
+                                    color="success"
+                                  >
+                                    Chấp nhận
+                                  </Button>
+                                  <Button
+                                    variant="contained"
+                                    sx={{ textTransform: "none" }}
+                                    size="small"
+                                    color="error"
+                                    onClick={() => setOpen(true)}
+                                  >
+                                    Từ chối
+                                  </Button>
+                                </div>
+                              </TableCell>
+                            );
                           } else {
                             const value =
                               column.id === "action"
@@ -326,13 +341,9 @@ const WithdrawRequest = () => {
                               <TableCell
                                 key={column.id}
                                 align={column.align}
-                                onClick={
-                                  column.id !== "action"
-                                    ? () => {
-                                        handleRowClick(row["id"]);
-                                      }
-                                    : null
-                                }
+                                onClick={() => {
+                                  handleRowClick(row["id"]);
+                                }}
                               >
                                 {column.format ? column.format(value) : value}
                               </TableCell>
@@ -354,6 +365,70 @@ const WithdrawRequest = () => {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
+          <Modal
+            open={open}
+            onClose={() => setOpen(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <Typography
+                id="modal-modal-title"
+                variant="h6"
+                component="h2"
+                sx={{ textAlign: "center" }}
+              >
+                Bạn có chắc muốn hủy yêu cầu rút tiền này không?
+              </Typography>
+              <div style={{ width: "100%", marginTop: "10px" }}>
+                <Typography sx={{ fontSize: "14px" }}>Lý do</Typography>
+                <TextareaAutosize
+                  minRows={5}
+                  maxRows={7}
+                  aria-label="maximum height"
+                  placeholder="..."
+                  onChange={(e) => {
+                    setBanReson(e.target.value.trim());
+                  }}
+                  style={{
+                    width: "97%",
+                    marginTop: "10px",
+                    padding: "10px",
+                    resize: "none",
+                  }}
+                />
+              </div>
+              <div
+                style={{
+                  width: "40%",
+                  display: "flex",
+                  justifyContent: "space-around",
+                  marginLeft: "auto",
+                  marginTop: "40px",
+                }}
+              >
+                <Button
+                  variant="contained"
+                  sx={{
+                    textTransform: "none",
+                  }}
+                  onClick={() => setOpen(false)}
+                  color="error"
+                >
+                  Thoát
+                </Button>
+                <Button
+                  variant="contained"
+                  sx={{
+                    textTransform: "none",
+                  }}
+                  disabled={!banReason}
+                >
+                  Lưu
+                </Button>
+              </div>
+            </Box>
+          </Modal>
         </div>
       </div>
     </div>
