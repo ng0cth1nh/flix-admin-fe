@@ -28,10 +28,12 @@ import ListTransactions from "./pages/transaction/ListTransactions";
 import TransactionDetail from "./pages/transaction/TransactionDetail";
 import WithdrawRequest from "./pages/request/WithdrawRequest";
 import ListAccessories from "./pages/accessories/ListAccessories";
+import SingleAccessories from "./pages/accessories/SingleAccessories";
+import ConfirmOTP from "./pages/auth/forgotPassword/ConfirmOTP";
 
 function App() {
   let routes;
-  if (true) {
+  if (false) {
     routes = (
       <Routes>
         <Route path="/" index element={<Home />} />
@@ -68,7 +70,7 @@ function App() {
         </Route>
         <Route path="/accessories">
           <Route index element={<ListAccessories />} />
-          {/* <Route path="profile/:repairerId" exact element={<RepairerProfile />} /> */}
+          <Route path="single" exact element={<SingleAccessories />} />
         </Route>
         <Route path="/transactions">
           <Route index element={<ListTransactions />} />
@@ -87,6 +89,7 @@ function App() {
       <Routes>
         <Route path="/login" index element={<Login />} />
         <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/confirmOTP" element={<ConfirmOTP />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     );

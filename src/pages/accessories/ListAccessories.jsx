@@ -14,10 +14,6 @@ import {
   TableBody,
   TablePagination,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 const columns = [
@@ -70,7 +66,7 @@ const columns = [
         size="small"
       >
         <Link
-          to={`/transactions/${value}`}
+          to={`/accessories/single?id=${value}`}
           style={{ textDecoration: "none", color: "white" }}
         >
           Cập nhật
@@ -204,10 +200,6 @@ const ListAccessories = () => {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [typeFilter, setTypeFilter] = useState("");
-  const handleChangeTypeFilter = (event) => {
-    setTypeFilter(event.target.value);
-  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -239,7 +231,7 @@ const ListAccessories = () => {
               </div>
               <Button variant="contained" color="success">
                 <Link
-                  to={`/categories/category`}
+                  to="/accessories/single"
                   style={{ textDecoration: "none", color: "white" }}
                 >
                   Thêm
