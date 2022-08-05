@@ -178,7 +178,7 @@ const ListRequests = () => {
           >
             <h1>Yêu cầu</h1>
             <div className="search">
-              <input type="text" placeholder="Tìm kiếm..." />
+              <input type="text" placeholder="Mã yêu cầu..." />
               <SearchOutlinedIcon />
             </div>
           </div>

@@ -1,17 +1,32 @@
 import FormInput from "../../../components/formInput/FormInput";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./ConfirmOTP.scss";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import useAxios from "../../../hooks/useAxios";
+import { useSelector, useDispatch } from "react-redux";
+import { setErrorMessage, setLoading } from "../../../features/auth/authSlice";
+import ApiContants from "../../../constants/Api";
+import LoadingState from "../../../constants/LoadingState";
+import getErrorMessage from "../../../utils/getErrorMessage";
+import Loading from "../../../components/loading/Loading";
 
 const ConfirmOTP = () => {
+  const { state } = useLocation();
+  const navigate = useNavigate();
+  const authAPI = useAxios();
+  const dispatch = useDispatch();
+  const { errorMessage, loading } = useSelector((state) => state.auth);
   const [values, setValues] = useState({
-    phone: "",
     password: "",
-    confirmPassword:""
+    confirmPassword: "",
+    otp: "",
   });
+  useEffect(() => {
+    dispatch(setErrorMessage(null));
+    dispatch(setLoading(LoadingState.IDLE));
+  }, [dispatch]);
 
   const inputs = [
-
     {
       id: 2,
       name: "password",
@@ -35,19 +50,43 @@ const ConfirmOTP = () => {
       isLast: true,
     },
     {
-        id: 1,
-        name: "otp",
-        type: "text",
-        placeholder: "Nhập mã OTP",
-        errorMessage: "Mã OTP gồm 6 số!",
-        label: "Mã OTP*",
-        pattern: "^([0-9]{6})$",
-        required: true,
-      },
+      id: 1,
+      name: "otp",
+      type: "text",
+      placeholder: "Nhập mã OTP",
+      errorMessage: "Mã OTP gồm 6 số!",
+      label: "Mã OTP*",
+      pattern: "^([0-9]{6})$",
+      required: true,
+    },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
+    console.log("otp: ", values.otp);
     e.preventDefault();
+    try {
+      dispatch(setLoading(LoadingState.PENDING));
+      const response = await authAPI.post(ApiContants.CONFIRM_OTP, {
+        phone: state.phone,
+        otp: values.otp,
+      });
+      await authAPI.put(
+        ApiContants.CHANGE_PASSWORD,
+        {
+          newPassword: values.password,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${response.data.accessToken}`,
+          },
+        }
+      );
+      dispatch(setLoading(LoadingState.SUCCEEDED));
+      navigate("/");
+    } catch (err) {
+      dispatch(setLoading(LoadingState.FAILED));
+      dispatch(setErrorMessage(getErrorMessage(err)));
+    }
   };
 
   const onChange = (e) => {
@@ -56,7 +95,11 @@ const ConfirmOTP = () => {
 
   return (
     <div className="confirm-otp">
-      <form onSubmit={handleSubmit} className="form">
+      <form
+        onSubmit={handleSubmit}
+        className="form"
+        style={{ opacity: loading === LoadingState.PENDING ? 0.5 : 1 }}
+      >
         <h1 className="title">Đổi mật khẩu</h1>
         {inputs.map((input) => (
           <FormInput
@@ -66,8 +109,12 @@ const ConfirmOTP = () => {
             onChange={onChange}
           />
         ))}
+        {loading === LoadingState.PENDING && <Loading wrapperClass="form" />}
+        {errorMessage && (
+          <p style={{ color: "red", fontSize: "12px" }}>{errorMessage}</p>
+        )}
         <button className="button">Đổi mật khẩu</button>
-        <Link to="/login" style={{ textDecoration: "none" }}>
+        <Link to="/" style={{ textDecoration: "none" }}>
           <p className="link">Đăng nhập</p>
         </Link>
       </form>

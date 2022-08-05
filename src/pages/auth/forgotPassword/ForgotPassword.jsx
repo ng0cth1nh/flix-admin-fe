@@ -1,13 +1,27 @@
 import FormInput from "../../../components/formInput/FormInput";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./forgotPassword.scss";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { setErrorMessage, setLoading } from "../../../features/auth/authSlice";
+import useAxios from "../../../hooks/useAxios";
+import ApiContants from "../../../constants/Api";
+import getErrorMessage from "../../../utils/getErrorMessage";
+import LoadingState from "../../../constants/LoadingState";
+import Loading from "../../../components/loading/Loading";
 
 const ForgotPassword = () => {
+  const authAPI = useAxios();
+  const { errorMessage, loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [values, setValues] = useState({
     phone: "",
   });
+  useEffect(() => {
+    dispatch(setErrorMessage(null));
+    dispatch(setLoading(LoadingState.IDLE));
+  }, [dispatch]);
 
   const inputs = [
     {
@@ -22,9 +36,17 @@ const ForgotPassword = () => {
     },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    navigate("/confirmOTP",values.phone);
+    try {
+      dispatch(setLoading(LoadingState.PENDING));
+      await authAPI.post(ApiContants.SEND_OTP, { phone: values.phone, roleType:'ADMIN' });
+      dispatch(setLoading(LoadingState.SUCCEEDED));
+      navigate("/confirmOTP", { state: { phone: values.phone } });
+    } catch (err) {
+      dispatch(setLoading(LoadingState.FAILED));
+      dispatch(setErrorMessage(getErrorMessage(err)));
+    }
   };
 
   const onChange = (e) => {
@@ -33,7 +55,11 @@ const ForgotPassword = () => {
 
   return (
     <div className="forgotpassword">
-      <form onSubmit={handleSubmit} className="form">
+      <form
+        onSubmit={handleSubmit}
+        className="form"
+        style={{ opacity: loading === LoadingState.PENDING ? 0.5 : 1 }}
+      >
         <h1 className="title">Đổi mật khẩu</h1>
         {inputs.map((input) => (
           <FormInput
@@ -43,8 +69,12 @@ const ForgotPassword = () => {
             onChange={onChange}
           />
         ))}
-        <input type="submit" className="button" value="Tiếp tục"/>
-        <Link to="/login" style={{ textDecoration: "none" }}>
+        {loading === LoadingState.PENDING && <Loading wrapperClass="form" />}
+        {errorMessage && (
+          <p style={{ color: "red", fontSize: "12px" }}>{errorMessage}</p>
+        )}
+        <input type="submit" className="button" value="Tiếp tục" />
+        <Link to="/" style={{ textDecoration: "none" }}>
           <p className="link">Đăng nhập</p>
         </Link>
       </form>

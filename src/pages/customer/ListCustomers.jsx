@@ -64,7 +64,7 @@ const columns = [
     format: (value) => (
       <Button variant="contained" sx={{ textTransform: "none" }} size="small">
         <Link
-          to={`/customers/category?id=${value}`}
+          to={`/customers/profile/${value}`}
           style={{ textDecoration: "none", color: "white" }}
         >
           Xem chi tiết

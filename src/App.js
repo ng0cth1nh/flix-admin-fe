@@ -1,11 +1,13 @@
 import Home from "./pages/main/home/Home";
 import Login from "./pages/auth/login/Login";
+import { useEffect } from "react";
 import ForgotPassword from "./pages/auth/forgotPassword/ForgotPassword";
 import {
   BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
+  useNavigate
 } from "react-router-dom";
 import UserProfile from "./pages/user-profile/UserProfile";
 import ListCategories from "./pages/category/ListCategories";
@@ -30,21 +32,39 @@ import WithdrawRequest from "./pages/request/WithdrawRequest";
 import ListAccessories from "./pages/accessories/ListAccessories";
 import SingleAccessories from "./pages/accessories/SingleAccessories";
 import ConfirmOTP from "./pages/auth/forgotPassword/ConfirmOTP";
+import CustomRouter from './customRoutes/customRoutes';
+import history from './customRoutes/history';
+// import { useSelector } from "react-redux";
 
 function App() {
-  let routes;
-  if (false) {
-    routes = (
+  // const {token} = useSelector(state=> state.auth);
+  // const navigate = useNavigate();
+  // useEffect(()=>{
+  //   if(!token) navigate("/");
+  // },[token, navigate])
+  return (
+    <CustomRouter history={history}>
       <Routes>
-        <Route path="/" index element={<Home />} />
+        <Route path="/" index element={<Login />} />
+        <Route path="/forgotpassword" element={<ForgotPassword />} />
+        <Route path="/confirmOTP" element={<ConfirmOTP />} />
+        <Route path="/home" index element={<Home />} />
         <Route path="/userProfile" element={<UserProfile />} />
         <Route path="/customers">
           <Route index element={<ListCustomers />} />
-          <Route path="profile/:customerId" exact element={<CustomerProfile />} />
+          <Route
+            path="profile/:customerId"
+            exact
+            element={<CustomerProfile />}
+          />
         </Route>
         <Route path="/repairers">
           <Route index element={<ListRepairers />} />
-          <Route path="profile/:repairerId" exact element={<RepairerProfile />} />
+          <Route
+            path="profile/:repairerId"
+            exact
+            element={<RepairerProfile />}
+          />
         </Route>
         <Route path="/categories">
           <Route index element={<ListCategories />} />
@@ -60,13 +80,21 @@ function App() {
         </Route>
         <Route path="/requests">
           <Route index element={<ListRequests />} />
-          <Route path=":requestId" exact element={< RequestDetail/>} />
+          <Route path=":requestId" exact element={<RequestDetail />} />
         </Route>
         <Route path="/feedbacks">
           <Route index element={<ListFeedbacks />} />
           <Route path="feedback/new" exact element={<NewFeedback />} />
-          <Route path="feedback/update/:feedbackId" exact element={<UpdateFeedback />} />
-          <Route path="feedback/view/:feedbackId" exact element={<FeedbackDetail />} />
+          <Route
+            path="feedback/update/:feedbackId"
+            exact
+            element={<UpdateFeedback />}
+          />
+          <Route
+            path="feedback/view/:feedbackId"
+            exact
+            element={<FeedbackDetail />}
+          />
         </Route>
         <Route path="/accessories">
           <Route index element={<ListAccessories />} />
@@ -74,30 +102,12 @@ function App() {
         </Route>
         <Route path="/transactions">
           <Route index element={<ListTransactions />} />
-          <Route path=":transactionId" exact element={< TransactionDetail/>} />
+          <Route path=":transactionId" exact element={<TransactionDetail />} />
         </Route>
         <Route path="/withdraws" exact element={<WithdrawRequest />} />
-
-
-       
-
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    );
-  } else {
-    routes = (
-      <Routes>
-        <Route path="/login" index element={<Login />} />
-        <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/confirmOTP" element={<ConfirmOTP />} />
-        <Route path="*" element={<Navigate to="/login" replace />} />
-      </Routes>
-    );
-  }
-  return (
-    // <ThemeProvider theme={theme}>
-    <Router>{routes}</Router>
-    // </ThemeProvider>
+    </CustomRouter>
   );
 }
 

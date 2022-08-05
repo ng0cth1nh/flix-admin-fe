@@ -1,13 +1,38 @@
 import FormInput from "../../../components/formInput/FormInput";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./login.scss";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { login } from "../../../features/auth/authSlice";
+import { useSelector, useDispatch } from "react-redux";
+import useAxios from "../../../hooks/useAxios";
+import LoadingState from "../../../constants/LoadingState";
+import Loading from "../../../components/loading/Loading";
+import {
+  setErrorMessage,
+  setLoading,
+  tryLocalSignIn,
+} from "../../../features/auth/authSlice";
 
 const Login = () => {
+  const authAPI = useAxios();
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { errorMessage, loading, token } = useSelector((state) => state.auth);
   const [values, setValues] = useState({
     phone: "",
     password: "",
   });
+  useEffect(() => {
+    if (token) {
+      navigate("/home", { replace: true });
+    }
+  }, [token, navigate]);
+
+  useEffect(() => {
+    dispatch(tryLocalSignIn({dispatch}));
+    dispatch(setErrorMessage(null));
+    dispatch(setLoading(LoadingState.IDLE));
+  }, [dispatch]);
 
   const inputs = [
     {
@@ -30,12 +55,24 @@ const Login = () => {
       label: "Mật khẩu*",
       pattern: "^((?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,10})$",
       required: true,
-      isLast:true,
+      isLast: true,
     },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try {
+      await dispatch(
+        login({
+          authAPI,
+          username: values.phone,
+          password: values.password,
+          roleType: "ADMIN",
+        })
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onChange = (e) => {
@@ -44,17 +81,25 @@ const Login = () => {
 
   return (
     <div className="login">
-      <form onSubmit={handleSubmit} className="form">
+      <form
+        onSubmit={handleSubmit}
+        className="form"
+        style={{ opacity: loading === LoadingState.PENDING ? 0.5 : 1 }}
+      >
         <h1 className="title">Đăng nhập</h1>
         {inputs.map((input) => (
           <FormInput
             key={input.id}
             {...input}
-            style={{marginBottom:'15px'}}
+            style={{ marginBottom: "15px" }}
             value={values[input.name]}
             onChange={onChange}
           />
         ))}
+        {loading === LoadingState.PENDING && <Loading wrapperClass="form" />}
+        {errorMessage && (
+          <p style={{ color: "red", fontSize: "12px" }}>{errorMessage}</p>
+        )}
         <button className="button">Đăng nhập</button>
         <Link to="/forgotpassword" style={{ textDecoration: "none" }}>
           <p className="link">Quên mật khẩu?</p>

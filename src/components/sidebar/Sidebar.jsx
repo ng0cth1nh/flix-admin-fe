@@ -1,4 +1,5 @@
 import "./sidebar.scss";
+import { useState } from "react";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import PersonOutlineIcon from "@mui/icons-material/PersonOutline";
 import EngineeringIcon from "@mui/icons-material/Engineering";
@@ -9,15 +10,25 @@ import HandymanIcon from "@mui/icons-material/Handyman";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import ConfirmationNumberIcon from "@mui/icons-material/ConfirmationNumber";
 import AccountCircleOutlinedIcon from "@mui/icons-material/AccountCircleOutlined";
-import CreditCardIcon from '@mui/icons-material/CreditCard';
+import CreditCardIcon from "@mui/icons-material/CreditCard";
 import PaidIcon from "@mui/icons-material/Paid";
 import { Link } from "react-router-dom";
-
+import ConfirmDialog from "../dialog/ConfirmDialog";
+import { useDispatch } from "react-redux";
+import { logout } from "../../features/auth/authSlice";
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const [open, setOpen] = useState(false);
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleConfirm = () => {
+    dispatch(logout());
+  };
   return (
     <div className="sidebar">
       <div className="top">
-        <Link to="/" style={{ textDecoration: "none" }}>
+        <Link to="/home" style={{ textDecoration: "none" }}>
           <span className="logo">Flix admin</span>
         </Link>
       </div>
@@ -62,10 +73,10 @@ const Sidebar = () => {
             </li>
           </Link>
           <Link to="/accessories" style={{ textDecoration: "none" }}>
-          <li>
-            <HandymanIcon className="icon" />
-            <span>Linh kiện</span>
-          </li>
+            <li>
+              <HandymanIcon className="icon" />
+              <span>Linh kiện</span>
+            </li>
           </Link>
           <li>
             <ConfirmationNumberIcon className="icon" />
@@ -91,12 +102,18 @@ const Sidebar = () => {
               <span>Thông tin tài khoản</span>
             </li>
           </Link>
-          <li>
+          <li onClick={() => setOpen(true)}>
             <ExitToAppIcon className="icon" />
             <span>Đăng xuất</span>
           </li>
         </ul>
       </div>
+      <ConfirmDialog
+        open={open}
+        title="Bạn có muốn đăng xuất không?"
+        handleClose={handleClose}
+        handleConfirm={handleConfirm}
+      />
     </div>
   );
 };
