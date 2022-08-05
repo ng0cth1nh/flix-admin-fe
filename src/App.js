@@ -34,6 +34,7 @@ import SingleAccessories from "./pages/accessories/SingleAccessories";
 import ConfirmOTP from "./pages/auth/forgotPassword/ConfirmOTP";
 import CustomRouter from './customRoutes/customRoutes';
 import history from './customRoutes/history';
+import Error from "./pages/error/Error";
 // import { useSelector } from "react-redux";
 
 function App() {
@@ -105,6 +106,7 @@ function App() {
           <Route path=":transactionId" exact element={<TransactionDetail />} />
         </Route>
         <Route path="/withdraws" exact element={<WithdrawRequest />} />
+        <Route path="/error" exact element={<Error />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </CustomRouter>

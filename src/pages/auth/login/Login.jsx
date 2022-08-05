@@ -29,7 +29,7 @@ const Login = () => {
   }, [token, navigate]);
 
   useEffect(() => {
-    dispatch(tryLocalSignIn({dispatch}));
+    dispatch(tryLocalSignIn({ dispatch }));
     dispatch(setErrorMessage(null));
     dispatch(setLoading(LoadingState.IDLE));
   }, [dispatch]);
@@ -96,7 +96,7 @@ const Login = () => {
             onChange={onChange}
           />
         ))}
-        {loading === LoadingState.PENDING && <Loading wrapperClass="form" />}
+        {loading === LoadingState.PENDING && <Loading />}
         {errorMessage && (
           <p style={{ color: "red", fontSize: "12px" }}>{errorMessage}</p>
         )}

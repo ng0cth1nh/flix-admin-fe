@@ -14,6 +14,7 @@ const CustomerProfile = () => {
   const [status, setStatus] = useState(false);
   const { search } = useLocation();
   const id = new URLSearchParams(search).get("id");
+  const [loading, setLoading] = useState(false);
   return (
     <div className="customer-profile">
       <Sidebar />

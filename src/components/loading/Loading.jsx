@@ -1,5 +1,5 @@
 import { ThreeDots } from "react-loader-spinner";
-const Loading = (wrapperClass) => {
+const Loading = () => {
   return (
     <ThreeDots
       height="80"
@@ -8,12 +8,11 @@ const Loading = (wrapperClass) => {
       color="blue"
       ariaLabel="three-dots-loading"
       wrapperStyle={{
-        position: "absolute",
+        position: "fixed",
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
       }}
-      wrapperClass={wrapperClass}
     />
   );
 };

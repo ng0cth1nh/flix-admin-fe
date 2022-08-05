@@ -109,7 +109,7 @@ const ConfirmOTP = () => {
             onChange={onChange}
           />
         ))}
-        {loading === LoadingState.PENDING && <Loading wrapperClass="form" />}
+        {loading === LoadingState.PENDING && <Loading />}
         {errorMessage && (
           <p style={{ color: "red", fontSize: "12px" }}>{errorMessage}</p>
         )}

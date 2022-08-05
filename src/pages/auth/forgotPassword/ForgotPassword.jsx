@@ -40,7 +40,10 @@ const ForgotPassword = () => {
     e.preventDefault();
     try {
       dispatch(setLoading(LoadingState.PENDING));
-      await authAPI.post(ApiContants.SEND_OTP, { phone: values.phone, roleType:'ADMIN' });
+      await authAPI.post(ApiContants.SEND_OTP, {
+        phone: values.phone,
+        roleType: "ADMIN",
+      });
       dispatch(setLoading(LoadingState.SUCCEEDED));
       navigate("/confirmOTP", { state: { phone: values.phone } });
     } catch (err) {
@@ -69,7 +72,7 @@ const ForgotPassword = () => {
             onChange={onChange}
           />
         ))}
-        {loading === LoadingState.PENDING && <Loading wrapperClass="form" />}
+        {loading === LoadingState.PENDING && <Loading />}
         {errorMessage && (
           <p style={{ color: "red", fontSize: "12px" }}>{errorMessage}</p>
         )}

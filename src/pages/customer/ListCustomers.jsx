@@ -3,7 +3,9 @@ import { useState } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAxios from "../../hooks/useAxios";
+import Config from "../../constants/Config";
 
 import {
   TableContainer,
@@ -17,10 +19,13 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import ApiContants from "../../constants/Api";
+import { useEffect } from "react";
+import Loading from "../../components/loading/Loading";
 const columns = [
   { id: "index", label: "#", width: "10%", align: "center" },
   {
-    id: "image",
+    id: "avatar",
     label: "ẢNH ĐẠI DIỆN",
     width: "15%",
     align: "center",
@@ -29,13 +34,13 @@ const columns = [
     ),
   },
   {
-    id: "name",
+    id: "customerName",
     label: "TÊN KHÁCH HÀNG",
     width: "30%",
     align: "center",
   },
   {
-    id: "phone",
+    id: "customerPhone",
     label: "SỐ ĐIỆN THOẠI",
     width: "15%",
     align: "center",
@@ -46,7 +51,7 @@ const columns = [
     width: "15%",
     align: "center",
     format: (value) =>
-      value ? (
+      value === "ACTIVE" ? (
         <Typography variant="p" sx={{ color: "green" }}>
           Hoạt động
         </Typography>
@@ -73,144 +78,49 @@ const columns = [
     ),
   },
 ];
-
-function createData(id, image, name, phone, status) {
-  return { id, image, name, phone, status };
-}
-
-const rows = [
-  createData(
-    "India",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    1324171354,
-    60483973,
-    true
-  ),
-  createData(
-    "China",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    1403500365,
-    60483973,
-    false
-  ),
-  createData(
-    "Italy",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    60483973,
-    60483973,
-    true
-  ),
-  createData(
-    "United States",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    327167434,
-    60483973,
-    true
-  ),
-  createData(
-    "Canada",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    37602103,
-    37602103,
-    true
-  ),
-  createData(
-    "Australia",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    25475400,
-    60483973,
-    false
-  ),
-  createData(
-    "Germany",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    83019200,
-    60483973,
-    true
-  ),
-  createData(
-    "Ireland",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    4857000,
-    60483973,
-    false
-  ),
-  createData(
-    "Mexico",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",
-    "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj fdjsfjsdklfj fjdsjfklsdjf fkdlsjklsdfjkljadsfkjklsad",
-    true
-  ),
-  createData(
-    "Japan",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    126317000,
-    60483973,
-    true
-  ),
-  createData(
-    "France",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    67022000,
-    60483973,
-    false
-  ),
-  createData(
-    "United Kingdom",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    67545757,
-    60483973,
-    true
-  ),
-  createData(
-    "Russia",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    146793744,
-    60483973,
-    true
-  ),
-  createData(
-    "Nigeria",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    200962417,
-    60483973,
-    true
-  ),
-  createData(
-    "Brazil",
-    "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNTq7wk2LDj7jNigWK_QF1nT8pacd9TlLu9g&usqp=CAU",
-    210147125,
-    60483973,
-    false
-  ),
-];
 const useStyles = makeStyles({
   root: {
     "& .MuiTableCell-head": {
       fontWeight: "bold",
+      backgroundColor: "#edeff0",
     },
   },
 });
 const ListCustomers = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
+  const customerAPI = useAxios();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  const handleChangePage = (event, newPage) => {
+  const [data, setData] = useState([]);
+  const [totalRecord, setTotalRecord] = useState(0);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await customerAPI.get(
+          ApiContants.FETCH_LIST_CUSTOMER + `?pageNumber=${page}`
+        );
+        setTotalRecord(response.data.totalRecord);
+        setData(response.data.customerList);
+        setLoading(false);
+      } catch (error) {
+        navigate("/error");
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [page]);
+  const handleChangePage = async (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
   return (
     <div className="list-customers">
       <Sidebar />
       <div className="list-customers-container">
         <Navbar />
-        <div className="table-container">
+        <div className="table-container" style={{ opacity: loading ? 0.5 : 1 }}>
           <div
             style={{
               display: "flex",
@@ -225,7 +135,7 @@ const ListCustomers = () => {
               <SearchOutlinedIcon />
             </div>
           </div>
-          <TableContainer sx={{ minHeight: "600px" }}>
+          <TableContainer sx={{ minHeight: "600px", marginTop: "20px" }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow className={classes.root}>
@@ -241,50 +151,41 @@ const ListCustomers = () => {
                 </TableRow>
               </TableHead>
               <TableBody sx={{ borderWidth: 1 }}>
-                {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        {columns.map((column) => {
-                          if (column.id === "index") {
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {page * rowsPerPage + index + 1}
-                              </TableCell>
-                            );
-                          } else {
-                            const value =
-                              column.id === "action"
-                                ? row["id"]
-                                : row[column.id];
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {column.format ? column.format(value) : value}
-                              </TableCell>
-                            );
-                          }
-                        })}
-                      </TableRow>
-                    );
-                  })}
+                {data.map((row, index) => {
+                  return (
+                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                      {columns.map((column) => {
+                        if (column.id === "index") {
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {page * Config.ROW_PER_PAGE + index + 1}
+                            </TableCell>
+                          );
+                        } else {
+                          const value =
+                            column.id === "action" ? row["id"] : row[column.id];
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {column.format ? column.format(value) : value}
+                            </TableCell>
+                          );
+                        }
+                      })}
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
           <TablePagination
             rowsPerPageOptions={[10]}
             component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
+            count={totalRecord}
+            rowsPerPage={Config.ROW_PER_PAGE}
             page={page}
             onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
           />
+          {loading && <Loading />}
         </div>
       </div>
     </div>
