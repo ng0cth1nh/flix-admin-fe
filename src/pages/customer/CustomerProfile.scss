@@ -33,8 +33,12 @@
           display: flex;
           margin-top: 20px;
           .row-title {
-            width: 100px;
-            margin-right: 100px;
+            width: 40%;
+            justify-content: space-between;
+          }
+          .row-content{
+            width: 55%;
+
           }
         }
       }

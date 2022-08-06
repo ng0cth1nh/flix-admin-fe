@@ -35,14 +35,9 @@ import ConfirmOTP from "./pages/auth/forgotPassword/ConfirmOTP";
 import CustomRouter from './customRoutes/customRoutes';
 import history from './customRoutes/history';
 import Error from "./pages/error/Error";
-// import { useSelector } from "react-redux";
 
 function App() {
-  // const {token} = useSelector(state=> state.auth);
-  // const navigate = useNavigate();
-  // useEffect(()=>{
-  //   if(!token) navigate("/");
-  // },[token, navigate])
+
   return (
     <CustomRouter history={history}>
       <Routes>

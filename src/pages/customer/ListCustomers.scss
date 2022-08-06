@@ -5,19 +5,10 @@
       h1 {
         color: rgb(5, 5, 94);
       }
-      .search {
-        display: flex;
-        align-items: center;
-        border: 0.5px solid lightgray;
-        padding: 3px;
-        margin-right: 20px;
-        input {
-          border: none;
-          outline: none;
-          background: transparent;
-          &::placeholder {
-            font-size: 12px;
-          }
+      .filter{
+        margin-top: 30px;
+        h2{
+            margin-bottom: 10px;
         }
       }
       .table-container{

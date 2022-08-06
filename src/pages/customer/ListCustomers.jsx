@@ -2,7 +2,6 @@ import "./ListCustomers.scss";
 import { useState } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { Link, useNavigate } from "react-router-dom";
 import useAxios from "../../hooks/useAxios";
 import Config from "../../constants/Config";
@@ -17,11 +16,16 @@ import {
   TablePagination,
   Button,
   Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import ApiContants from "../../constants/Api";
 import { useEffect } from "react";
 import Loading from "../../components/loading/Loading";
+import Search from "../../components/search/Search";
 const columns = [
   { id: "index", label: "#", width: "10%", align: "center" },
   {
@@ -94,27 +98,73 @@ const ListCustomers = () => {
   const [data, setData] = useState([]);
   const [totalRecord, setTotalRecord] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [search, setSearch] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+
+  const handleChangeStatusFilter = (event) => {
+    setStatusFilter(event.target.value);
+    searchData(event.target.value);
+  };
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await customerAPI.get(
+        ApiContants.FETCH_LIST_CUSTOMER + `?pageNumber=${page}`
+      );
+      setTotalRecord(response.data.totalRecord);
+      setData(response.data.customerList);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      navigate("/error");
+    }
+  };
+  const handleSearch = () => {
+    searchData(null);
+  };
+  const searchData = async (statusChange) => {
+    let status = statusChange !== null ? statusChange : statusFilter;
+    // case both search text and status is null then fetch data by paging
+    if (!search.trim() && !status) {
+      setIsSearching(false);
+      setPage(0);
+      fetchData();
+      return;
+    }
+    let searchUrl = ApiContants.SEARCH_CUSTOMER;
+    let flag = false;
+    if (search.trim()) {
+      searchUrl += `?keyword=${search.trim()}`;
+      flag = true;
+    }
+    if (status) {
+      searchUrl += (flag ? "&" : "?") + `status=${status}`;
+    }
+    console.log(searchUrl);
+    try {
+      setPage(0);
+      setLoading(true);
+      setIsSearching(true);
+      const response = await customerAPI.get(searchUrl);
+      setData(response.data.customers);
+      console.log(response.data.customers.length);
+      setTotalRecord(response.data.customers.length);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      navigate("/error");
+    }
+  };
+
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await customerAPI.get(
-          ApiContants.FETCH_LIST_CUSTOMER + `?pageNumber=${page}`
-        );
-        setTotalRecord(response.data.totalRecord);
-        setData(response.data.customerList);
-        setLoading(false);
-      } catch (error) {
-        navigate("/error");
-        setLoading(false);
-      }
-    };
-    fetchData();
+    if (!isSearching) {
+      fetchData();
+    }
   }, [page]);
   const handleChangePage = async (event, newPage) => {
     setPage(newPage);
   };
-
   return (
     <div className="list-customers">
       <Sidebar />
@@ -130,10 +180,35 @@ const ListCustomers = () => {
             }}
           >
             <h1>Khách hàng</h1>
-            <div className="search">
-              <input type="text" placeholder="Tìm kiếm..." />
-              <SearchOutlinedIcon />
-            </div>
+            <Search
+              placeholder="Số điện thoại"
+              handleSearch={handleSearch}
+              search={search}
+              setSearch={setSearch}
+            />
+          </div>
+          <div className="filter">
+            <h2>Lọc theo</h2>
+
+            <FormControl
+              sx={{
+                width: "200px",
+              }}
+              margin="normal"
+            >
+              <InputLabel id="status-label">Trạng thái</InputLabel>
+              <Select
+                labelId="status-label"
+                id="statusFilter"
+                value={statusFilter}
+                label="Trạng thái"
+                onChange={handleChangeStatusFilter}
+              >
+                <MenuItem value="">Tất cả</MenuItem>
+                <MenuItem value="ACTIVE">Hoạt động</MenuItem>
+                <MenuItem value="BAN">Không hoạt động</MenuItem>
+              </Select>
+            </FormControl>
           </div>
           <TableContainer sx={{ minHeight: "600px", marginTop: "20px" }}>
             <Table stickyHeader aria-label="sticky table">
@@ -151,29 +226,45 @@ const ListCustomers = () => {
                 </TableRow>
               </TableHead>
               <TableBody sx={{ borderWidth: 1 }}>
-                {data.map((row, index) => {
-                  return (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
-                      {columns.map((column) => {
-                        if (column.id === "index") {
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {page * Config.ROW_PER_PAGE + index + 1}
-                            </TableCell>
-                          );
-                        } else {
-                          const value =
-                            column.id === "action" ? row["id"] : row[column.id];
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {column.format ? column.format(value) : value}
-                            </TableCell>
-                          );
-                        }
-                      })}
-                    </TableRow>
-                  );
-                })}
+                {data
+                  .slice(
+                    data.length <= Config.ROW_PER_PAGE
+                      ? 0
+                      : page * Config.ROW_PER_PAGE,
+                    data.length <= Config.ROW_PER_PAGE
+                      ? Config.ROW_PER_PAGE
+                      : page * Config.ROW_PER_PAGE + Config.ROW_PER_PAGE
+                  )
+                  .map((row, index) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.id}
+                      >
+                        {columns.map((column) => {
+                          if (column.id === "index") {
+                            return (
+                              <TableCell key={column.id} align={column.align}>
+                                {page * Config.ROW_PER_PAGE + index + 1}
+                              </TableCell>
+                            );
+                          } else {
+                            const value =
+                              column.id === "action"
+                                ? row["id"]
+                                : row[column.id];
+                            return (
+                              <TableCell key={column.id} align={column.align}>
+                                {column.format ? column.format(value) : value}
+                              </TableCell>
+                            );
+                          }
+                        })}
+                      </TableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </TableContainer>
