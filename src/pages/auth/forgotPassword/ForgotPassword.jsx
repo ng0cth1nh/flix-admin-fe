@@ -9,6 +9,7 @@ import ApiContants from "../../../constants/Api";
 import getErrorMessage from "../../../utils/getErrorMessage";
 import LoadingState from "../../../constants/LoadingState";
 import Loading from "../../../components/loading/Loading";
+import Pattern from "../../../constants/Pattern";
 
 const ForgotPassword = () => {
   const authAPI = useAxios();
@@ -31,7 +32,7 @@ const ForgotPassword = () => {
       placeholder: "Nhập số điện thoại",
       errorMessage: "Số điện thoại không đúng!",
       label: "Số điện thoại*",
-      pattern: "^(03|05|07|08|09|01[2|6|8|9])([0-9]{8})$",
+      pattern: Pattern.PHONE_NUMBER,
       required: true,
     },
   ];

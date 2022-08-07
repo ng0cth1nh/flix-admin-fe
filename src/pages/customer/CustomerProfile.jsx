@@ -8,6 +8,7 @@ import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import Loading from "../../components/loading/Loading";
 import { formatFromDate, formatFromDateTime } from "../../utils/getFormatDate";
+import BanModal from "../../components/modal/BanModal";
 const titleStyle = { fontWeight: "bold", fontSize: "15px" };
 const CustomerProfile = () => {
   const { customerId } = useParams();
@@ -16,6 +17,46 @@ const CustomerProfile = () => {
   const [status, setStatus] = useState(false);
   const [loading, setLoading] = useState(true);
   const [customer, setCustomer] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [banReason, setBanReason] = useState("");
+  const [isEdited, setIsEdited] = useState(false);
+  const handleSave = () => {
+    setStatus(!status);
+    setOpen(false);
+  };
+  const handleClose = () => {
+    setIsEdited(false);
+    setOpen(false);
+  };
+  const handleSwitchChange = (event) => {
+    if (!isEdited) {
+      if (!event.target.checked) {
+        setOpen(true);
+      } else {
+        setStatus(event.target.checked);
+      }
+      setIsEdited(true);
+    }
+  };
+  const handleSaveCustomer = async () => {
+    if (isEdited) {
+      try {
+        if (status) {
+          await customerAPI.delete(
+            ApiContants.BAN_USER + `?phone=${customer.customerPhone}`
+          );
+        } else {
+          await customerAPI.post(ApiContants.BAN_USER, {
+            phone: customer.customerPhone,
+            banReason,
+          });
+        }
+        alert("Cập nhật thông tin thành công!");
+      } catch (error) {
+        alert("Cập nhật thông tin không thành công.Vui lòng thử lại sau!");
+      }
+    }
+  };
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -24,12 +65,10 @@ const CustomerProfile = () => {
         const response = await customerAPI.get(
           ApiContants.VIEW_CUSTOMER_INFO + `?customerId=${customerId}`
         );
-        console.log(response.data);
         setCustomer(response.data);
         setStatus(response.data.status === "ACTIVE");
         setLoading(false);
       } catch (error) {
-        console.log(error);
         navigate("/error");
         setLoading(false);
       }
@@ -55,7 +94,9 @@ const CustomerProfile = () => {
                 }}
               >
                 <Typography sx={titleStyle}>Ngày tạo tài khoản</Typography>
-                <Typography>{formatFromDateTime(customer.createdAt)}</Typography>
+                <Typography>
+                  {formatFromDateTime(customer.createdAt)}
+                </Typography>
               </div>
             </div>
             <div className="category-information">
@@ -123,12 +164,7 @@ const CustomerProfile = () => {
                 </Typography>
                 <FormControlLabel
                   control={
-                    <Switch
-                      checked={status}
-                      onChange={(event) => {
-                        setStatus(event.target.checked);
-                      }}
-                    />
+                    <Switch checked={status} onChange={handleSwitchChange} />
                   }
                   label={status ? "Hoạt động" : "Vô hiệu hóa"}
                 />
@@ -140,10 +176,20 @@ const CustomerProfile = () => {
                     textTransform: "none",
                     margin: "40px 20px 0px auto",
                   }}
+                  onClick={handleSaveCustomer}
                 >
                   Lưu
                 </Button>
               </div>
+              <BanModal
+                open={open}
+                handleClose={handleClose}
+                banReason={banReason}
+                setBanReason={setBanReason}
+                handleSave={handleSave}
+                phone={customer.customerPhone}
+                userType="Khách hàng"
+              />
             </div>
           </div>
         )}

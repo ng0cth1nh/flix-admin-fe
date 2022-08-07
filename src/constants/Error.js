@@ -6,5 +6,7 @@ const Error = {
   INVALID_PHONE_NUMBER: "Số điện thoại không hợp lệ!",
   INVALID_OTP: "Mã OTP chưa đúng vui lòng thử lại!",
   INVALID_PASSWORD: "Mật khẩu nhập không hợp lệ!",
+  NEW_PASSWORD_MUST_BE_DIFFERENT_FROM_OLD_PASSWORD:"Mật khẩu mới phải khác so với mật khẩu cũ!",
+  WRONG_PASSWORD:"Mật khẩu nhập không hợp lệ!",
 };
 export default Error;

@@ -9,6 +9,7 @@ import ApiContants from "../../../constants/Api";
 import LoadingState from "../../../constants/LoadingState";
 import getErrorMessage from "../../../utils/getErrorMessage";
 import Loading from "../../../components/loading/Loading";
+import Pattern from "../../../constants/Pattern";
 
 const ConfirmOTP = () => {
   const { state } = useLocation();
@@ -35,7 +36,7 @@ const ConfirmOTP = () => {
       errorMessage:
         "Mật khẩu phải từ 6 đến 10 kí tự và bao gồm ít nhất 1 số hoặc 1 kí tự!",
       label: "Mật khẩu*",
-      pattern: "^((?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,10})$",
+      pattern: Pattern.PASSWORD,
       required: true,
     },
     {
@@ -56,7 +57,7 @@ const ConfirmOTP = () => {
       placeholder: "Nhập mã OTP",
       errorMessage: "Mã OTP gồm 6 số!",
       label: "Mã OTP*",
-      pattern: "^([0-9]{6})$",
+      pattern: Pattern.OTP,
       required: true,
     },
   ];

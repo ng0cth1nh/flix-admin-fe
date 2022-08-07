@@ -12,6 +12,7 @@ import {
   setLoading,
   tryLocalSignIn,
 } from "../../../features/auth/authSlice";
+import Pattern from "../../../constants/Pattern";
 
 const Login = () => {
   const authAPI = useAxios();
@@ -42,7 +43,7 @@ const Login = () => {
       placeholder: "Nhập số điện thoại",
       errorMessage: "Số điện thoại không đúng!",
       label: "Số điện thoại*",
-      pattern: "^(03|05|07|08|09|01[2|6|8|9])([0-9]{8})$",
+      pattern: Pattern.PHONE_NUMBER,
       required: true,
     },
     {
@@ -53,7 +54,7 @@ const Login = () => {
       errorMessage:
         "Mật khẩu phải từ 6 đến 10 kí tự và bao gồm ít nhất 1 số hoặc 1 kí tự!",
       label: "Mật khẩu*",
-      pattern: "^((?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d]{6,10})$",
+      pattern: Pattern.PASSWORD,
       required: true,
       isLast: true,
     },

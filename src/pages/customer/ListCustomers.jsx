@@ -206,76 +206,96 @@ const ListCustomers = () => {
               >
                 <MenuItem value="">Tất cả</MenuItem>
                 <MenuItem value="ACTIVE">Hoạt động</MenuItem>
-                <MenuItem value="BAN">Không hoạt động</MenuItem>
+                <MenuItem value="BAN">Vô hiệu hóa</MenuItem>
               </Select>
             </FormControl>
           </div>
-          <TableContainer sx={{ minHeight: "600px", marginTop: "20px" }}>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow className={classes.root}>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ width: column.width }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody sx={{ borderWidth: 1 }}>
-                {data
-                  .slice(
-                    data.length <= Config.ROW_PER_PAGE
-                      ? 0
-                      : page * Config.ROW_PER_PAGE,
-                    data.length <= Config.ROW_PER_PAGE
-                      ? Config.ROW_PER_PAGE
-                      : page * Config.ROW_PER_PAGE + Config.ROW_PER_PAGE
-                  )
-                  .map((row, index) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        {columns.map((column) => {
-                          if (column.id === "index") {
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {page * Config.ROW_PER_PAGE + index + 1}
-                              </TableCell>
-                            );
-                          } else {
-                            const value =
-                              column.id === "action"
-                                ? row["id"]
-                                : row[column.id];
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {column.format ? column.format(value) : value}
-                              </TableCell>
-                            );
-                          }
-                        })}
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[10]}
-            component="div"
-            count={totalRecord}
-            rowsPerPage={Config.ROW_PER_PAGE}
-            page={page}
-            onPageChange={handleChangePage}
-          />
+          {data.length !== 0 ? (
+            <div>
+              <TableContainer sx={{ minHeight: "600px", marginTop: "20px" }}>
+                <Table stickyHeader aria-label="sticky table">
+                  <TableHead>
+                    <TableRow className={classes.root}>
+                      {columns.map((column) => (
+                        <TableCell
+                          key={column.id}
+                          align={column.align}
+                          style={{ width: column.width }}
+                        >
+                          {column.label}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody sx={{ borderWidth: 1 }}>
+                    {data
+                      .slice(
+                        data.length <= Config.ROW_PER_PAGE
+                          ? 0
+                          : page * Config.ROW_PER_PAGE,
+                        data.length <= Config.ROW_PER_PAGE
+                          ? Config.ROW_PER_PAGE
+                          : page * Config.ROW_PER_PAGE + Config.ROW_PER_PAGE
+                      )
+                      .map((row, index) => {
+                        return (
+                          <TableRow
+                            hover
+                            role="checkbox"
+                            tabIndex={-1}
+                            key={row.id}
+                          >
+                            {columns.map((column) => {
+                              if (column.id === "index") {
+                                return (
+                                  <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                  >
+                                    {page * Config.ROW_PER_PAGE + index + 1}
+                                  </TableCell>
+                                );
+                              } else {
+                                const value =
+                                  column.id === "action"
+                                    ? row["id"]
+                                    : row[column.id];
+                                return (
+                                  <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                  >
+                                    {column.format
+                                      ? column.format(value)
+                                      : value}
+                                  </TableCell>
+                                );
+                              }
+                            })}
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[10]}
+                component="div"
+                count={totalRecord}
+                rowsPerPage={Config.ROW_PER_PAGE}
+                page={page}
+                onPageChange={handleChangePage}
+              />
+            </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <img
+                src="/nodata.png"
+                alt="nodata"
+                style={{ width: "60%", aspectRatio: 1.5, margin: "auto" }}
+              />
+            </div>
+          )}
           {loading && <Loading />}
         </div>
       </div>

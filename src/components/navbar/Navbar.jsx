@@ -7,10 +7,12 @@ import { Badge } from "@mui/material";
 import ConfirmDialog from "../dialog/ConfirmDialog";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/authSlice";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
   const [showProfile, setShowProfile] = useState(false);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const handleClose = () => {
     setOpen(false);
@@ -71,7 +73,7 @@ const Navbar = () => {
       </div>
       <div className={`profileMenu ${!showProfile&&'notShow'}`}>
         <ul>
-          <li>Tài khoản</li>
+          <li onClick={()=> navigate("/userProfile")}>Tài khoản</li>
           <li onClick={() => setOpen(true)}>Đăng xuất</li>
         </ul>
       </div>
