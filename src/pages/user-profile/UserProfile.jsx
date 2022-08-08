@@ -8,9 +8,12 @@ import { getErrorImageSelect } from "../../utils/util";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import getErrorMessage from "../../utils/getErrorMessage";
+import Loading from "../../components/loading/Loading";
+import { useNavigate } from "react-router-dom";
 
 const UserProfile = () => {
   const userAPI = useAxios();
+  const navigate= useNavigate();
   const [avatar, setAvatar] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState("");
   const [loading, setLoading] = useState(false);
@@ -132,6 +135,7 @@ const UserProfile = () => {
         setLoading(false);
       } catch (error) {
         setLoading(false);
+        navigate("/error");
       }
     };
     fetchData();
@@ -188,188 +192,198 @@ const UserProfile = () => {
       <Sidebar />
       <div className="user-profile-container">
         <Navbar />
-        <div className="body">
-          <h2>Thay đổi thông tin</h2>
-          <div className="avatar-container">
-            <img src={avatarUrl} alt="" className="avatar" />
-            <div>
-              <Button variant="outlined" sx={{ textTransform: "none" }}>
-                <label htmlFor="file">Chọn ảnh</label>
-              </Button>
-              <input
-                type="file"
-                id="file"
-                onChange={(e) => {
-                  if (e.target.files.length > 0) {
-                    const err = getErrorImageSelect(e.target.files[0]);
-                    if (err) {
-                      alert(err);
-                    } else {
-                      setAvatar(e.target.files[0]);
-                      setAvatarUrl(URL.createObjectURL(e.target.files[0]));
-                      setIsChanges({ ...isChanges, avatar: true });
+        {loading ? (
+          <Loading />
+        ) : (
+          <div className="body">
+            <h2>Thay đổi thông tin</h2>
+            <div className="avatar-container">
+              <img src={avatarUrl} alt="" className="avatar" />
+              <div>
+                <Button variant="outlined" sx={{ textTransform: "none" }}>
+                  <label htmlFor="file">Chọn ảnh</label>
+                </Button>
+                <input
+                  type="file"
+                  id="file"
+                  onChange={(e) => {
+                    if (e.target.files.length > 0) {
+                      const err = getErrorImageSelect(e.target.files[0]);
+                      if (err) {
+                        alert(err);
+                      } else {
+                        setAvatar(e.target.files[0]);
+                        setAvatarUrl(URL.createObjectURL(e.target.files[0]));
+                        setIsChanges({ ...isChanges, avatar: true });
+                      }
                     }
-                  }
-                }}
-                style={{ display: "none" }}
-              />
+                  }}
+                  style={{ display: "none" }}
+                />
+              </div>
             </div>
-          </div>
-          <div className="account-information">
-            <h3>Thông tin tài khoản</h3>
-            <div style={{ width: "40%" }}>
-              <TextField
-                id="fullName"
-                label="Họ tên"
-                margin="normal"
-                error={errors.fullName ? true : false}
-                value={values.fullName}
-                onChange={(e) => {
-                  setValues({ ...values, fullName: e.target.value });
-                  setIsChanges({ ...isChanges, profile: true });
-                  checkFullName(e);
-                }}
-                variant="outlined"
-                sx={{
-                  width: "100%",
-                }}
-                required
-              />
-              {errors.fullName && <span>{errors.fullName}</span>}
-            </div>
+            <div className="account-information">
+              <h3>Thông tin tài khoản</h3>
+              <div style={{ width: "40%" }}>
+                <TextField
+                  id="fullName"
+                  label="Họ tên"
+                  margin="normal"
+                  error={errors.fullName ? true : false}
+                  value={values.fullName}
+                  onChange={(e) => {
+                    setValues({ ...values, fullName: e.target.value });
+                    setIsChanges({ ...isChanges, profile: true });
+                    checkFullName(e);
+                  }}
+                  variant="outlined"
+                  sx={{
+                    width: "100%",
+                  }}
+                  required
+                />
+                {errors.fullName && <span>{errors.fullName}</span>}
+              </div>
 
-            <div style={{ width: "40%" }}>
-              <TextField
-                id="phone"
-                label="Số điện thoại"
-                margin="normal"
-                value={values.phone}
-                inputProps={{ readOnly: true }}
-                variant="outlined"
-                sx={{
-                  width: "100%",
-                }}
-                required
-              />
-              {errors.phone && <span>{errors.phone}</span>}
+              <div style={{ width: "40%" }}>
+                <TextField
+                  id="phone"
+                  label="Số điện thoại"
+                  margin="normal"
+                  value={values.phone}
+                  inputProps={{ readOnly: true }}
+                  variant="outlined"
+                  sx={{
+                    width: "100%",
+                  }}
+                  required
+                />
+                {errors.phone && <span>{errors.phone}</span>}
+              </div>
+              <div style={{ width: "40%" }}>
+                <TextField
+                  id="email"
+                  label="Email"
+                  margin="normal"
+                  error={errors.email ? true : false}
+                  value={values.email}
+                  variant="outlined"
+                  onChange={(e) => {
+                    setValues({ ...values, email: e.target.value.trim() });
+                    setIsChanges({ ...isChanges, profile: true });
+                    checkEmail(e);
+                  }}
+                  sx={{
+                    width: "100%",
+                  }}
+                  required
+                />
+                {errors.email && <span>{errors.email}</span>}
+              </div>
+              <div style={{ width: "100%", display: "flex" }}>
+                <Button
+                  variant="contained"
+                  sx={{
+                    textTransform: "none",
+                    marginLeft: "auto",
+                    marginRight: "20px",
+                  }}
+                  onClick={handleSaveProfile}
+                >
+                  Cập nhật thông tin
+                </Button>
+              </div>
             </div>
-            <div style={{ width: "40%" }}>
-              <TextField
-                id="email"
-                label="Email"
-                margin="normal"
-                error={errors.email ? true : false}
-                value={values.email}
-                variant="outlined"
-                onChange={(e) => {
-                  setValues({ ...values, email: e.target.value.trim() });
-                  setIsChanges({ ...isChanges, profile: true });
-                  checkEmail(e);
-                }}
-                sx={{
-                  width: "100%",
-                }}
-                required
-              />
-              {errors.email && <span>{errors.email}</span>}
-            </div>
-            <div style={{ width: "100%", display: "flex" }}>
-              <Button
-                variant="contained"
-                sx={{
-                  textTransform: "none",
-                  marginLeft: "auto",
-                  marginRight: "20px",
-                }}
-                onClick={handleSaveProfile}
-              >
-                Cập nhật thông tin
-              </Button>
+            <div className="account-information">
+              <h3>Đổi mật khẩu</h3>
+              <div style={{ width: "40%" }}>
+                <TextField
+                  id="oldPassword"
+                  label="Mật khẩu cũ"
+                  type="password"
+                  error={errors.oldPassword ? true : false}
+                  value={values.oldPassword}
+                  variant="outlined"
+                  margin="normal"
+                  onChange={(e) => {
+                    setValues({
+                      ...values,
+                      oldPassword: e.target.value.trim(),
+                    });
+                    setIsChanges({ ...isChanges, password: true });
+                    checkOldPassword(e);
+                  }}
+                  sx={{
+                    width: "100%",
+                  }}
+                  required
+                />
+                {errors.oldPassword && <span>{errors.oldPassword}</span>}
+              </div>
+              <div style={{ width: "40%" }}>
+                <TextField
+                  id="newPassword"
+                  label="Mật khẩu mới"
+                  type="password"
+                  margin="normal"
+                  error={errors.newPassword ? true : false}
+                  value={values.newPassword}
+                  variant="outlined"
+                  onChange={(e) => {
+                    setValues({
+                      ...values,
+                      newPassword: e.target.value.trim(),
+                    });
+                    setIsChanges({ ...isChanges, password: true });
+                    checkNewPassword(e);
+                  }}
+                  sx={{
+                    width: "100%",
+                  }}
+                  required
+                />
+                {errors.newPassword && <span>{errors.newPassword}</span>}
+              </div>
+              <div style={{ width: "40%" }}>
+                <TextField
+                  id="re_newPassword"
+                  label="Nhập lại mật khẩu"
+                  type="password"
+                  margin="normal"
+                  error={errors.reNewPassword ? true : false}
+                  value={values.reNewPassword}
+                  variant="outlined"
+                  onChange={(e) => {
+                    setIsChanges({ ...isChanges, password: true });
+                    setValues({
+                      ...values,
+                      reNewPassword: e.target.value.trim(),
+                    });
+                    checkReNewPassword(e);
+                  }}
+                  sx={{
+                    width: "100%",
+                  }}
+                  required
+                />
+                {errors.reNewPassword && <span>{errors.reNewPassword}</span>}
+              </div>
+              <div style={{ width: "100%", display: "flex" }}>
+                <Button
+                  variant="contained"
+                  sx={{
+                    textTransform: "none",
+                    marginLeft: "auto",
+                    marginRight: "20px",
+                  }}
+                  onClick={handleSavePassword}
+                >
+                  Thay đổi mật khẩu
+                </Button>
+              </div>
             </div>
           </div>
-          <div className="account-information">
-            <h3>Đổi mật khẩu</h3>
-            <div style={{ width: "40%" }}>
-              <TextField
-                id="oldPassword"
-                label="Mật khẩu cũ"
-                type="password"
-                error={errors.oldPassword ? true : false}
-                value={values.oldPassword}
-                variant="outlined"
-                margin="normal"
-                onChange={(e) => {
-                  setValues({ ...values, oldPassword: e.target.value.trim() });
-                  setIsChanges({ ...isChanges, password: true });
-                  checkOldPassword(e);
-                }}
-                sx={{
-                  width: "100%",
-                }}
-                required
-              />
-              {errors.oldPassword && <span>{errors.oldPassword}</span>}
-            </div>
-            <div style={{ width: "40%" }}>
-              <TextField
-                id="newPassword"
-                label="Mật khẩu mới"
-                type="password"
-                margin="normal"
-                error={errors.newPassword ? true : false}
-                value={values.newPassword}
-                variant="outlined"
-                onChange={(e) => {
-                  setValues({ ...values, newPassword: e.target.value.trim() });
-                  setIsChanges({ ...isChanges, password: true });
-                  checkNewPassword(e);
-                }}
-                sx={{
-                  width: "100%",
-                }}
-                required
-              />
-              {errors.newPassword && <span>{errors.newPassword}</span>}
-            </div>
-            <div style={{ width: "40%" }}>
-              <TextField
-                id="re_newPassword"
-                label="Nhập lại mật khẩu"
-                type="password"
-                margin="normal"
-                error={errors.reNewPassword ? true : false}
-                value={values.reNewPassword}
-                variant="outlined"
-                onChange={(e) => {
-                  setIsChanges({ ...isChanges, password: true });
-                  setValues({
-                    ...values,
-                    reNewPassword: e.target.value.trim(),
-                  });
-                  checkReNewPassword(e);
-                }}
-                sx={{
-                  width: "100%",
-                }}
-                required
-              />
-              {errors.reNewPassword && <span>{errors.reNewPassword}</span>}
-            </div>
-            <div style={{ width: "100%", display: "flex" }}>
-              <Button
-                variant="contained"
-                sx={{
-                  textTransform: "none",
-                  marginLeft: "auto",
-                  marginRight: "20px",
-                }}
-                onClick={handleSavePassword}
-              >
-                Thay đổi mật khẩu
-              </Button>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

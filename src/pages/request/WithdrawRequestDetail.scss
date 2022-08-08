@@ -1,0 +1,26 @@
+.withdraw-detail {
+  display: flex;
+  .withdraw-detail-container {
+    flex: 6;
+    .body {
+      padding: 30px;
+      width: 70%;
+      margin: 20px auto 20px auto;
+      -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+      box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+      h4 {
+        color: rgb(5, 5, 94);
+        margin-bottom: 10px;
+      }
+      .row-field {
+        display: flex;
+        margin-top: 20px;
+        justify-content: space-between;
+        .row-title {
+          width: "40%";
+          font-weight: "bold";
+        }
+      }
+    }
+  }
+}

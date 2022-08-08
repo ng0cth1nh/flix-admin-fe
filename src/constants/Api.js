@@ -10,9 +10,19 @@ const ApiContants = {
   FETCH_LIST_REPAIRER: "/admin/repairers",
   SEARCH_REPAIRER: "admin/search/repairers",
   VIEW_REPAIRER_INFO: "/admin/repairer",
-  BAN_USER:"/admin/blackList",
+  BAN_USER: "/admin/blackList",
   ADMIN_PROFILE: "/admin/profile",
   UPDATE_AVATAR: "/user/avatar",
   UPDATE_PASSWORD: "/user/changePassword",
+  FETCH_LIST_WITHDRAW: "/admin/repairer/withdraw/histories",
+  SEARCH_WITHDRAW: "/admin/repairer/withdraw/search",
+  VIEW_WITHDRAW_DETAIL: "/admin/withdraw/detail",
+  APPROVE_WITHDRAW: "/admin/withdraw/accept",
+  REJECT_WITHDRAW: "/admin/withdraw/reject",
+  CV_ACCEPT:"/admin/cv/accept",
+  CV_REJECT:"/admin/cv/reject",
+  TRANSACTION_LIST:"/admin/transactions",
+  TRANSACTION_DETAIL:"/admin/transaction",
+  TRANSACTION_SEARCH:"/admin/search/transactions"
 };
 export default ApiContants;

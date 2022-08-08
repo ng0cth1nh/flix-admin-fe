@@ -10,7 +10,7 @@ const useAxios = () => {
   });
 
   axiosInstance.interceptors.request.use(async req => {
-    let token = localStorage.getItem('token');
+    let token = Cookies.get('token');
     if (token) {
       const user = jwt_decode(token);
       const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
@@ -18,6 +18,7 @@ const useAxios = () => {
         return req;
       }
       try {
+        console.log('token expired')
         await store.dispatch(refreshToken());
       } catch (error) {
         console.log("axios refresh token :", error.message)

@@ -39,6 +39,7 @@ export const refreshToken = createAsyncThunk("auth/refreshToken", async () => {
       Authorization: `Bearer ${refresh_token}`,
     },
   });
+  console.log('refresh token success!');
   Cookies.set("token", response.data.accessToken, { expires: 1 });
   Cookies.set("refreshToken", response.data.refreshToken, { expires: 1 });
   return response.data;

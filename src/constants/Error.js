@@ -8,5 +8,9 @@ const Error = {
   INVALID_PASSWORD: "Mật khẩu nhập không hợp lệ!",
   NEW_PASSWORD_MUST_BE_DIFFERENT_FROM_OLD_PASSWORD:"Mật khẩu mới phải khác so với mật khẩu cũ!",
   WRONG_PASSWORD:"Mật khẩu nhập không hợp lệ!",
+  INVALID_TRANSACTION_ID:"Yêu cầu rút tiền không hợp lệ!",
+  TRANSACTION_NOT_FOUND:"Yêu cầu rút tiền không tồn tại!",
+  BALANCE_NOT_ENOUGH:"Số dư tài khoản không đủ",
+  INVALID_PENDING_REPAIRER:"Trạng thái duyệt không hợp lệ",
 };
 export default Error;

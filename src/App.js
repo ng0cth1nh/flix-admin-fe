@@ -1,13 +1,10 @@
 import Home from "./pages/main/home/Home";
 import Login from "./pages/auth/login/Login";
-import { useEffect } from "react";
 import ForgotPassword from "./pages/auth/forgotPassword/ForgotPassword";
 import {
-  BrowserRouter as Router,
   Route,
   Routes,
   Navigate,
-  useNavigate
 } from "react-router-dom";
 import UserProfile from "./pages/user-profile/UserProfile";
 import ListCategories from "./pages/category/ListCategories";
@@ -32,12 +29,12 @@ import WithdrawRequest from "./pages/request/WithdrawRequest";
 import ListAccessories from "./pages/accessories/ListAccessories";
 import SingleAccessories from "./pages/accessories/SingleAccessories";
 import ConfirmOTP from "./pages/auth/forgotPassword/ConfirmOTP";
-import CustomRouter from './customRoutes/customRoutes';
-import history from './customRoutes/history';
+import CustomRouter from "./customRoutes/customRoutes";
+import history from "./customRoutes/history";
 import Error from "./pages/error/Error";
+import WithdrawRequestDetail from "./pages/request/WithdrawRequestDetail";
 
 function App() {
-
   return (
     <CustomRouter history={history}>
       <Routes>
@@ -100,7 +97,14 @@ function App() {
           <Route index element={<ListTransactions />} />
           <Route path=":transactionId" exact element={<TransactionDetail />} />
         </Route>
-        <Route path="/withdraws" exact element={<WithdrawRequest />} />
+        <Route path="/withdraws">
+          <Route index element={<WithdrawRequest />} />
+          <Route
+            path=":withdrawId"
+            exact
+            element={<WithdrawRequestDetail />}
+          />
+        </Route>
         <Route path="/error" exact element={<Error />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

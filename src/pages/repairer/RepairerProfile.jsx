@@ -8,6 +8,8 @@ import {
   Typography,
   FormControlLabel,
   TextareaAutosize,
+  RadioGroup,
+  Radio,
 } from "@mui/material";
 import { MapInteractionCSS } from "react-map-interaction";
 import useAxios from "../../hooks/useAxios";
@@ -17,6 +19,8 @@ import "./RepairerProfile.scss";
 import BanModal from "../../components/modal/BanModal";
 import Loading from "../../components/loading/Loading";
 import { formatFromDate, formatFromDateTime } from "../../utils/getFormatDate";
+import ConfirmDialog from "../../components/dialog/ConfirmDialog";
+import getErrorMessage from "../../utils/getErrorMessage";
 const titleStyle = { fontWeight: "bold", fontSize: "15px" };
 const RepairerProfile = () => {
   const { repairerId } = useParams();
@@ -24,10 +28,15 @@ const RepairerProfile = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [verifyStatus, setVerifyStatus] = useState(null);
+  const [isVerifyChange, setIsVerifyChange] = useState(false);
   const [status, setStatus] = useState(true);
   const [buttonPos, setButtonPos] = useState(0);
   const [banReason, setBanReason] = useState("");
+  const [rejectReason, setRejectReason] = useState("");
   const [loading, setLoading] = useState(true);
+  const [willCvUpdate, setWillCvUpdate] = useState(true);
+  const [acceptButtonEnable, setAcceptButtonEnable] = useState(false);
+  const [openRejectCv, setOpenRejectCv] = useState(false);
   const [repairer, setRepairer] = useState(null);
   const [isEdited, setIsEdited] = useState(false);
   const handleSave = () => {
@@ -37,6 +46,14 @@ const RepairerProfile = () => {
   const handleClose = () => {
     setIsEdited(false);
     setOpen(false);
+  };
+  const handleRejectCvClose = () => {
+    setOpenRejectCv(false);
+  };
+  const handleRejectCvConfirm = () => {
+    setVerifyStatus("REJECT");
+    setIsVerifyChange(true);
+    setOpenRejectCv(false);
   };
   const handleSwitchChange = (event) => {
     if (!isEdited) {
@@ -64,6 +81,33 @@ const RepairerProfile = () => {
         alert("Cập nhật thông tin thành công!");
       } catch (error) {
         alert("Cập nhật thông tin không thành công.Vui lòng thử lại sau!");
+      }
+    }
+    if (isVerifyChange) {
+      if (verifyStatus === "REJECT") {
+        try {
+          await repairerAPI.put(ApiContants.CV_REJECT, {
+            repairerId,
+            reason: rejectReason,
+            rejectStatus: willCvUpdate ? "UPDATING" : "REJECTED",
+          });
+          alert("Từ chối thông tin Cv thợ thành công!");
+        } catch (error) {
+          alert(
+            "Từ chối thông tin Cv thợ thất bại do: " + getErrorMessage(error)
+          );
+        }
+      } else if (verifyStatus === "ACCEPTED") {
+        try {
+          await repairerAPI.put(ApiContants.CV_ACCEPT, {
+            repairerId,
+          });
+          alert("Chấp nhận thông tin Cv thợ thành công!");
+        } catch (error) {
+          alert(
+            "Chấp nhận thông tin Cv thợ thất bại do: " + getErrorMessage(error)
+          );
+        }
       }
     }
   };
@@ -114,11 +158,9 @@ const RepairerProfile = () => {
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography variant="h4">{repairer.repairerName}</Typography>
                 {verifyStatus === "PENDING" ? (
-                  <Typography sx={{ color: "orange" }}>
-                    Chưa xác thực
-                  </Typography>
-                ) : verifyStatus === "UPDATE" ? (
-                  <Typography sx={{ color: "green" }}>Đang cập nhật</Typography>
+                  <Typography sx={{ color: "orange" }}>Đang đợi</Typography>
+                ) : verifyStatus === "UPDATING" ? (
+                  <Typography sx={{ color: "blue" }}>Đang xử lí</Typography>
                 ) : verifyStatus === "ACCEPTED" ? (
                   <Typography sx={{ color: "green" }}>Đã xác thực</Typography>
                 ) : (
@@ -359,25 +401,30 @@ const RepairerProfile = () => {
                   justifyContent: "space-between",
                 }}
               >
-                {(verifyStatus === "PENDING" || verifyStatus === "UPDATE") && (
+                {(verifyStatus === "PENDING" || verifyStatus === "UPDATING") && (
                   <Button
                     variant="contained"
                     sx={{
                       textTransform: "none",
                     }}
                     color="success"
-                    onClick={() => setVerifyStatus("ACCEPTED")}
+                    onClick={() => {
+                      setIsVerifyChange(true);
+                      setVerifyStatus("ACCEPTED");
+                    }}
                   >
                     Chấp nhận
                   </Button>
                 )}
-                {(verifyStatus === "PENDING" || verifyStatus === "UPDATE") && (
+                {(verifyStatus === "PENDING" || verifyStatus === "UPDATING") && (
                   <Button
                     variant="contained"
                     sx={{
                       textTransform: "none",
                     }}
-                    onClick={() => setVerifyStatus("REJECT")}
+                    onClick={() => {
+                      setOpenRejectCv(true);
+                    }}
                     color="error"
                   >
                     Từ chối
@@ -393,6 +440,82 @@ const RepairerProfile = () => {
                   Lưu
                 </Button>
               </div>
+              <ConfirmDialog
+                open={openRejectCv}
+                title="Bạn có muốn từ chối cv của thợ rút tiền này không?"
+                handleClose={handleRejectCvClose}
+                handleConfirm={handleRejectCvConfirm}
+                acceptButtonEnable={acceptButtonEnable}
+              >
+                <div
+                  style={{
+                    width: "85%",
+                    marginTop: "10px",
+                    alignSelf: "center",
+                  }}
+                >
+                  <RadioGroup
+                    aria-labelledby="demo-radio-buttons-group-label"
+                    defaultValue={willCvUpdate}
+                    onChange={(e) => setWillCvUpdate(e.target.value)}
+                    name="radio-buttons-group"
+                    row
+                  >
+                    <FormControlLabel
+                      value={true}
+                      control={<Radio />}
+                      label="Yêu cầu nhập lại Cv"
+                      sx={{ width: "50%" }}
+                    />
+                    <FormControlLabel
+                      value={false}
+                      control={<Radio />}
+                      label="Từ chối nhận lại Cv"
+                      sx={{
+                        width: "45%",
+                        marginLeft: "auto",
+                        justifyContent: "flex-end",
+                      }}
+                    />
+                  </RadioGroup>
+                  <Typography sx={{ fontSize: "14px" }}>Lý do</Typography>
+                  <TextareaAutosize
+                    minRows={5}
+                    maxRows={7}
+                    aria-label="maximum height"
+                    placeholder="Nội dung"
+                    value={rejectReason}
+                    onChange={(e) => {
+                      if (
+                        !e.target.value.trim() ||
+                        e.target.value.length > 2500
+                      ) {
+                        setAcceptButtonEnable(false);
+                      } else {
+                        setAcceptButtonEnable(true);
+                      }
+                      setRejectReason(e.target.value);
+                    }}
+                    style={{
+                      width: "97%",
+                      marginTop: "5px",
+                      padding: "10px",
+                      resize: "none",
+                    }}
+                  />
+                  {rejectReason.length > 2500 && (
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        padding: "3px",
+                        color: "red",
+                      }}
+                    >
+                      Lý do nhập quá dài
+                    </span>
+                  )}
+                </div>
+              </ConfirmDialog>
               <BanModal
                 open={open}
                 handleClose={handleClose}

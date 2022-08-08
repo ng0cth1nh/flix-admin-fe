@@ -24,7 +24,6 @@ import {
   MenuItem,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { display } from "@mui/system";
 const columns = [
   { id: "index", label: "#", width: "10%", align: "center" },
   {
@@ -65,20 +64,28 @@ const columns = [
       ),
   },
   {
-    id: "role",
+    id: "cvStatus",
     label: "XÁC THỰC",
     width: "15%",
     align: "center",
     format: (value) =>
-      value === "ROLE_REPAIRER" ? (
-        <Typography variant="p" sx={{ color: "green" }}>
-          Đã xác thực
-        </Typography>
-      ) : (
-        <Typography variant="p" sx={{ color: "red" }}>
-          Chưa xác thực
-        </Typography>
-      ),
+    value === 'PENDING' ? (
+      <Typography variant="p" sx={{ color: "orange" }}>
+        Đang đợi
+      </Typography>
+    ) : value === 'UPDATING' ? (
+      <Typography variant="p" sx={{ color: "blue" }}>
+        Đang xử lí
+      </Typography>
+    ) : value === 'ACCEPTED' ? (
+      <Typography variant="p" sx={{ color: "green" }}>
+        Đã xác thực
+      </Typography>
+    ) : (
+      <Typography variant="p" sx={{ color: "red" }}>
+        Đã hủy
+      </Typography>
+    ),
   },
   {
     id: "action",
@@ -136,6 +143,7 @@ const ListRepairers = () => {
       );
       setTotalRecord(response.data.totalRecord);
       setData(response.data.repairerList);
+      console.log("status",response.data.repairerList[0].cvStatus);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -163,13 +171,12 @@ const ListRepairers = () => {
       flag = true;
     }
     if (status) {
-      searchUrl += (flag ? "&" : "?") + `status=${status}`;
+      searchUrl += (flag ? "&" : "?") + `accountState=${status}`;
       flag = true;
     }
     if (verify) {
-      console.log("Verify: ", verify);
       searchUrl +=
-        (flag ? "&" : "?") + `isVerified=${verify === "TRUE" ? true : false}`;
+        (flag ? "&" : "?") + `cvStatus=${verify}`;
     }
     console.log(searchUrl);
     try {
@@ -256,8 +263,10 @@ const ListRepairers = () => {
                 onChange={handleChangeVerifyFilter}
               >
                 <MenuItem value="">Tất cả</MenuItem>
-                <MenuItem value="TRUE">Đã xác thực</MenuItem>
-                <MenuItem value="FALSE">Chưa xác thực</MenuItem>
+                <MenuItem value="PENDING">Đang đợi</MenuItem>
+                <MenuItem value="UPDATING">Đang xử lí</MenuItem>
+                <MenuItem value="ACCEPTED">Đã xác thực</MenuItem>
+                <MenuItem value="REJECTED">Đã hủy</MenuItem>
               </Select>
             </FormControl>
           </div>
