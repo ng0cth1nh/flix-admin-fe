@@ -1,0 +1,65 @@
+#  Template React Deploy
+
+#  This template allows you to deploy your React app to an AWS S3 bucket and invalidate the old AWS Cloudfront distribution.
+#  The workflow allows running tests, code linting and security scans on feature branches (as well as master).
+#  The react app will be validated, deployed to S3 and trigger an AWS Cloudfront distribution invalidation to refresh the CDN caches after the code is merged to master.
+
+# Prerequisites: $AWS_ACCESS_KEY_ID, $AWS_SECRET_ACCESS_KEY setup in the Deployment variables.
+# For advanced cases, please, follow examples from the pipe's:
+# README https://bitbucket.org/atlassian/aws-s3-deploy/src/master/README.md
+# README https://bitbucket.org/atlassian/aws-cloudfront-invalidate/src/master/README.md
+
+options:
+  docker: true
+definitions:
+  steps:
+    - step: &build-and-test
+        name: Build and test
+        caches:
+          - node
+        script:
+          - npm install
+          # CI=true in default variables for Bitbucket Pipelines https://support.atlassian.com/bitbucket-cloud/docs/variables-in-pipelines/
+          - npm run build
+        artifacts:
+          - build/** 
+        after-script:
+              # Collect checkstyle results, if any, and convert to Bitbucket Code Insights.
+          - pipe: atlassian/checkstyle-report:0.3.0
+    - step: &build-image
+        name: Build Docker image
+        image: node
+        script:
+          - docker build -t flix-admin-fe .
+          - docker save --output tmp-image.docker flix-admin-fe
+        artifacts:
+          - tmp-image.docker
+    - step: &push-gcr-and-deploy
+        name: Push to GCR and deploy to Cloud Run
+        image: google/cloud-sdk:alpine
+        script:
+          - docker load --input ./tmp-image.docker
+          # Authenticating with the service account key file
+          - echo $GCLOUD_API_KEYFILE | base64 -d > ./gcloud-api-key.json
+          - gcloud auth activate-service-account --key-file gcloud-api-key.json
+          - gcloud config set project $GCLOUD_PROJECT
+          # Tag container & push
+          - export TAG=$(echo "$BITBUCKET_TAG" | sed -e "s/v//g")
+          - export SUFFIX=$([[ ! -z "$TAG" ]] && echo ":$TAG" || echo "")
+          - export IMAGE_NAME=gcr.io/authentic-reach-351916/flix-admin-fe${SUFFIX}
+          - docker tag flix-admin-fe ${IMAGE_NAME}
+          # Login to GCR
+          - cat ./gcloud-api-key.json | docker login -u _json_key --password-stdin https://gcr.io
+          - docker push ${IMAGE_NAME}
+          # Deploy to Cloud Run
+          - gcloud run deploy flix --image gcr.io/authentic-reach-351916/flix-admin-fe${SUFFIX} --max-instances 30 --platform managed --region asia-southeast1 --allow-unauthenticated
+pipelines:
+  tags:
+    v*:
+      - step: *build-image
+      - step: *push-gcr-and-deploy
+  branches:
+    dev:
+      - step: *build-and-test
+      - step: *build-image
+      - step: *push-gcr-and-deploy
