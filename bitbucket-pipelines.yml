@@ -15,12 +15,11 @@ definitions:
   steps:
     - step: &build-and-test
         name: Build
-        caches:
-          - node
         script:
-          - yarn install
-          # CI=true in default variables for Bitbucket Pipelines https://support.atlassian.com/bitbucket-cloud/docs/variables-in-pipelines/
-          - yarn build
+          - npm install
+          - npm run-script build
+          - mkdir packaged
+          - tar -czvf packaged/package-flix-admin-fe.tar.gz -C build .
         artifacts:
           - build/** 
         after-script:
