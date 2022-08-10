@@ -14,13 +14,13 @@ options:
 definitions:
   steps:
     - step: &build-and-test
-        name: Build and test
+        name: Build
         caches:
           - node
         script:
-          - npm install
+          - yarn install
           # CI=true in default variables for Bitbucket Pipelines https://support.atlassian.com/bitbucket-cloud/docs/variables-in-pipelines/
-          - npm run build
+          - yarn build
         artifacts:
           - build/** 
         after-script:
