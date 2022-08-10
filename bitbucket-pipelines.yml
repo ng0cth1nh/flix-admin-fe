@@ -59,7 +59,7 @@ pipelines:
       - step: *build-image
       - step: *push-gcr-and-deploy
   branches:
-    dev:
+    master:
       - step: *build-and-test
       - step: *build-image
       - step: *push-gcr-and-deploy
