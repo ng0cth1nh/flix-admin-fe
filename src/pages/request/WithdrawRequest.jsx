@@ -25,6 +25,7 @@ import ApiContants from "../../constants/Api";
 import Config from "../../constants/Config";
 import Loading from "../../components/loading/Loading";
 import Search from "../../components/search/Search";
+import { getMoneyFormat } from "../../utils/util";
 const columns = [
   { id: "index", label: "#", width: "5%", align: "center" },
   {
@@ -56,7 +57,7 @@ const columns = [
     label: "SỐ TIỀN",
     width: "10%",
     align: "center",
-    format: (value) => parseInt(value).toLocaleString("en-US") + " vnđ",
+    format: (value) => getMoneyFormat(value),
   },
   {
     id: "action",

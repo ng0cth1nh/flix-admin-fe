@@ -12,5 +12,8 @@ const Error = {
   TRANSACTION_NOT_FOUND:"Yêu cầu rút tiền không tồn tại!",
   BALANCE_NOT_ENOUGH:"Số dư tài khoản không đủ",
   INVALID_PENDING_REPAIRER:"Trạng thái duyệt không hợp lệ",
+  FEEDBACK_NOT_FOUND:"Phản hồi không hợp lệ!",
+  INVALID_RESPONSE:"Nội dung phải hồi không hợp lệ!",
+  FEEDBACK_ID_IS_REQUIRED:"Phản hồi không hợp lệ!"
 };
 export default Error;

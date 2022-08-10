@@ -1,5 +1,5 @@
 export const getErrorImageSelect = (image) => {
-  const listImageType = ["jpg", "jpeg", "png","gif"];
+  const listImageType = ["jpg", "jpeg", "png", "gif"];
   if (image.size > 1024 * 1024 * 20) {
     return "Kích thước file không quá 20MB!";
   } else if (
@@ -9,4 +9,21 @@ export const getErrorImageSelect = (image) => {
     return "File không đúng định dạng!";
   }
   return "";
+};
+export const getMoneyFormat = (money) => {
+  return parseInt(money).toLocaleString("en-US") + " vnđ";
+};
+export const getStatus = (statusCode) => {
+  switch (statusCode) {
+    case "PENDING":
+      return "Đang đợi";
+    case "PROCESSING":
+      return "Đang xử lí";
+    case "DONE":
+      return "Đã hoàn thành";
+    case "CANCELLED":
+      return "Đã hủy";
+    default:
+      return "";
+  }
 };

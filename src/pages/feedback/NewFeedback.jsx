@@ -1,26 +1,114 @@
 import React, { useState } from "react";
+
+import { useNavigate } from "react-router-dom";
+import Loading from "../../components/loading/Loading";
+import useAxios from "../../hooks/useAxios";
+import ApiContants from "../../constants/Api";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import ClearIcon from "@mui/icons-material/Clear";
 import {
-  TextField,
   Button,
   Typography,
-  TextareaAutosize,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
+  getImageListItemBarUtilityClass,
 } from "@mui/material";
 import "./NewFeedback.scss";
-
+import Pattern from "../../constants/Pattern";
+import MuiFormInput from "../../components/formInput/MuiFormInput";
+import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
+import Config from "../../constants/Config";
+import { getErrorImageSelect } from "../../utils/util";
+import getErrorMessage from "../../utils/getErrorMessage";
+const listField = [
+  {
+    id: "requestCode",
+    label: "Mã đặt lịch",
+    pattern: "^.{1,150}$",
+    errorMessage: "Mã đặt lịch có độ dài không quá 150 kí tự!",
+    isRequired: true,
+  },
+  {
+    id: "phone",
+    label: "Số điện thoại",
+    pattern: Pattern.PHONE_NUMBER,
+    errorMessage: "Số điện thoại không đúng!",
+    isRequired: true,
+  },
+  {
+    id: "title",
+    label: "Tiêu đề",
+    pattern: ".{1,150}$",
+    errorMessage: "Tiêu đề có độ dài không quá 150 kí tự!",
+    isRequired: true,
+  },
+];
 const NewFeedback = () => {
+  const userAPI = useAxios();
+  const navigate = useNavigate();
+  const [values, setValues] = useState({
+    requestCode: {
+      value: "",
+      error: "",
+    },
+    phone: {
+      value: "",
+      error: "",
+    },
+    title: {
+      value: "",
+      error: "",
+    },
+    description: {
+      value: "",
+      error: "",
+    },
+  });
   const [listImage, setListImage] = useState([]);
-  const [requestTypeId, setRequestTypeId] = useState("");
+  const [requestTypeId, setRequestTypeId] = useState("REQUEST");
   const handleChange = (event) => {
     setRequestTypeId(event.target.value);
   };
-
+  const onChange = (id, text, error) => {
+    setValues({ ...values, [id]: { value: text, error } });
+  };
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    for (const key in values) {
+      if (values[key].error !== "") return;
+    }
+    const formData = new FormData();
+    formData.append("phone", values.phone.value);
+    console.log(
+      values.phone.value,
+      values.requestCode.value,
+      values.title.value,
+      values.description.value,
+      requestTypeId
+    );
+    formData.append("requestCode", values.requestCode.value);
+    formData.append("title", values.title.value);
+    formData.append("description", values.description.value);
+    formData.append("feedbackType", requestTypeId);
+    listImage.forEach((image) => {
+      formData.append("images[]", image);
+    });
+    try {
+      await userAPI.post(ApiContants.FEEDBACK_SINGLE, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      alert("Tạo phản hồi thành công!");
+      navigate("/feedbacks");
+    } catch (error) {
+      alert("Tạo phản hồi thất bại do:" + getErrorMessage(error));
+      // navigate("/error");
+    }
+  };
   return (
     <div className="new-feedback">
       <Sidebar />
@@ -28,17 +116,15 @@ const NewFeedback = () => {
         <Navbar />
         <div className="body">
           <h1>Phản hồi</h1>
-          <div className="feedback-information">
-            <TextField
-              id="phone"
-              label="Số điện thoại"
-              margin="normal"
-              error={false}
-              variant="outlined"
-              sx={{
-                width: "40%",
-              }}
-            />
+          <form className="feedback-information" onSubmit={onSubmit}>
+            {listField.map((input) => (
+              <MuiFormInput
+                key={input.id}
+                {...input}
+                onChange={onChange}
+                item={values[input.id]}
+              />
+            ))}
             <FormControl
               sx={{
                 width: "40%",
@@ -53,46 +139,18 @@ const NewFeedback = () => {
                 label="Loại yêu cầu"
                 onChange={handleChange}
               >
-                <MenuItem value={10}>Dụng cụ gia dụng</MenuItem>
-                <MenuItem value={20}>Điện lạnh</MenuItem>
-                <MenuItem value={30}>Điện tử</MenuItem>
+                {Object.entries(Config.FEEDBACK_TYPE).map((item) => (
+                  <MenuItem value={item[0]}>{item[1]}</MenuItem>
+                ))}
               </Select>
             </FormControl>
-            <TextField
-              id="requestId"
-              label="Mã đặt lịch"
-              margin="normal"
-              error={false}
-              variant="outlined"
-              sx={{
-                width: "40%",
-              }}
+            <MuiTextAreaInput
+              label="Nội dung"
+              item={values.description}
+              id="description"
+              onChange={onChange}
+              isRequired={true}
             />
-            <TextField
-              id="title"
-              label="Tiêu đề"
-              margin="normal"
-              error={false}
-              variant="outlined"
-              sx={{
-                width: "40%",
-              }}
-            />
-            <div style={{ width: "100%", marginTop: "10px" }}>
-              <Typography sx={{ fontSize: "14px" }}>Nội dung</Typography>
-              <TextareaAutosize
-                minRows={5}
-                maxRows={7}
-                aria-label="maximum height"
-                placeholder="Nội dung"
-                style={{
-                  width: "97%",
-                  marginTop: "10px",
-                  padding: "10px",
-                  resize: "none",
-                }}
-              />
-            </div>
             <div
               style={{
                 width: "100%",
@@ -111,8 +169,14 @@ const NewFeedback = () => {
                     type="file"
                     id="file"
                     onChange={(e) => {
-                      if (e.target.files[0])
+                      if (e.target.files[0]) {
+                        const err = getErrorImageSelect(e.target.files[0]);
+                        if (err !== "") {
+                          alert(err);
+                          return;
+                        }
                         setListImage(listImage.concat([e.target.files[0]]));
+                      }
                     }}
                     style={{ display: "none" }}
                   />
@@ -154,6 +218,7 @@ const NewFeedback = () => {
             </div>
             <div style={{ width: "100%", display: "flex", marginTop: "20px" }}>
               <Button
+                type="submit"
                 variant="contained"
                 sx={{
                   textTransform: "none",
@@ -164,7 +229,7 @@ const NewFeedback = () => {
                 Thêm mới
               </Button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>

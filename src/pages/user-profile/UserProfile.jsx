@@ -152,7 +152,7 @@ const UserProfile = () => {
         });
         alert("Cập nhật avatar thành công!");
       } catch (error) {
-        alert("Cập nhật avatar không thành công!");
+        alert("Cập nhật avatar không thành công do: "+getErrorMessage(error));
       }
     }
     if (isChanges.profile && checkFullName(null) && checkEmail(null)) {
@@ -289,6 +289,7 @@ const UserProfile = () => {
                     marginRight: "20px",
                   }}
                   onClick={handleSaveProfile}
+                  disabled={!isChanges.profile&&!isChanges.avatar}
                 >
                   Cập nhật thông tin
                 </Button>
@@ -377,6 +378,7 @@ const UserProfile = () => {
                     marginRight: "20px",
                   }}
                   onClick={handleSavePassword}
+                  disabled={!isChanges.password}
                 >
                   Thay đổi mật khẩu
                 </Button>

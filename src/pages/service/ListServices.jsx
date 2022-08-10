@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { getMoneyFormat } from "../../utils/util";
 const columns = [
   { id: "index", label: "#", width: "5%", align: "center" },
   {
@@ -39,8 +40,7 @@ const columns = [
     label: "PHÍ KIỂM TRA",
     width: "15%",
     align: "center",
-    format: (value) =>
-      typeof value === "number" ? value.toLocaleString("en-US") + " vnđ" : value,
+    format: (value) => getMoneyFormat(value),
   },
   {
     id: "description",
@@ -315,12 +315,10 @@ const ListServices = () => {
                                 key={column.id}
                                 align={column.align}
                                 onClick={(e) => {
-                                  if (column.id === "action"){
-                                    console.log('go to action');
+                                  if (column.id === "action") {
+                                    console.log("go to action");
                                     e.preventDefault();
-                                  }
-                                  else
-                                    handleCellClick(row.id);
+                                  } else handleCellClick(row.id);
                                 }}
                               >
                                 {column.format ? column.format(value) : value}

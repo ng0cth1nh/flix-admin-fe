@@ -9,6 +9,7 @@ import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import Loading from "../../components/loading/Loading";
 import getErrorMessage from "../../utils/getErrorMessage";
+import { getMoneyFormat } from "../../utils/util";
 const requestInfoField = [
   { id: "repairerName", label: "Tên thợ sửa", value: "" },
   { id: "repairerPhone", label: "Số điện thoại", value: "" },
@@ -22,7 +23,7 @@ const requestInfoField = [
     id: "amount",
     label: "Số tiền",
     value: "",
-    format: (value) => parseInt(value).toLocaleString("en-US") + " vnđ",
+    format: (value) => getMoneyFormat(value),
   },
 ];
 const vnpayInfoField = [

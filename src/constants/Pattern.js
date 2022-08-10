@@ -4,5 +4,6 @@ const Pattern = {
     FULL_NAME:"^[a-zA-Z\\s]{3,150}$",
     EMAIL:"^\\w+([\\.-]?\\w+)*@\\w+([\\.-]?\\w+)*(\\.\\w{2,3})+$",
     OTP:"^([0-9]{6})$",
+    TEXT_AREA:"^.{0,2500}$"
 }
 export default Pattern;

@@ -17,6 +17,7 @@ import {
   Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { getMoneyFormat } from "../../utils/util";
 const columns = [
   { id: "index", label: "#", width: "5%", align: "center" },
   {
@@ -30,8 +31,7 @@ const columns = [
     label: "PHÍ KIỂM TRA",
     width: "15%",
     align: "center",
-    format: (value) =>
-      typeof value === "number" ? value.toLocaleString("en-US") + " vnđ" : value,
+    format: (value) => getMoneyFormat(value),
   },
   {
     id: "description",
@@ -78,62 +78,14 @@ function createData(id, name, price, description, status) {
 }
 
 const rows = [
-  createData(
-    "India",
-    1324171354,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "China",
-    1403500365,
-    12000000,
-    60483973,
-    false
-  ),
-  createData(
-    "Italy",
-    60483973,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "United States",
-    327167434,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "Canada",
-    37602103,
-    120000,
-    37602103,
-    true
-  ),
-  createData(
-    "Australia",
-    25475400,
-    120000,
-    60483973,
-    false
-  ),
-  createData(
-    "Germany",
-    83019200,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "Ireland",
-    4857000,
-    120000,
-    60483973,
-    false
-  ),
+  createData("India", 1324171354, 120000, 60483973, true),
+  createData("China", 1403500365, 12000000, 60483973, false),
+  createData("Italy", 60483973, 120000, 60483973, true),
+  createData("United States", 327167434, 120000, 60483973, true),
+  createData("Canada", 37602103, 120000, 37602103, true),
+  createData("Australia", 25475400, 120000, 60483973, false),
+  createData("Germany", 83019200, 120000, 60483973, true),
+  createData("Ireland", 4857000, 120000, 60483973, false),
   createData(
     "Mexico",
     "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",
@@ -141,48 +93,12 @@ const rows = [
     "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj fdjsfjsdklfj fjdsjfklsdjf fkdlsjklsdfjkljadsfkjklsad",
     true
   ),
-  createData(
-    "Japan",
-    126317000,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "France",
-    67022000,
-    120000,
-    60483973,
-    false
-  ),
-  createData(
-    "United Kingdom",
-    67545757,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "Russia",
-    146793744,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "Nigeria",
-    200962417,
-    120000,
-    60483973,
-    true
-  ),
-  createData(
-    "Brazil",
-    210147125,
-    120000,
-    60483973,
-    false
-  ),
+  createData("Japan", 126317000, 120000, 60483973, true),
+  createData("France", 67022000, 120000, 60483973, false),
+  createData("United Kingdom", 67545757, 120000, 60483973, true),
+  createData("Russia", 146793744, 120000, 60483973, true),
+  createData("Nigeria", 200962417, 120000, 60483973, true),
+  createData("Brazil", 210147125, 120000, 60483973, false),
 ];
 const useStyles = makeStyles({
   root: {
@@ -264,10 +180,7 @@ const ListSubServices = () => {
                         {columns.map((column) => {
                           if (column.id === "index") {
                             return (
-                              <TableCell
-                                key={column.id}
-                                align={column.align}
-                              >
+                              <TableCell key={column.id} align={column.align}>
                                 {page * rowsPerPage + index + 1}
                               </TableCell>
                             );
@@ -277,10 +190,7 @@ const ListSubServices = () => {
                                 ? { categoryId, serviceId, id: row["id"] }
                                 : row[column.id];
                             return (
-                              <TableCell
-                                key={column.id}
-                                align={column.align}
-                              >
+                              <TableCell key={column.id} align={column.align}>
                                 {column.format ? column.format(value) : value}
                               </TableCell>
                             );

@@ -23,6 +23,21 @@ const ApiContants = {
   CV_REJECT:"/admin/cv/reject",
   TRANSACTION_LIST:"/admin/transactions",
   TRANSACTION_DETAIL:"/admin/transaction",
-  TRANSACTION_SEARCH:"/admin/search/transactions"
+  TRANSACTION_SEARCH:"/admin/search/transactions",
+  REQUEST_LIST:"/admin/requests",
+  REQUEST_SEARCH:"/admin/search/request",
+  REQUEST_DETAIL:"/admin/request",
+  ACCESSORIES_LIST:"/admin/accessories",
+  ACCESSORY_SEARCH: "/admin/search/accessories",
+  ACCESSORY_SINGLE:"/admin/accessory",
+  FEEDBACK_LIST:"/admin/feedbacks",
+  FEEDBACK_SINGLE:"/admin/feedback",
+  FEEDBACK_SEARCH:"/admin/search/feedbacks",
+  CATEGORY_LIST:"/admin/categories",
+  CATEGORY_SINGLE:"/admin/category",
+  CATEGORY_SEARCH:"/admin/search/categories",
+  SERVICE_LIST:"/admin/services",
+  SERVICE_SINGLE:"/admin/service",
+  SERVICE_SEARCH:"/admin/search/services",
 };
 export default ApiContants;

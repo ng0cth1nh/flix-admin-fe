@@ -1,9 +1,14 @@
 import "./ListFeedbacks.scss";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useAxios from "../../hooks/useAxios";
+import Config from "../../constants/Config";
+import Loading from "../../components/loading/Loading";
+import Search from "../../components/search/Search";
+import ApiContants from "../../constants/Api";
+import { formatFromDateTime } from "../../utils/getFormatDate";
 
 import {
   TableContainer,
@@ -30,10 +35,22 @@ const columns = [
     align: "center",
   },
   {
-    id: "type",
+    id: "feedbackType",
     label: "LOẠI YÊU CẦU",
     width: "15%",
     align: "center",
+    format: (val) =>
+      val === "REQUEST"
+        ? "Yêu cầu"
+        : val === "VOUCHER"
+        ? "Phiếu giảm giá"
+        : val === "INSURANCE"
+        ? "Bảo hành"
+        : val === "INVOICE"
+        ? "Hóa đơn"
+        : val === "COMMENT"
+        ? "Bình luận"
+        : "Tài khoản",
   },
   {
     id: "title",
@@ -42,10 +59,11 @@ const columns = [
     align: "center",
   },
   {
-    id: "date",
+    id: "createdAt",
     label: "NGÀY TẠO",
     width: "`10%",
     align: "center",
+    format: (val) => formatFromDateTime(val),
   },
   {
     id: "status",
@@ -53,13 +71,21 @@ const columns = [
     width: "15%",
     align: "center",
     format: (value) =>
-      value ? (
+      value === "PENDING" ? (
         <Typography variant="p" sx={{ color: "green" }}>
-          Hoạt động
+          Đang đợi
+        </Typography>
+      ) : value === "PROCESSING" ? (
+        <Typography variant="p" sx={{ color: "blue" }}>
+          Đang xử lí
+        </Typography>
+      ) : value === "DONE" ? (
+        <Typography variant="p" sx={{ color: "green" }}>
+          Đã hoàn thành
         </Typography>
       ) : (
         <Typography variant="p" sx={{ color: "red" }}>
-          Vô hiệu hóa
+          Đã hủy
         </Typography>
       ),
   },
@@ -81,63 +107,102 @@ const columns = [
   },
 ];
 
-function createData(id, phone, type, title, date, status) {
-  return { id, phone, type, title, date, status };
-}
-
-const rows = [
-  createData("India", "0865390055", 1324171354, 120000, 60483973, true),
-  createData("China", "0865390055", 1403500365, 120000, 60483973, false),
-  createData("Italy", "0865390055", 60483973, 120000, "20/10/2022", true),
-  createData("United States", "0865390055", 327167434, 120000, 60483973, true),
-  createData("Canada", "0865390055", 37602103, 120000, 37602103, true),
-  createData("Australia", "0865390055", 25475400, 120000, 60483973, false),
-  createData("Germany", "0865390055", 83019200, 120000, 60483973, true),
-  createData("Ireland", "0865390055", 4857000, 120000, 60483973, false),
-  createData(
-    "Mexico",
-    "0865390055",
-    "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",
-    120000,
-    "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj fdjsfjsdklfj fjdsjfklsdjf fkdlsjklsdfjkljadsfkjklsad",
-    true
-  ),
-  createData("Japan", "0865390055", 126317000, 120000, 60483973, true),
-  createData("France", "0865390055", 67022000, 120000, 60483973, false),
-  createData("United Kingdom", "0865390055", 67545757, 120000, 60483973, true),
-  createData("Russia", "0865390055", 146793744, 120000, 60483973, true),
-  createData("Nigeria", "0865390055", 200962417, 120000, 60483973, true),
-  createData("Brazil", "0865390055", 210147125, 120000, 60483973, false),
-];
 const useStyles = makeStyles({
   root: {
     "& .MuiTableCell-head": {
       fontWeight: "bold",
+      backgroundColor: "#edeff0",
     },
   },
 });
 const ListFeedbacks = () => {
   const classes = useStyles();
+  const navigate = useNavigate();
+  const userAPI = useAxios();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [statusFilter, setStatusFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
+  const [data, setData] = useState([]);
+  const [totalRecord, setTotalRecord] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
 
   const handleChangeStatusFilter = (event) => {
     setStatusFilter(event.target.value);
+    searchData(event.target.value, null);
   };
   const handleChangeTypeFilter = (event) => {
     setTypeFilter(event.target.value);
+    searchData(null, event.target.value);
   };
+  const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await userAPI.get(
+        ApiContants.FEEDBACK_LIST + `?pageNumber=${page}`
+      );
+      setTotalRecord(response.data.totalRecord);
+      setData(response.data.feedbackList);
+      console.log(response.data.feedbackList);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      navigate("/error");
+    }
+  };
+  const handleSearch = () => {
+    searchData(null, null);
+  };
+  const searchData = async (statusChange, typeChange) => {
+    let status = statusChange !== null ? statusChange : statusFilter;
+    let type = typeChange !== null ? typeChange : typeFilter;
+    // case both search text and status is null then fetch data by paging
+    if (!search.trim() && !status && !type) {
+      setIsSearching(false);
+      setPage(0);
+      fetchData();
+      return;
+    }
+    let searchUrl = ApiContants.FEEDBACK_SEARCH;
+    let flag = false;
+    if (search.trim()) {
+      searchUrl += `?keyword=${search.trim()}`;
+      flag = true;
+    }
+    if (status) {
+      searchUrl += (flag ? "&" : "?") + `status=${status}`;
+      flag = true;
+    }
+    if (type) {
+      searchUrl += (flag ? "&" : "?") + `feedbackType=${type}`;
+    }
+    console.log(searchUrl);
+    try {
+      setPage(0);
+      setLoading(true);
+      setIsSearching(true);
+      const response = await userAPI.get(searchUrl);
+      setData(response.data.feedbackList);
+      console.log(response.data);
+      setTotalRecord(response.data.feedbackList.length);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      navigate("/error");
+    }
+  };
+
+  useEffect(() => {
+    if (!isSearching) {
+      fetchData();
+    }
+  }, [page]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
   return (
     <div className="list-feedbacks">
       <Sidebar />
@@ -154,10 +219,12 @@ const ListFeedbacks = () => {
           >
             <h1>Phản hồi</h1>
             <div style={{ display: "flex" }}>
-              <div className="search">
-                <input type="text" placeholder="Tìm kiếm..." />
-                <SearchOutlinedIcon />
-              </div>
+              <Search
+                placeholder="Số điện thoại"
+                handleSearch={handleSearch}
+                search={search}
+                setSearch={setSearch}
+              />
               <Button variant="contained" color="success">
                 <Link
                   to={"/feedbacks/feedback/new"}
@@ -185,9 +252,13 @@ const ListFeedbacks = () => {
                 label="Loại yêu cầu"
                 onChange={handleChangeTypeFilter}
               >
-                <MenuItem value={10}>Dụng cụ gia dụng</MenuItem>
-                <MenuItem value={20}>Điện lạnh</MenuItem>
-                <MenuItem value={30}>Điện tử</MenuItem>
+                <MenuItem value={""}>Tất cả</MenuItem>
+                <MenuItem value={"REQUEST"}>Yêu cầu</MenuItem>
+                <MenuItem value={"VOUCHER"}>Phiếu giảm giá</MenuItem>
+                <MenuItem value={"INSURANCE"}>Bảo hành</MenuItem>
+                <MenuItem value={"INVOICE"}>Hóa đơn</MenuItem>
+                <MenuItem value={"COMMENT"}>Bình luận</MenuItem>
+                <MenuItem value={"ACCOUNT"}>Tài khoản</MenuItem>
               </Select>
             </FormControl>
             <FormControl
@@ -204,71 +275,101 @@ const ListFeedbacks = () => {
                 label="Trạng thái"
                 onChange={handleChangeStatusFilter}
               >
-                <MenuItem value={10}>Dụng cụ gia dụng</MenuItem>
-                <MenuItem value={20}>Điện lạnh</MenuItem>
-                <MenuItem value={30}>Điện tử</MenuItem>
+                <MenuItem value={""}>Tất cả</MenuItem>
+                <MenuItem value={"PENDING"}>Đang đợi</MenuItem>
+                <MenuItem value={"PROCESSING"}>Đang xử lí</MenuItem>
+                <MenuItem value={"DONE"}>Đã hoàn thành</MenuItem>
+                <MenuItem value={"REJECTED"}>Đã hủy</MenuItem>
               </Select>
             </FormControl>
           </div>
-          <TableContainer sx={{ minHeight: "600px" }}>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow className={classes.root}>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ width: column.width }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody sx={{ borderWidth: 1 }}>
-                {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        {columns.map((column) => {
-                          if (column.id === "index") {
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {page * rowsPerPage + index + 1}
-                              </TableCell>
-                            );
-                          } else {
-                            const value = column.id === "action"
-                            ? row["id"]
-                            : row[column.id];
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {column.format ? column.format(value) : value}
-                              </TableCell>
-                            );
-                          }
-                        })}
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[10]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          {data.length !== 0 ? (
+            <div>
+              <TableContainer sx={{ minHeight: "600px", marginTop: "20px" }}>
+                <Table stickyHeader aria-label="sticky table">
+                  <TableHead>
+                    <TableRow className={classes.root}>
+                      {columns.map((column) => (
+                        <TableCell
+                          key={column.id}
+                          align={column.align}
+                          style={{ width: column.width }}
+                        >
+                          {column.label}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody sx={{ borderWidth: 1 }}>
+                    {data
+                      .slice(
+                        data.length <= Config.ROW_PER_PAGE
+                          ? 0
+                          : page * Config.ROW_PER_PAGE,
+                        data.length <= Config.ROW_PER_PAGE
+                          ? Config.ROW_PER_PAGE
+                          : page * Config.ROW_PER_PAGE + Config.ROW_PER_PAGE
+                      )
+                      .map((row, index) => {
+                        return (
+                          <TableRow
+                            hover
+                            role="checkbox"
+                            tabIndex={-1}
+                            key={row.id}
+                          >
+                            {columns.map((column) => {
+                              if (column.id === "index") {
+                                return (
+                                  <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                  >
+                                    {page * Config.ROW_PER_PAGE + index + 1}
+                                  </TableCell>
+                                );
+                              } else {
+                                const value =
+                                  column.id === "action"
+                                    ? row["id"]
+                                    : row[column.id];
+                                return (
+                                  <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                  >
+                                    {column.format
+                                      ? column.format(value)
+                                      : value}
+                                  </TableCell>
+                                );
+                              }
+                            })}
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[10]}
+                component="div"
+                count={totalRecord}
+                rowsPerPage={Config.ROW_PER_PAGE}
+                page={page}
+                onPageChange={handleChangePage}
+              />
+            </div>
+          ) : loading? null: (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <img
+                src="/nodata.png"
+                alt="nodata"
+                style={{ width: "60%", aspectRatio: 1.5, margin: "auto" }}
+              />
+            </div>
+          )}
+          {loading && <Loading />}
         </div>
       </div>
     </div>

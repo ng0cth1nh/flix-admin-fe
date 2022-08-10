@@ -287,7 +287,7 @@ const ListCustomers = () => {
                 onPageChange={handleChangePage}
               />
             </div>
-          ) : (
+          ) : loading ? null : (
             <div style={{ display: "flex", alignItems: "center" }}>
               <img
                 src="/nodata.png"

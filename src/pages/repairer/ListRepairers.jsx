@@ -69,23 +69,23 @@ const columns = [
     width: "15%",
     align: "center",
     format: (value) =>
-    value === 'PENDING' ? (
-      <Typography variant="p" sx={{ color: "orange" }}>
-        Đang đợi
-      </Typography>
-    ) : value === 'UPDATING' ? (
-      <Typography variant="p" sx={{ color: "blue" }}>
-        Đang xử lí
-      </Typography>
-    ) : value === 'ACCEPTED' ? (
-      <Typography variant="p" sx={{ color: "green" }}>
-        Đã xác thực
-      </Typography>
-    ) : (
-      <Typography variant="p" sx={{ color: "red" }}>
-        Đã hủy
-      </Typography>
-    ),
+      value === "PENDING" ? (
+        <Typography variant="p" sx={{ color: "orange" }}>
+          Đang đợi
+        </Typography>
+      ) : value === "UPDATING" ? (
+        <Typography variant="p" sx={{ color: "blue" }}>
+          Đang xử lí
+        </Typography>
+      ) : value === "ACCEPTED" ? (
+        <Typography variant="p" sx={{ color: "green" }}>
+          Đã xác thực
+        </Typography>
+      ) : (
+        <Typography variant="p" sx={{ color: "red" }}>
+          Đã hủy
+        </Typography>
+      ),
   },
   {
     id: "action",
@@ -143,7 +143,7 @@ const ListRepairers = () => {
       );
       setTotalRecord(response.data.totalRecord);
       setData(response.data.repairerList);
-      console.log("status",response.data.repairerList[0].cvStatus);
+      console.log("status", response.data.repairerList[0].cvStatus);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -175,8 +175,7 @@ const ListRepairers = () => {
       flag = true;
     }
     if (verify) {
-      searchUrl +=
-        (flag ? "&" : "?") + `cvStatus=${verify}`;
+      searchUrl += (flag ? "&" : "?") + `cvStatus=${verify}`;
     }
     console.log(searchUrl);
     try {
@@ -347,7 +346,7 @@ const ListRepairers = () => {
                 onPageChange={handleChangePage}
               />
             </div>
-          ) : (
+          ) : loading ? null : (
             <div style={{ display: "flex", alignItems: "center" }}>
               <img
                 src="/nodata.png"

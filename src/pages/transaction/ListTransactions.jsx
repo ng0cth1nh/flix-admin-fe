@@ -351,7 +351,7 @@ const ListTransactions = () => {
                 onPageChange={handleChangePage}
               />
             </div>
-          ) : (
+          ) : loading ? null : (
             <div style={{ display: "flex", alignItems: "center" }}>
               <img
                 src="/nodata.png"

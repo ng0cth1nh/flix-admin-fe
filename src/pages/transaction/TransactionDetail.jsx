@@ -9,6 +9,7 @@ import Loading from "../../components/loading/Loading";
 import Config from "../../constants/Config";
 import { formatFromDate } from "../../utils/getFormatDate";
 import "./TransactionDetail.scss";
+import { getMoneyFormat } from "../../utils/util";
 const transactionInfoField = [
   { id: "fullName", label: "Họ và tên", value: "" },
   { id: "phone", label: "Số điện thoại", value: "" },
@@ -21,7 +22,7 @@ const transactionInfoField = [
     id: "amount",
     label: "Số tiền",
     value: "",
-    format: (val) => parseInt(val).toLocaleString("en-US") + " vnđ",
+    format: (val) => getMoneyFormat(val),
   },
   {
     id: "transactionType",
