@@ -4,7 +4,6 @@ import Navbar from "../../components/navbar/Navbar";
 import FolderIcon from "@mui/icons-material/Folder";
 import {
   Button,
-  Switch,
   Typography,
   FormControlLabel,
   TextareaAutosize,
@@ -28,86 +27,85 @@ const RepairerProfile = () => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [verifyStatus, setVerifyStatus] = useState(null);
-  const [isVerifyChange, setIsVerifyChange] = useState(false);
   const [status, setStatus] = useState(true);
   const [buttonPos, setButtonPos] = useState(0);
-  const [banReason, setBanReason] = useState("");
+  const [banReason, setBanReason] = useState({ value: "", error: "" });
   const [rejectReason, setRejectReason] = useState("");
   const [loading, setLoading] = useState(true);
-  const [willCvUpdate, setWillCvUpdate] = useState(true);
+  const [willCvUpdate, setWillCvUpdate] = useState("true");
   const [acceptButtonEnable, setAcceptButtonEnable] = useState(false);
   const [openRejectCv, setOpenRejectCv] = useState(false);
   const [repairer, setRepairer] = useState(null);
-  const [isEdited, setIsEdited] = useState(false);
-  const handleSave = () => {
-    setStatus(!status);
-    setOpen(false);
+  const handleSave = (e) => {
+    e.preventDefault();
+    banRepairer();
   };
   const handleClose = () => {
-    setIsEdited(false);
     setOpen(false);
   };
   const handleRejectCvClose = () => {
     setOpenRejectCv(false);
   };
   const handleRejectCvConfirm = () => {
-    setVerifyStatus("REJECT");
-    setIsVerifyChange(true);
-    setOpenRejectCv(false);
+    changeStatusCVRepairer("REJECT");
   };
-  const handleSwitchChange = (event) => {
-    if (!isEdited) {
-      if (!event.target.checked) {
-        setOpen(true);
-      } else {
-        setStatus(event.target.checked);
-      }
-      setIsEdited(true);
+  const handleBan = () => {
+    if (status) {
+      setOpen(true);
+    } else {
+      banRepairer();
     }
   };
-  const handleSaveRepairer = async () => {
-    if (isEdited) {
+  const banRepairer = async () => {
+    if (banReason.error === "") {
       try {
-        if (status) {
+        if (!status) {
           await repairerAPI.delete(
             ApiContants.BAN_USER + `?phone=${repairer.repairerPhone}`
           );
         } else {
           await repairerAPI.post(ApiContants.BAN_USER, {
             phone: repairer.repairerPhone,
-            banReason,
+            banReason: banReason.value,
           });
         }
+        setOpen(false);
         alert("Cập nhật thông tin thành công!");
+        navigate("/repairers");
       } catch (error) {
+        setOpen(false);
         alert("Cập nhật thông tin không thành công.Vui lòng thử lại sau!");
       }
     }
-    if (isVerifyChange) {
-      if (verifyStatus === "REJECT") {
-        try {
-          await repairerAPI.put(ApiContants.CV_REJECT, {
-            repairerId,
-            reason: rejectReason,
-            rejectStatus: willCvUpdate ? "UPDATING" : "REJECTED",
-          });
-          alert("Từ chối thông tin Cv thợ thành công!");
-        } catch (error) {
-          alert(
-            "Từ chối thông tin Cv thợ thất bại do: " + getErrorMessage(error)
-          );
-        }
-      } else if (verifyStatus === "ACCEPTED") {
-        try {
-          await repairerAPI.put(ApiContants.CV_ACCEPT, {
-            repairerId,
-          });
-          alert("Chấp nhận thông tin Cv thợ thành công!");
-        } catch (error) {
-          alert(
-            "Chấp nhận thông tin Cv thợ thất bại do: " + getErrorMessage(error)
-          );
-        }
+  };
+  const changeStatusCVRepairer = async (status) => {
+    if (status === "REJECT") {
+      try {
+        await repairerAPI.put(ApiContants.CV_REJECT, {
+          repairerId,
+          reason: rejectReason,
+          rejectStatus: willCvUpdate==="true" ? "UPDATING" : "REJECTED",
+        });
+        setOpenRejectCv(false);
+        alert("Từ chối thông tin Cv thợ thành công!");
+        navigate("/repairers");
+      } catch (error) {
+        setOpenRejectCv(false);
+        alert(
+          "Từ chối thông tin Cv thợ thất bại do: " + getErrorMessage(error)
+        );
+      }
+    } else if (status === "ACCEPTED") {
+      try {
+        await repairerAPI.put(ApiContants.CV_ACCEPT, {
+          repairerId,
+        });
+        alert("Chấp nhận thông tin Cv thợ thành công!");
+        navigate("/repairers");
+      } catch (error) {
+        alert(
+          "Chấp nhận thông tin Cv thợ thất bại do: " + getErrorMessage(error)
+        );
       }
     }
   };
@@ -157,15 +155,6 @@ const RepairerProfile = () => {
             <div className="category-information">
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 <Typography variant="h4">{repairer.repairerName}</Typography>
-                {verifyStatus === "PENDING" ? (
-                  <Typography sx={{ color: "orange" }}>Đang đợi</Typography>
-                ) : verifyStatus === "UPDATING" ? (
-                  <Typography sx={{ color: "blue" }}>Đang xử lí</Typography>
-                ) : verifyStatus === "ACCEPTED" ? (
-                  <Typography sx={{ color: "green" }}>Đã xác thực</Typography>
-                ) : (
-                  <Typography sx={{ color: "red" }}>Đã hủy</Typography>
-                )}
               </div>
               <Typography>{repairer.repairerPhone}</Typography>
               <div style={{ display: "flex", justifyContent: "space-between" }}>
@@ -252,12 +241,15 @@ const RepairerProfile = () => {
                   >
                     Trạng thái:{" "}
                   </Typography>
-                  <FormControlLabel
-                    control={
-                      <Switch onChange={handleSwitchChange} checked={status} />
-                    }
-                    label={status ? "Hoạt động" : "Vô hiệu hóa"}
-                  />
+                  {verifyStatus === "PENDING" ? (
+                    <Typography sx={{ color: "orange" }}>Đang đợi</Typography>
+                  ) : verifyStatus === "UPDATING" ? (
+                    <Typography sx={{ color: "blue" }}>Đang xử lí</Typography>
+                  ) : verifyStatus === "ACCEPTED" ? (
+                    <Typography sx={{ color: "green" }}>Đã xác thực</Typography>
+                  ) : (
+                    <Typography sx={{ color: "red" }}>Đã hủy</Typography>
+                  )}
                 </div>
               </div>
               <div style={{ display: buttonPos === 1 ? "block" : "none" }}>
@@ -401,7 +393,8 @@ const RepairerProfile = () => {
                   justifyContent: "space-between",
                 }}
               >
-                {(verifyStatus === "PENDING" || verifyStatus === "UPDATING") && (
+                {(verifyStatus === "PENDING" ||
+                  verifyStatus === "UPDATING") && (
                   <Button
                     variant="contained"
                     sx={{
@@ -409,14 +402,14 @@ const RepairerProfile = () => {
                     }}
                     color="success"
                     onClick={() => {
-                      setIsVerifyChange(true);
-                      setVerifyStatus("ACCEPTED");
+                      changeStatusCVRepairer("ACCEPTED");
                     }}
                   >
                     Chấp nhận
                   </Button>
                 )}
-                {(verifyStatus === "PENDING" || verifyStatus === "UPDATING") && (
+                {(verifyStatus === "PENDING" ||
+                  verifyStatus === "UPDATING") && (
                   <Button
                     variant="contained"
                     sx={{
@@ -435,9 +428,9 @@ const RepairerProfile = () => {
                   sx={{
                     textTransform: "none",
                   }}
-                  onClick={handleSaveRepairer}
+                  onClick={handleBan}
                 >
-                  Lưu
+                  {status ? "Ban" : "Bỏ ban"}
                 </Button>
               </div>
               <ConfirmDialog
@@ -457,7 +450,7 @@ const RepairerProfile = () => {
                   <RadioGroup
                     aria-labelledby="demo-radio-buttons-group-label"
                     defaultValue={willCvUpdate}
-                    onChange={(e) => setWillCvUpdate(e.target.value)}
+                    onChange={(e) => {setWillCvUpdate(e.target.value)}}
                     name="radio-buttons-group"
                     row
                   >

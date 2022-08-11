@@ -55,6 +55,7 @@ const WithdrawRequestDetail = () => {
         reason:rejectReason
       });
       alert("Yêu cầu rút tiền được từ chối thành công!");
+      navigate("/withdraws");
     } catch (error) {
       alert(
         "Yêu cầu rút tiền từ chối bị thất bại do : " + getErrorMessage(error)
@@ -68,6 +69,7 @@ const WithdrawRequestDetail = () => {
         transactionId: withdrawId,
       });
       alert("Yêu cầu rút tiền được chấp nhận thành công!");
+      navigate("/withdraws");
     } catch (error) {
       alert(
         "Yêu cầu rút tiền chấp nhận bị thất bại do : " + getErrorMessage(error)

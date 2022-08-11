@@ -18,28 +18,13 @@ const CustomerProfile = () => {
   const [loading, setLoading] = useState(true);
   const [customer, setCustomer] = useState(null);
   const [open, setOpen] = useState(false);
-  const [banReason, setBanReason] = useState("");
+  const [banReason, setBanReason] = useState({
+    value: "",
+    error: "",
+  });
   const [isEdited, setIsEdited] = useState(false);
-  const handleSave = () => {
-    setStatus(!status);
-    setOpen(false);
-  };
-  const handleClose = () => {
-    setIsEdited(false);
-    setOpen(false);
-  };
-  const handleSwitchChange = (event) => {
-    if (!isEdited) {
-      if (!event.target.checked) {
-        setOpen(true);
-      } else {
-        setStatus(event.target.checked);
-      }
-      setIsEdited(true);
-    }
-  };
-  const handleSaveCustomer = async () => {
-    if (isEdited) {
+  const saveCustomer = async () => {
+    if (isEdited && banReason.error === "") {
       try {
         if (status) {
           await customerAPI.delete(
@@ -48,13 +33,36 @@ const CustomerProfile = () => {
         } else {
           await customerAPI.post(ApiContants.BAN_USER, {
             phone: customer.customerPhone,
-            banReason,
+            banReason: banReason.value,
           });
         }
+        setOpen(false);
         alert("Cập nhật thông tin thành công!");
+        navigate("/customers");
       } catch (error) {
+        setOpen(false);
         alert("Cập nhật thông tin không thành công.Vui lòng thử lại sau!");
       }
+    }
+  };
+  const handleSave = (e) => {
+    e.preventDefault();
+    saveCustomer();
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleSwitchChange = (event) => {
+    if (!isEdited) {
+      setStatus(event.target.checked);
+      setIsEdited(true);
+    }
+  };
+  const handleSaveCustomer = async () => {
+    if (!status) {
+      setOpen(true);
+    } else {
+      saveCustomer();
     }
   };
   useEffect(() => {

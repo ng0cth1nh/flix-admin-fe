@@ -2,8 +2,7 @@ import "./WithdrawRequest.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import {
   TableContainer,
@@ -92,7 +91,6 @@ const WithdrawRequest = () => {
 
   const handleChangeTypeFilter = (event) => {
     setTypeFilter(event.target.value);
-    searchData(event.target.value);
   };
   const fetchData = async () => {
     try {
@@ -109,13 +107,10 @@ const WithdrawRequest = () => {
       navigate("/error");
     }
   };
-  const handleSearch = () => {
-    searchData(null);
-  };
-  const searchData = async (typeChange) => {
-    let type = typeChange !== null ? typeChange : typeFilter;
+  const searchData = async () => {
+   
     // case both search text and status is null then fetch data by paging
-    if (!search.trim() && !type) {
+    if (!search.trim() && !typeFilter) {
       setIsSearching(false);
       setPage(0);
       fetchData();
@@ -127,8 +122,8 @@ const WithdrawRequest = () => {
       searchUrl += `?keyword=${search.trim()}`;
       flag = true;
     }
-    if (type) {
-      searchUrl += (flag ? "&" : "?") + `withdrawType=${type}`;
+    if (typeFilter) {
+      searchUrl += (flag ? "&" : "?") + `withdrawType=${typeFilter}`;
     }
     console.log(searchUrl);
     try {
@@ -168,22 +163,14 @@ const WithdrawRequest = () => {
             }}
           >
             <h1>Yêu cầu rút tiền</h1>
-            <Search
-              placeholder="Mã giao dịch"
-              handleSearch={handleSearch}
-              search={search}
-              setSearch={setSearch}
-            />
           </div>
           <div className="filter">
-            <h2>Lọc theo</h2>
-
             <FormControl
               sx={{
                 width: "200px",
-                marginRight: "50px",
+                marginRight:5,
+                backgroundColor:'white'
               }}
-              margin="normal"
             >
               <InputLabel id="status-label">Loại rút tiền</InputLabel>
               <Select
@@ -198,6 +185,12 @@ const WithdrawRequest = () => {
                 <MenuItem value={"BANKING"}>Chuyển khoản</MenuItem>
               </Select>
             </FormControl>
+            <Search
+              placeholder="Mã giao dịch"
+              handleSearch={searchData}
+              search={search}
+              setSearch={setSearch}
+            />
           </div>
           {data.length !== 0 ? (
             <div>

@@ -1,19 +1,30 @@
 import React from "react";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import "./Search.scss";
+import { Paper, InputBase, IconButton } from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
 const Search = ({ placeholder, handleSearch, search, setSearch }) => {
   return (
-    <div className="search">
-      <input
-        type="text"
-        value={search}
+    <Paper
+      component="form"
+      sx={{
+        p: "2px 4px",
+        display: "flex",
+        alignItems: "center",
+        width: 200,
+        border:"0.1px solid #9d9e9f",
+        boxShadow:"none"
+      }}
+    >
+      <InputBase
+        sx={{ ml: 1, flex: 1 }}
         placeholder={placeholder}
-        onChange={(e) => {
-          setSearch(e.target.value);
-        }}
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        inputProps={{ "aria-label": "search google maps" }}
       />
-      <SearchOutlinedIcon sx={{ cursor: "pointer" }} onClick={handleSearch} />
-    </div>
+      <IconButton onClick={handleSearch} sx={{ p: "10px" }} aria-label="search">
+        <SearchIcon />
+      </IconButton>
+    </Paper>
   );
 };
 

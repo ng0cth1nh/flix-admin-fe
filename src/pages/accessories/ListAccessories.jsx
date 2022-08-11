@@ -6,7 +6,7 @@ import useAxios from "../../hooks/useAxios";
 import { Link, useNavigate } from "react-router-dom";
 import Config from "../../constants/Config";
 import Loading from "../../components/loading/Loading";
-import Search from "../../components/search/Search";
+import SearchInline from "../../components/search/SearchInline";
 import ApiContants from "../../constants/Api";
 
 import {
@@ -162,7 +162,7 @@ const ListAccessories = () => {
           >
             <h1>Linh kiện</h1>
             <div style={{ display: "flex" }}>
-              <Search
+              <SearchInline
                 placeholder="Tên linh kiện"
                 handleSearch={searchData}
                 search={search}

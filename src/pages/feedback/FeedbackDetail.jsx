@@ -13,7 +13,7 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import Loading from "../../components/loading/Loading";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
-
+import Config from "../../constants/Config"
 import "./FeedbackDetail.scss";
 import { getStatus } from "../../utils/util";
 import { formatFromDateTime } from "../../utils/getFormatDate";
@@ -69,7 +69,7 @@ const FeedbackDetail = () => {
                 label="Loại yêu cầu"
                 margin="normal"
                 error={false}
-                value={data.feedbackType}
+                value={Config.FEEDBACK_TYPE[data.feedbackType]}
                 variant="outlined"
                 sx={{
                   width: "40%",
@@ -258,7 +258,7 @@ const FeedbackDetail = () => {
                   }}
                 >
                   <Link
-                    to={`/feedbacks/feedback/update/${feedbackId}`}
+                    to={`/feedbacks/feedback/update?feedbackId=${feedbackId}&statusId=${data.status}`}
                     style={{ textDecoration: "none", color: "white" }}
                   >
                     Cập nhật

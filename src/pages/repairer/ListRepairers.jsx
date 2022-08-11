@@ -129,11 +129,9 @@ const ListRepairers = () => {
 
   const handleChangeStatusFilter = (event) => {
     setStatusFilter(event.target.value);
-    searchData(event.target.value, null);
   };
   const handleChangeVerifyFilter = (event) => {
     setVerifyTypeFilter(event.target.value);
-    searchData(null, event.target.value);
   };
   const fetchData = async () => {
     try {
@@ -150,15 +148,9 @@ const ListRepairers = () => {
       navigate("/error");
     }
   };
-  const handleSearch = () => {
-    searchData(null, null);
-  };
-  const searchData = async (statusChange, verifyChange) => {
-    let status = statusChange !== null ? statusChange : statusFilter;
-    let verify = verifyChange !== null ? verifyChange : verifyTypeFilter;
-    console.log(status, verify);
+  const searchData = async () => {
     // case both search text and status is null then fetch data by paging
-    if (!search.trim() && !status && !verify) {
+    if (!search.trim() && !statusFilter && !verifyTypeFilter) {
       setIsSearching(false);
       setPage(0);
       fetchData();
@@ -170,12 +162,12 @@ const ListRepairers = () => {
       searchUrl += `?keyword=${search.trim()}`;
       flag = true;
     }
-    if (status) {
-      searchUrl += (flag ? "&" : "?") + `accountState=${status}`;
+    if (statusFilter) {
+      searchUrl += (flag ? "&" : "?") + `accountState=${statusFilter}`;
       flag = true;
     }
-    if (verify) {
-      searchUrl += (flag ? "&" : "?") + `cvStatus=${verify}`;
+    if (verifyTypeFilter) {
+      searchUrl += (flag ? "&" : "?") + `cvStatus=${verifyTypeFilter}`;
     }
     console.log(searchUrl);
     try {
@@ -217,21 +209,14 @@ const ListRepairers = () => {
             }}
           >
             <h1>Thợ sửa chữa</h1>
-            <Search
-              placeholder="Số điện thoại"
-              handleSearch={handleSearch}
-              search={search}
-              setSearch={setSearch}
-            />
           </div>
           <div className="filter">
-            <h2>Lọc theo</h2>
-
             <FormControl
               sx={{
                 width: "200px",
+                marginRight:5,
+                backgroundColor:'white'
               }}
-              margin="normal"
             >
               <InputLabel id="status-label">Trạng thái</InputLabel>
               <Select
@@ -249,9 +234,9 @@ const ListRepairers = () => {
             <FormControl
               sx={{
                 width: "200px",
-                marginLeft: "30px",
+                marginRight:5,
+                backgroundColor:'white'
               }}
-              margin="normal"
             >
               <InputLabel id="verify-label">Xác thực</InputLabel>
               <Select
@@ -268,6 +253,12 @@ const ListRepairers = () => {
                 <MenuItem value="REJECTED">Đã hủy</MenuItem>
               </Select>
             </FormControl>
+            <Search
+              placeholder="Số điện thoại"
+              handleSearch={searchData}
+              search={search}
+              setSearch={setSearch}
+            />
           </div>
           {data.length !== 0 ? (
             <div>

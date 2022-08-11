@@ -6,8 +6,7 @@ import {store} from "../features/store";
 import { refreshToken } from '../features/auth/authSlice';
 const useAxios = () => {
   const axiosInstance = axios.create({
-    // baseURL: 'https://flix-lj7prqscta-as.a.run.app/api/v1',
-    baseURL:'http://localhost:8080/api/v1/'
+    baseURL: 'https://flix-lj7prqscta-as.a.run.app/api/v1',
   });
 
   axiosInstance.interceptors.request.use(async req => {

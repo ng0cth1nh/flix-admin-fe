@@ -6,9 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import useAxios from "../../hooks/useAxios";
 import Config from "../../constants/Config";
 import Loading from "../../components/loading/Loading";
-import Search from "../../components/search/Search";
+import SearchInline from "../../components/search/SearchInline";
 import ApiContants from "../../constants/Api";
-import { formatFromDateTime } from "../../utils/getFormatDate";
 import {
   TableContainer,
   Table,
@@ -166,7 +165,7 @@ const ListCategories = () => {
           >
             <h1>Danh mục</h1>
             <div style={{ display: "flex" }}>
-              <Search
+              <SearchInline
                 placeholder="Tên danh mục"
                 handleSearch={searchData}
                 search={search}

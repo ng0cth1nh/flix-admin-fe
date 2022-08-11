@@ -4,8 +4,8 @@ import {
   Box,
   Typography,
   TextField,
-  TextareaAutosize,
 } from "@mui/material";
+import MuiTextAreaInput from "../formInput/MuiTextAreaInput";
 
 const style = {
   position: "fixed",
@@ -25,8 +25,11 @@ const BanModal = ({
   setBanReason,
   handleSave,
   phone,
-  userType
+  userType,
 }) => {
+  const onChange = (id, text, error) => {
+    setBanReason({ value: text, error });
+  };
   return (
     <Modal
       open={open}
@@ -35,95 +38,85 @@ const BanModal = ({
       aria-describedby="modal-modal-description"
     >
       <Box sx={style}>
-        <Typography
-          id="modal-modal-title"
-          variant="h6"
-          component="h2"
-          sx={{ textAlign: "center" }}
-        >
-          Bạn có chắc muốn chặn tài khoản này không?
-        </Typography>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginTop: "20px",
-          }}
-        >
-          <TextField
-            id="title"
-            label="Số điện thoại"
-            margin="normal"
-            error={false}
-            value={phone}
-            defaultValue="45985858"
-            variant="outlined"
-            sx={{
-              width: "40%",
-            }}
-            inputProps={{ readOnly: true }}
-          />
-          <TextField
-            id="title"
-            label="Loại người dùng"
-            margin="normal"
-            value={userType}
-            variant="outlined"
-            sx={{
-              width: "40%",
-            }}
-            inputProps={{ readOnly: true }}
-          />
-        </div>
-        <div style={{ width: "100%", marginTop: "10px" }}>
-          <Typography sx={{ fontSize: "14px" }}>Lí do</Typography>
-          <TextareaAutosize
-            minRows={5}
-            maxRows={7}
-            aria-label="maximum height"
-            placeholder="Nội dung"
-            value={banReason}
-            onChange={(e) => {
-              setBanReason(e.target.value);
-            }}
+        <form onSubmit={handleSave}>
+          <Typography
+            id="modal-modal-title"
+            variant="h6"
+            component="h2"
+            sx={{ textAlign: "center" }}
+          >
+            Bạn có chắc muốn chặn tài khoản này không?
+          </Typography>
+          <div
             style={{
-              width: "97%",
-              marginTop: "10px",
-              padding: "10px",
-              resize: "none",
+              display: "flex",
+              justifyContent: "space-between",
+              marginTop: "20px",
             }}
+          >
+            <TextField
+              id="title"
+              label="Số điện thoại"
+              margin="normal"
+              error={false}
+              value={phone}
+              defaultValue="45985858"
+              variant="outlined"
+              sx={{
+                width: "40%",
+              }}
+              inputProps={{ readOnly: true }}
+            />
+            <TextField
+              id="title"
+              label="Loại người dùng"
+              margin="normal"
+              value={userType}
+              variant="outlined"
+              sx={{
+                width: "40%",
+              }}
+              inputProps={{ readOnly: true }}
+            />
+          </div>
+          <MuiTextAreaInput
+            label="Lý do"
+            item={banReason}
+            id="description"
+            onChange={onChange}
+            isRequired={true}
           />
-        </div>
-        <div
-          style={{
-            width: "40%",
-            display: "flex",
-            justifyContent: "space-around",
-            marginLeft: "auto",
-            marginTop: "40px",
-          }}
-        >
-          <Button
-            variant="contained"
-            sx={{
-              textTransform: "none",
+          <div
+            style={{
+              width: "40%",
+              display: "flex",
+              justifyContent: "space-around",
+              marginLeft: "auto",
+              marginTop: "40px",
             }}
-            onClick={handleClose}
-            color="error"
           >
-            Thoát
-          </Button>
-          <Button
-            variant="contained"
-            sx={{
-              textTransform: "none",
-            }}
-            disabled={!banReason}
-            onClick={handleSave}
-          >
-            Lưu
-          </Button>
-        </div>
+            <Button
+              variant="contained"
+              sx={{
+                textTransform: "none",
+              }}
+              onClick={handleClose}
+              color="error"
+            >
+              Thoát
+            </Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{
+                textTransform: "none",
+              }}
+              disabled={!banReason}
+            >
+              Lưu
+            </Button>
+          </div>
+        </form>
       </Box>
     </Modal>
   );

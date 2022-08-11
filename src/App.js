@@ -79,7 +79,7 @@ function App() {
           <Route index element={<ListFeedbacks />} />
           <Route path="feedback/new" exact element={<NewFeedback />} />
           <Route
-            path="feedback/update/:feedbackId"
+            path="feedback/update"
             exact
             element={<UpdateFeedback />}
           />

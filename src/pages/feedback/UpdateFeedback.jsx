@@ -3,14 +3,12 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import {
   Button,
-  Typography,
-  TextareaAutosize,
   Select,
   MenuItem,
   InputLabel,
   FormControl,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./UpdateFeedback.scss";
 import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
 import useAxios from "../../hooks/useAxios";
@@ -18,16 +16,18 @@ import ApiContants from "../../constants/Api";
 import getErrorMessage from "../../utils/getErrorMessage";
 
 const UpdateFeedback = () => {
-  const { feedbackId } = useParams();
-  console.log("feedbackId",feedbackId)
-  const navigate= useNavigate();
-  const userAPI= useAxios();
+  const { search } = useLocation();
+  const feedbackId = new URLSearchParams(search).get("feedbackId");
+  const statusId = new URLSearchParams(search).get("statusId");
+  console.log("feedbackId", feedbackId, 'fjdjf',statusId);
+  const navigate = useNavigate();
+  const userAPI = useAxios();
   const [values, setValues] = useState({
     response: {
       value: "",
       error: "",
     },
-    status: "PENDING",
+    status: statusId,
   });
   const onChange = (id, text, error) => {
     setValues({ ...values, [id]: { value: text, error } });
@@ -35,21 +35,21 @@ const UpdateFeedback = () => {
   const handleChange = (event) => {
     setValues({ ...values, status: event.target.value });
   };
-  const onSubmit = async(e)=>{
+  const onSubmit = async (e) => {
     e.preventDefault();
-    if(values.response.error!=="") return;
+    if (values.response.error !== "") return;
     try {
-      await userAPI.put(ApiContants.FEEDBACK_SINGLE,{
-        id:feedbackId,
-        status:values.status,
-        response:values.response.value
+      await userAPI.put(ApiContants.FEEDBACK_SINGLE, {
+        id: feedbackId,
+        status: values.status,
+        response: values.response.value,
       });
       alert("Cập nhật phản hồi thành công!");
       navigate(`/feedbacks/feedback/view/${feedbackId}`);
     } catch (error) {
-      alert("Cập nhật phản hồi thất bại do: "+getErrorMessage(error));
+      alert("Cập nhật phản hồi thất bại do: " + getErrorMessage(error));
     }
-  }
+  };
 
   return (
     <div className="update-feedback">

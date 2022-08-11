@@ -137,7 +137,6 @@ const ListRequests = () => {
 
   const handleChangeStatusFilter = (event) => {
     setStatusFilter(event.target.value);
-    searchData(event.target.value);
   };
   const fetchData = async () => {
     try {
@@ -153,13 +152,9 @@ const ListRequests = () => {
       navigate("/error");
     }
   };
-  const handleSearch = () => {
-    searchData(null);
-  };
-  const searchData = async (statusChange) => {
-    let status = statusChange !== null ? statusChange : statusFilter;
+  const searchData = async () => {
     // case both search text and status is null then fetch data by paging
-    if (!search.trim() && !status) {
+    if (!search.trim() && !statusFilter) {
       setIsSearching(false);
       setPage(0);
       fetchData();
@@ -171,8 +166,8 @@ const ListRequests = () => {
       searchUrl += `?keyword=${search.trim()}`;
       flag = true;
     }
-    if (status) {
-      searchUrl += (flag ? "&" : "?") + `status=${status}`;
+    if (statusFilter) {
+      searchUrl += (flag ? "&" : "?") + `status=${statusFilter}`;
     }
     console.log(searchUrl);
     try {
@@ -215,21 +210,15 @@ const ListRequests = () => {
             }}
           >
             <h1>Yêu cầu</h1>
-            <Search
-              placeholder="Mã yêu cầu"
-              handleSearch={handleSearch}
-              search={search}
-              setSearch={setSearch}
-            />
+          
           </div>
           <div className="filter">
-            <h2>Lọc theo</h2>
-
             <FormControl
               sx={{
                 width: "200px",
+                marginRight:5,
+                backgroundColor:'white'
               }}
-              margin="normal"
             >
               {/* // PENDING,APPROVED,FIXING,CANCEL,PAYMENT_WAITING,DONE */}
               <InputLabel id="status-label">Trạng thái</InputLabel>
@@ -249,6 +238,12 @@ const ListRequests = () => {
                 <MenuItem value={"DONE"}>Hoàn thành</MenuItem>
               </Select>
             </FormControl>
+            <Search
+              placeholder="Mã yêu cầu"
+              handleSearch={searchData}
+              search={search}
+              setSearch={setSearch}
+            />
           </div>
           {data.length !== 0 ? (
             <div>

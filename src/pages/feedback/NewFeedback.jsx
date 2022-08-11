@@ -82,13 +82,6 @@ const NewFeedback = () => {
     }
     const formData = new FormData();
     formData.append("phone", values.phone.value);
-    console.log(
-      values.phone.value,
-      values.requestCode.value,
-      values.title.value,
-      values.description.value,
-      requestTypeId
-    );
     formData.append("requestCode", values.requestCode.value);
     formData.append("title", values.title.value);
     formData.append("description", values.description.value);
@@ -106,7 +99,6 @@ const NewFeedback = () => {
       navigate("/feedbacks");
     } catch (error) {
       alert("Tạo phản hồi thất bại do:" + getErrorMessage(error));
-      // navigate("/error");
     }
   };
   return (

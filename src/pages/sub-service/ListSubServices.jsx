@@ -1,10 +1,13 @@
 import "./ListSubServices.scss";
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import { Link, useParams } from "react-router-dom";
-
+import { Link, useNavigate, useParams } from "react-router-dom";
+import useAxios from "../../hooks/useAxios";
+import Config from "../../constants/Config";
+import Loading from "../../components/loading/Loading";
+import SearchInline from "../../components/search/SearchInline";
+import ApiContants from "../../constants/Api";
 import {
   TableContainer,
   Table,
@@ -21,7 +24,7 @@ import { getMoneyFormat } from "../../utils/util";
 const columns = [
   { id: "index", label: "#", width: "5%", align: "center" },
   {
-    id: "name",
+    id: "subServiceName",
     label: "TÊN DỊCH VỤ CON",
     width: "15%",
     align: "center",
@@ -45,7 +48,7 @@ const columns = [
     width: "15%",
     align: "center",
     format: (value) =>
-      value ? (
+      value ==="ACTIVE"? (
         <Typography variant="p" sx={{ color: "green" }}>
           Hoạt động
         </Typography>
@@ -72,55 +75,74 @@ const columns = [
     ),
   },
 ];
-
-function createData(id, name, price, description, status) {
-  return { id, name, price, description, status };
-}
-
-const rows = [
-  createData("India", 1324171354, 120000, 60483973, true),
-  createData("China", 1403500365, 12000000, 60483973, false),
-  createData("Italy", 60483973, 120000, 60483973, true),
-  createData("United States", 327167434, 120000, 60483973, true),
-  createData("Canada", 37602103, 120000, 37602103, true),
-  createData("Australia", 25475400, 120000, 60483973, false),
-  createData("Germany", 83019200, 120000, 60483973, true),
-  createData("Ireland", 4857000, 120000, 60483973, false),
-  createData(
-    "Mexico",
-    "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj",
-    120000,
-    "fjadskjfkl;jjjjjjjjjjjjjjjjjjjjjjjljljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj fdjsfjsdklfj fjdsjfklsdjf fkdlsjklsdfjkljadsfkjklsad",
-    true
-  ),
-  createData("Japan", 126317000, 120000, 60483973, true),
-  createData("France", 67022000, 120000, 60483973, false),
-  createData("United Kingdom", 67545757, 120000, 60483973, true),
-  createData("Russia", 146793744, 120000, 60483973, true),
-  createData("Nigeria", 200962417, 120000, 60483973, true),
-  createData("Brazil", 210147125, 120000, 60483973, false),
-];
 const useStyles = makeStyles({
   root: {
     "& .MuiTableCell-head": {
       fontWeight: "bold",
+      backgroundColor: "#edeff0",
     },
   },
 });
 const ListSubServices = () => {
-  const classes = useStyles();
+  const classes = useStyles();  
+  const navigate = useNavigate();
+  const userAPI = useAxios();
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const { categoryId, serviceId } = useParams();
+  const [data, setData] = useState([]);
+  const [totalRecord, setTotalRecord] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
 
+const fetchData = async () => {
+    try {
+      setLoading(true);
+      const response = await userAPI.get(
+        ApiContants.SUBSERVICE_LIST + `?pageNumber=${page}&serviceId=${serviceId}`
+      );
+      setTotalRecord(response.data.totalRecord);
+      setData(response.data.subServices);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      navigate("/error");
+    }
+  };
+  const searchData = async () => {
+    // case both search text and status is null then fetch data by paging
+    if (!search.trim()) {
+      setIsSearching(false);
+      setPage(0);
+      fetchData();
+      return;
+    }
+    let searchUrl = ApiContants.SUBSERVICE_SEARCH;
+    if (search.trim()) {
+      searchUrl += `?keyword=${search.trim()}&serviceId=${serviceId}`;
+    }
+    try {
+      setPage(0);
+      setLoading(true);
+      setIsSearching(true);
+      const response = await userAPI.get(searchUrl);
+      setData(response.data.subServices.map(item =>({...item, subServiceName:item.name })));
+      setTotalRecord(response.data.subServices.length);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      navigate("/error");
+    }
+  };
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+  useEffect(() => {
+    if (!isSearching) {
+      fetchData();
+    }
+  }, [page]);
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
-  };
   return (
     <div className="list-subservices">
       <Sidebar />
@@ -137,10 +159,12 @@ const ListSubServices = () => {
           >
             <h1>Dịch vụ con</h1>
             <div style={{ display: "flex" }}>
-              <div className="search">
-                <input type="text" placeholder="Tìm kiếm..." />
-                <SearchOutlinedIcon />
-              </div>
+            <SearchInline
+                placeholder="Tên dịch vụ"
+                handleSearch={searchData}
+                search={search}
+                setSearch={setSearch}
+              />
               <Button variant="contained" color="success">
                 <Link
                   to={`/categories/${categoryId}/services/${serviceId}/subservices/subservice`}
@@ -151,7 +175,9 @@ const ListSubServices = () => {
               </Button>
             </div>
           </div>
-          <TableContainer sx={{ minHeight: "600px" }}>
+          {data.length !== 0 ? (
+            <div>
+          <TableContainer sx={{ minHeight: "600px", marginTop: "20px"  }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow className={classes.root}>
@@ -167,8 +193,15 @@ const ListSubServices = () => {
                 </TableRow>
               </TableHead>
               <TableBody sx={{ borderWidth: 1 }}>
-                {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                {data
+                      .slice(
+                        data.length <= Config.ROW_PER_PAGE
+                          ? 0
+                          : page * Config.ROW_PER_PAGE,
+                        data.length <= Config.ROW_PER_PAGE
+                          ? Config.ROW_PER_PAGE
+                          : page * Config.ROW_PER_PAGE + Config.ROW_PER_PAGE
+                      )
                   .map((row, index) => {
                     return (
                       <TableRow
@@ -181,7 +214,7 @@ const ListSubServices = () => {
                           if (column.id === "index") {
                             return (
                               <TableCell key={column.id} align={column.align}>
-                                {page * rowsPerPage + index + 1}
+                                {page * Config.ROW_PER_PAGE  + index + 1}
                               </TableCell>
                             );
                           } else {
@@ -205,12 +238,21 @@ const ListSubServices = () => {
           <TablePagination
             rowsPerPageOptions={[10]}
             component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
+            count={totalRecord}
+            rowsPerPage={Config.ROW_PER_PAGE}
             page={page}
             onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+          />  </div>
+          ) : loading ? null : (
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <img
+                src="/nodata.png"
+                alt="nodata"
+                style={{ width: "60%", aspectRatio: 1.5, margin: "auto" }}
+              />
+            </div>
+          )}
+          {loading && <Loading />}
         </div>
       </div>
     </div>

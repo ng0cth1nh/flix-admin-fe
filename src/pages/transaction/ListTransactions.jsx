@@ -127,11 +127,9 @@ const ListTransactions = () => {
   //before
   const handleChangeTypeFilter = (event) => {
     setTypeFilter(event.target.value);
-    searchData(null, event.target.value);
   };
   const handleChangeStatusFilter = (event) => {
     setStatusFilter(event.target.value);
-    searchData(event.target.value, null);
   };
   const fetchData = async () => {
     try {
@@ -147,15 +145,9 @@ const ListTransactions = () => {
       navigate("/error");
     }
   };
-  const handleSearch = () => {
-    searchData(null, null);
-  };
-  const searchData = async (statusChange, typeChange) => {
-    let status = statusChange !== null ? statusChange : statusFilter;
-    let type = typeChange !== null ? typeChange : typeFilter;
-    console.log(status, type);
+  const searchData = async () => {
     // case both search text and status is null then fetch data by paging
-    if (!search.trim() && !status && !type) {
+    if (!search.trim() && !statusFilter && !typeFilter) {
       setIsSearching(false);
       setPage(0);
       fetchData();
@@ -167,12 +159,12 @@ const ListTransactions = () => {
       searchUrl += `?keyword=${search.trim()}`;
       flag = true;
     }
-    if (status) {
-      searchUrl += (flag ? "&" : "?") + `status=${status}`;
+    if (statusFilter) {
+      searchUrl += (flag ? "&" : "?") + `status=${statusFilter}`;
       flag = true;
     }
-    if (type) {
-      searchUrl += (flag ? "&" : "?") + `transactionType=${type}`;
+    if (typeFilter) {
+      searchUrl += (flag ? "&" : "?") + `transactionType=${typeFilter}`;
     }
     console.log(searchUrl);
     try {
@@ -214,22 +206,15 @@ const ListTransactions = () => {
             }}
           >
             <h1>Giao dịch</h1>
-            <Search
-              placeholder="Mã giao dịch"
-              handleSearch={handleSearch}
-              search={search}
-              setSearch={setSearch}
-            />
+           
           </div>
           <div className="filter">
-            <h2>Lọc theo</h2>
-
             <FormControl
               sx={{
                 width: "200px",
-                marginRight: "50px",
+                marginRight:5,
+                backgroundColor:'white'
               }}
-              margin="normal"
             >
               <InputLabel id="status-label">Loại giao dịch</InputLabel>
               <Select
@@ -256,8 +241,9 @@ const ListTransactions = () => {
             <FormControl
               sx={{
                 width: "200px",
+                marginRight:5,
+                backgroundColor:'white'
               }}
-              margin="normal"
             >
               <InputLabel id="status-label">Trạng thái</InputLabel>
               <Select
@@ -273,6 +259,12 @@ const ListTransactions = () => {
                 <MenuItem value={"FAIL"}>Thất bại</MenuItem>
               </Select>
             </FormControl>
+            <Search
+              placeholder="Mã giao dịch"
+              handleSearch={searchData}
+              search={search}
+              setSearch={setSearch}
+            />
           </div>
           {data.length !== 0 ? (
             <div>

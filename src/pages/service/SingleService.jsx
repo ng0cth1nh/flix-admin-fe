@@ -1,149 +1,287 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import {
   TextField,
   Button,
+  Autocomplete,
   Switch,
   Typography,
   FormControlLabel,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
 } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
+import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
+import MuiFormInput from "../../components/formInput/MuiFormInput";
+import ApiContants from "../../constants/Api";
+import useAxios from "../../hooks/useAxios";
+import { getErrorImageSelect } from "../../utils/util";
+import getErrorMessage from "../../utils/getErrorMessage";
 import "./SingleService.scss";
+import Loading from "../../components/loading/Loading";
 
+const listField = [
+  {
+    id: "serviceName",
+    label: "Tên dịch vụ",
+    pattern: "^.{1,150}$",
+    errorMessage: "Tên dịch vụ có độ dài không quá 150 kí tự!",
+    isRequired: true,
+  },
+  {
+    id: "inspectionPrice",
+    label: "Phí kiểm tra(vnđ)",
+    pattern: "^[1-9][0-9]{3,}$",
+    errorMessage: "Phí kiểm tra bao gồm số và phải lớn hơn 1,000 vnđ!",
+    isRequired: true,
+  },
+];
 const SingleService = () => {
+  const { search } = useLocation();
+  const id = new URLSearchParams(search).get("id");
+  const { categoryId } = useParams();
+  console.log("id", id);
+  const navigate = useNavigate();
+  const userAPI = useAxios();
+  const [isEdited, setIsEdited] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const [status, setStatus] = useState(false);
-  const { search } = useLocation();
-  const [cateId, setCateId] = useState("");
-  const id = new URLSearchParams(search).get("id");
-  const handleChange = (event) => {
-    setCateId(event.target.value);
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState([]);
+  const [categoryLabel, setCategoryLabel] = useState("");
+  const [values, setValues] = useState({
+    description: {
+      value: "",
+      error: "",
+    },
+    serviceName: {
+      value: "",
+      error: "",
+    },
+    inspectionPrice: {
+      value: "",
+      error: "",
+    },
+    categoryId: {
+      value: null,
+      error: "",
+    },
+  });
+  const onChange = (id, text, error) => {
+    setValues({ ...values, [id]: { value: text, error } });
   };
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    for (const key in values) {
+      if (values[key].error !== "") return;
+    }
+    const formData = new FormData();
+    formData.append("serviceName", values.serviceName.value);
+    formData.append("description", values.description.value);
+    formData.append("inspectionPrice", values.inspectionPrice.value);
+    formData.append("categoryId", values.categoryId.value);
+    formData.append("isActive", status);
+    if (isEdited) {
+      formData.append("image", avatar);
+    }
+    if (!id) {
+      if (!avatar) {
+        alert("Vui lòng chọn ảnh trước khi tạo!");
+        return;
+      }
+      try {
+        await userAPI.post(ApiContants.SERVICE_SINGLE, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        alert("Tạo dịch vụ thành công!");
+        navigate(`/categories/${categoryId}/services`);
+      } catch (error) {
+        alert("Tạo dịch vụ thất bại do: " + getErrorMessage(error));
+      }
+    } else {
+      try {
+        formData.append("serviceId", id);
+        await userAPI.put(ApiContants.SERVICE_SINGLE, formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        alert("Cập nhật dịch vụ thành công!");
+        navigate(`/categories/${values.categoryId.value}/services`);
+      } catch (error) {
+        console.log(error);
+        alert("Cập nhật dịch vụ thất bại do: " + getErrorMessage(error));
+      }
+    }
+  };
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        setLoading(true);
+        const res = await userAPI.get(ApiContants.CATEFORY_ALL);
+        setCategories(res.data.categories);
+        console.log("categories", res.data.categories);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        navigate("/error");
+      }
+    };
+    fetchCategories();
+    if (id) {
+      const fetchData = async () => {
+        try {
+          const res = await userAPI.get(
+            ApiContants.SERVICE_SINGLE + `?serviceId=${id}`
+          );
+          const data = res.data;
+          for (const key in values) {
+            values[key].value = data[key];
+          }
+          setAvatar(data.image);
+          setStatus(data.active);
+        } catch (error) {
+          navigate("/error");
+        }
+      };
+      fetchData();
+    }
+  }, []);
 
   return (
     <div className="single-service">
       <Sidebar />
       <div className="single-service-container">
         <Navbar />
-        <div className="body">
-          <h1>Dịch vụ</h1>
-          <div className="avatar-container">
-            <img
-              src={
-                avatar
-                  ? URL.createObjectURL(avatar)
-                  : "https://images.pexels.com/photos/941693/pexels-photo-941693.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
-              }
-              alt=""
-              className="avatar"
-            />
-            <div>
-              <Button variant="outlined" sx={{ textTransform: "none" }}>
-                <label htmlFor="file">Chọn ảnh</label>
-              </Button>
-              <input
-                type="file"
-                id="file"
-                onChange={(e) => setAvatar(e.target.files[0])}
-                style={{ display: "none" }}
-              />
-            </div>
-          </div>
-          <div className="service-information">
-            <TextField
-              id="name"
-              label="Tên dịch vụ"
-              margin="normal"
-              error={false}
-              defaultValue="thang"
-              variant="outlined"
-              sx={{
-                width: "40%",
-              }}
-              required
-            />
-            <TextField
-              id="description"
-              label="Mô tả"
-              margin="normal"
-              error={false}
-              defaultValue="thang"
-              variant="outlined"
-              sx={{
-                width: "40%",
-              }}
-              required
-            />
-            <FormControl  sx={{
-                width: "40%",
-              }}
-              margin="normal"
-              >
-              <InputLabel id="demo-simple-select-label">Danh mục</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={cateId}
-                label="Danh mục"
-                onChange={handleChange}
-              >
-                <MenuItem value={10}>Dụng cụ gia dụng</MenuItem>
-                <MenuItem value={20}>Điện lạnh</MenuItem>
-                <MenuItem value={30}>Điện tử</MenuItem>
-              </Select>
-            </FormControl>
-            <TextField
-              id="price"
-              label="Phí kiểm tra"
-              margin="normal"
-              error={false}
-              defaultValue="20000"
-              variant="outlined"
-              sx={{
-                width: "40%",
-              }}
-              required
-            />
-            <div
-              style={{
-                width: "40%",
-                display: "flex",
-                marginTop: "20px",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Typography>Trạng thái: </Typography>
-              <FormControlLabel
-                control={
-                  <Switch
-                    onChange={(event) => {
-                      setStatus(event.target.checked);
+        {loading ? (
+          <Loading />
+        ) : (
+          <div className="body">
+            <h1>Dịch vụ</h1>
+            <form onSubmit={onSubmit}>
+              <div className="avatar-container">
+                <img
+                  src={!isEdited ? avatar : URL.createObjectURL(avatar)}
+                  alt="Ảnh dịch vụ"
+                  className="avatar"
+                />
+                <div>
+                  <Button variant="outlined" sx={{ textTransform: "none" }}>
+                    <label htmlFor="file">Chọn ảnh</label>
+                  </Button>
+                  <input
+                    type="file"
+                    id="file"
+                    onChange={(e) => {
+                      if (e.target.files.length > 0) {
+                        const err = getErrorImageSelect(e.target.files[0]);
+                        if (err) {
+                          alert(err);
+                        } else {
+                          setAvatar(e.target.files[0]);
+                          setIsEdited(true);
+                        }
+                      }
                     }}
+                    style={{ display: "none" }}
                   />
-                }
-                label={status ? "Hoạt động" : "Vô hiệu hóa"}
-              />
-            </div>
-            <div style={{ width: "100%", display: "flex" }}>
-              <Button
-                variant="contained"
-                sx={{
-                  textTransform: "none",
-                  marginLeft: "auto",
-                  marginRight: "20px",
-                }}
-              >
-                {id ? "Cập nhật" : "Thêm mới"}
-              </Button>
-            </div>
+                </div>
+              </div>
+              <div className="service-information">
+                {listField.map((input) => (
+                  <MuiFormInput
+                    key={input.id}
+                    {...input}
+                    onChange={onChange}
+                    item={values[input.id]}
+                  />
+                ))}
+
+                <Autocomplete
+                  value={
+                    categoryLabel !== ""
+                      ? categoryLabel
+                      : id
+                      ? categories.filter(
+                          (item) => item.id === values.categoryId.value
+                        )[0].categoryName
+                      : categories[0].categoryName
+                  }
+                  onChange={(event, newValue) => {
+                    console.log("new value", newValue);
+                    setValues({
+                      ...values,
+                      categoryId: { value: newValue.id, error: "" },
+                    });
+                    setCategoryLabel(newValue.categoryName);
+                  }}
+                  id="category-select"
+                  options={categories.map((item) => ({
+                    ...item,
+                    label: item.categoryName,
+                  }))}
+                  sx={{ width: "40%" }}
+                  renderInput={(params) => {
+                    return (
+                      <TextField
+                        {...params}
+                        id="cateId"
+                        label="Danh mục"
+                        margin="normal"
+                      />
+                    );
+                  }}
+                />
+                <div
+                  style={{
+                    width: "40%",
+                    display: "flex",
+                    marginTop: "20px",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography>Trạng thái: </Typography>
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        checked={status}
+                        onChange={(event) => {
+                          setStatus(event.target.checked);
+                        }}
+                      />
+                    }
+                    label={status ? "Hoạt động" : "Vô hiệu hóa"}
+                  />
+                </div>
+                <MuiTextAreaInput
+                  label="Mô tả"
+                  item={values.description}
+                  id="description"
+                  onChange={onChange}
+                  isRequired={true}
+                />
+
+                <div style={{ width: "100%", display: "flex" }}>
+                  <Button
+                    type="submit"
+                    variant="contained"
+                    sx={{
+                      textTransform: "none",
+                      marginLeft: "auto",
+                      marginRight: "20px",
+                      marginTop: "30px",
+                    }}
+                  >
+                    {id ? "Cập nhật" : "Thêm mới"}
+                  </Button>
+                </div>
+              </div>
+            </form>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

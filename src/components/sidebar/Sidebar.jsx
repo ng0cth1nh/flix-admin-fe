@@ -36,10 +36,12 @@ const Sidebar = () => {
       <div className="center">
         <ul>
           <p className="title">TRANG CHỦ</p>
-          <li>
-            <DashboardIcon className="icon" />
-            <span>Dashboard</span>
-          </li>
+          <Link to="/home" style={{ textDecoration: "none" }}>
+            <li>
+              <DashboardIcon className="icon" />
+              <span>Dashboard</span>
+            </li>
+          </Link>
           <p className="title">THÔNG TIN KHÁCH HÀNG</p>
           <Link to="/customers" style={{ textDecoration: "none" }}>
             <li>

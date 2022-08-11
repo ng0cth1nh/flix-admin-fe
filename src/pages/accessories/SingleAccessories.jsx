@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import {
-  Button,
-  Typography,
-  TextareaAutosize,
-  Autocomplete,
-  TextField,
-} from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { Button, Autocomplete, TextField } from "@mui/material";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./SingleAccessories.scss";
 import MuiFormInput from "../../components/formInput/MuiFormInput";
+import useAxios from "../../hooks/useAxios";
+import ApiContants from "../../constants/Api";
+import Loading from "../../components/loading/Loading";
+import getErrorMessage from "../../utils/getErrorMessage";
+import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
 
 const listField = [
   {
@@ -50,14 +49,12 @@ const listField = [
   },
 ];
 
-const options = [
-  { label: "Option 1", value: "thang1" },
-  { label: "Option 2", value: "thang2" },
-];
 const SingleAccessories = () => {
-  const [isChanged, setIsChanged] = useState(false);
-  const [value, setValue] = useState(options[0]);
-  const [inputValue, setInputValue] = useState("");
+  const userAPI = useAxios();
+  const navigate = useNavigate();
+  const [serviceLabel, setServiceLabel] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [services, setServices] = useState([]);
   const [values, setValues] = useState({
     accessoryName: {
       value: "",
@@ -83,88 +80,160 @@ const SingleAccessories = () => {
       value: "",
       error: "",
     },
+    serviceId: {
+      value: null,
+      error: "",
+    },
   });
   const { search } = useLocation();
   const id = new URLSearchParams(search).get("id");
   const onChange = (id, text, error) => {
     setValues({ ...values, [id]: { value: text, error } });
-    if (!isChanged) setIsChanged(true);
   };
   const handleSubmit = async (e) => {
     e.preventDefault();
+    for (const key in values) {
+      if (values[key].error !== "") return;
+    }
+    if (!values.serviceId.value) return;
     if (!id) {
+      try {
+        await userAPI.post(ApiContants.ACCESSORY_SINGLE, {
+          accessoryName: values.accessoryName.value,
+          price: values.price.value,
+          insurance: values.insurance.value,
+          manufacturer: values.manufacturer.value,
+          country: values.country.value,
+          description: values.description.value,
+          serviceId: values.serviceId.value,
+        });
+        alert("Tạo linh kiện thành công!");
+        navigate("/accessories");
+      } catch (error) {
+        alert("Tạo linh kiện thất bại do: " + getErrorMessage(error));
+      }
     } else {
       try {
-        
+        await userAPI.put(ApiContants.ACCESSORY_SINGLE, {
+          id,
+          accessoryName: values.accessoryName.value,
+          price: values.price.value,
+          insurance: values.insurance.value,
+          manufacturer: values.manufacturer.value,
+          country: values.country.value,
+          description: values.description.value,
+          serviceId: values.serviceId.value,
+        });
+        alert("Cập nhật linh kiện thành công!");
+        navigate("/accessories");
       } catch (error) {
-
+        alert("Cập nhật linh kiện thất bại do: " + getErrorMessage(error));
       }
     }
   };
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        setLoading(true);
+        const res = await userAPI.get(ApiContants.SERVICE_SELECT_ALL);
+        setServices(res.data.services);
+        console.log("service", res.data);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+      }
+    };
+    fetchServices();
+    if (id) {
+      const fetchData = async () => {
+        try {
+          const res = await userAPI.get(
+            ApiContants.ACCESSORY_SINGLE + `?accessoryId=${id}`
+          );
+          const data = res.data;
+          console.log("data", data);
+          for (const key in values) {
+            values[key].value = data[key];
+          }
+        } catch (error) {
+          navigate("/error");
+        }
+      };
+      fetchData();
+    }
+  }, []);
   return (
     <div className="single-accessories">
       <Sidebar />
       <div className="single-accessories-container">
         <Navbar />
-        <div className="body">
-          <h1>Linh kiện</h1>
-          <form className="accessories-information" onSubmit={handleSubmit}>
-            {listField.map((input) => (
-              <MuiFormInput
-                key={input.id}
-                {...input}
+        {loading ? (
+          <Loading />
+        ) : (
+          <div className="body">
+            <h1>Linh kiện</h1>
+            <form className="accessories-information" onSubmit={handleSubmit}>
+              {listField.map((input) => (
+                <MuiFormInput
+                  key={input.id}
+                  {...input}
+                  onChange={onChange}
+                  item={values[input.id]}
+                />
+              ))}
+              <Autocomplete
+                value={
+                  serviceLabel !== ""
+                    ? serviceLabel
+                    : id
+                    ? services.filter(
+                        (item) => item.id === values.serviceId.value
+                      )[0].serviceName
+                    : services[0].serviceName
+                }
+                onChange={(event, newValue) => {
+                  setValues({
+                    ...values,
+                    serviceId: { value: newValue.id, error: "" },
+                  });
+                  setServiceLabel(newValue.serviceName);
+                }}
+                id="controllable-states-demo"
+                options={services.map((item) => ({
+                  ...item,
+                  label: item.serviceName,
+                }))}
+                sx={{ width: "40%" }}
+                renderInput={(params) => {
+                  console.log("param", params);
+                  return (
+                    <TextField {...params} label="Dịch vụ" margin="normal" />
+                  );
+                }}
+              />
+              <MuiTextAreaInput
+                label="Nội dung"
+                item={values.description}
+                id="description"
                 onChange={onChange}
-                item={values[input.id]}
               />
-            ))}
-            <Autocomplete
-              value={value}
-              onChange={(event, newValue) => {
-                setValue(newValue.label);
-              }}
-              inputValue={inputValue}
-              onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue);
-              }}
-              id="controllable-states-demo"
-              options={options}
-              sx={{ width: "40%" }}
-              renderInput={(params) => (
-                <TextField {...params} label="Dịch vụ" margin="normal" />
-              )}
-            />
-            <div style={{ width: "100%", marginTop: "10px" }}>
-              <Typography sx={{ fontSize: "14px" }}>Mô tả</Typography>
-              <TextareaAutosize
-                minRows={5}
-                maxRows={7}
-                aria-label="maximum height"
-                placeholder="..."
-                style={{
-                  width: "97%",
-                  marginTop: "10px",
-                  padding: "10px",
-                  resize: "none",
-                }}
-              />
-            </div>
-            <div style={{ width: "100%", display: "flex" }}>
-              <Button
-                type="submit"
-                variant="contained"
-                sx={{
-                  textTransform: "none",
-                  marginLeft: "auto",
-                  marginRight: "20px",
-                  marginTop: "40px",
-                }}
-                disabled={!isChanged}
-              >
-                {id ? "Cập nhật" : "Thêm mới"}
-              </Button>
-            </div>
-          </form>
-        </div>
+              <div style={{ width: "100%", display: "flex" }}>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  sx={{
+                    textTransform: "none",
+                    marginLeft: "auto",
+                    marginRight: "20px",
+                    marginTop: "40px",
+                  }}
+                >
+                  {id ? "Cập nhật" : "Thêm mới"}
+                </Button>
+              </div>
+            </form>
+          </div>
+        )}
       </div>
     </div>
   );

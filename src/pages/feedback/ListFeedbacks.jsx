@@ -72,7 +72,7 @@ const columns = [
     align: "center",
     format: (value) =>
       value === "PENDING" ? (
-        <Typography variant="p" sx={{ color: "green" }}>
+        <Typography variant="p" sx={{ color: "orange" }}>
           Đang đợi
         </Typography>
       ) : value === "PROCESSING" ? (
@@ -130,11 +130,9 @@ const ListFeedbacks = () => {
 
   const handleChangeStatusFilter = (event) => {
     setStatusFilter(event.target.value);
-    searchData(event.target.value, null);
   };
   const handleChangeTypeFilter = (event) => {
     setTypeFilter(event.target.value);
-    searchData(null, event.target.value);
   };
   const fetchData = async () => {
     try {
@@ -151,14 +149,9 @@ const ListFeedbacks = () => {
       navigate("/error");
     }
   };
-  const handleSearch = () => {
-    searchData(null, null);
-  };
-  const searchData = async (statusChange, typeChange) => {
-    let status = statusChange !== null ? statusChange : statusFilter;
-    let type = typeChange !== null ? typeChange : typeFilter;
+  const searchData = async () => {
     // case both search text and status is null then fetch data by paging
-    if (!search.trim() && !status && !type) {
+    if (!search.trim() && !statusFilter && !typeFilter) {
       setIsSearching(false);
       setPage(0);
       fetchData();
@@ -170,14 +163,13 @@ const ListFeedbacks = () => {
       searchUrl += `?keyword=${search.trim()}`;
       flag = true;
     }
-    if (status) {
-      searchUrl += (flag ? "&" : "?") + `status=${status}`;
+    if (statusFilter) {
+      searchUrl += (flag ? "&" : "?") + `status=${statusFilter}`;
       flag = true;
     }
-    if (type) {
-      searchUrl += (flag ? "&" : "?") + `feedbackType=${type}`;
+    if (typeFilter) {
+      searchUrl += (flag ? "&" : "?") + `feedbackType=${typeFilter}`;
     }
-    console.log(searchUrl);
     try {
       setPage(0);
       setLoading(true);
@@ -219,12 +211,7 @@ const ListFeedbacks = () => {
           >
             <h1>Phản hồi</h1>
             <div style={{ display: "flex" }}>
-              <Search
-                placeholder="Số điện thoại"
-                handleSearch={handleSearch}
-                search={search}
-                setSearch={setSearch}
-              />
+            
               <Button variant="contained" color="success">
                 <Link
                   to={"/feedbacks/feedback/new"}
@@ -236,13 +223,12 @@ const ListFeedbacks = () => {
             </div>
           </div>
           <div className="filter">
-            <h2>Lọc theo</h2>
             <FormControl
               sx={{
                 width: "200px",
-                marginRight: "30px",
+                marginRight:5,
+                backgroundColor:'white'
               }}
-              margin="normal"
             >
               <InputLabel id="type-label">Loại yêu cầu</InputLabel>
               <Select
@@ -264,8 +250,9 @@ const ListFeedbacks = () => {
             <FormControl
               sx={{
                 width: "200px",
+                marginRight:5,
+                backgroundColor:'white'
               }}
-              margin="normal"
             >
               <InputLabel id="status-label">Trạng thái</InputLabel>
               <Select
@@ -282,6 +269,12 @@ const ListFeedbacks = () => {
                 <MenuItem value={"REJECTED"}>Đã hủy</MenuItem>
               </Select>
             </FormControl>
+            <Search
+                placeholder="Số điện thoại"
+                handleSearch={searchData}
+                search={search}
+                setSearch={setSearch}
+              />
           </div>
           {data.length !== 0 ? (
             <div>

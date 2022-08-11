@@ -36,8 +36,13 @@ const ApiContants = {
   CATEGORY_LIST:"/admin/categories",
   CATEGORY_SINGLE:"/admin/category",
   CATEGORY_SEARCH:"/admin/search/categories",
+  CATEFORY_ALL:"/category/all",
   SERVICE_LIST:"/admin/services",
   SERVICE_SINGLE:"/admin/service",
   SERVICE_SEARCH:"/admin/search/services",
+  SERVICE_SELECT_ALL:"/category/service/all",
+  SUBSERVICE_LIST:"/admin/subServices",
+  SUBSERVICE_SINGLE:"/admin/subService",
+  SUBSERVICE_SEARCH:"/admin/search/subServices"
 };
 export default ApiContants;

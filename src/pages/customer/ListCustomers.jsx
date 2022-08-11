@@ -104,7 +104,6 @@ const ListCustomers = () => {
 
   const handleChangeStatusFilter = (event) => {
     setStatusFilter(event.target.value);
-    searchData(event.target.value);
   };
   const fetchData = async () => {
     try {
@@ -120,13 +119,9 @@ const ListCustomers = () => {
       navigate("/error");
     }
   };
-  const handleSearch = () => {
-    searchData(null);
-  };
-  const searchData = async (statusChange) => {
-    let status = statusChange !== null ? statusChange : statusFilter;
+  const searchData = async () => {
     // case both search text and status is null then fetch data by paging
-    if (!search.trim() && !status) {
+    if (!search.trim() && !statusFilter) {
       setIsSearching(false);
       setPage(0);
       fetchData();
@@ -138,8 +133,8 @@ const ListCustomers = () => {
       searchUrl += `?keyword=${search.trim()}`;
       flag = true;
     }
-    if (status) {
-      searchUrl += (flag ? "&" : "?") + `status=${status}`;
+    if (statusFilter) {
+      searchUrl += (flag ? "&" : "?") + `status=${statusFilter}`;
     }
     console.log(searchUrl);
     try {
@@ -180,21 +175,15 @@ const ListCustomers = () => {
             }}
           >
             <h1>Khách hàng</h1>
-            <Search
-              placeholder="Số điện thoại"
-              handleSearch={handleSearch}
-              search={search}
-              setSearch={setSearch}
-            />
+         
           </div>
           <div className="filter">
-            <h2>Lọc theo</h2>
-
             <FormControl
               sx={{
                 width: "200px",
+                marginRight:5,
+                backgroundColor:'white'
               }}
-              margin="normal"
             >
               <InputLabel id="status-label">Trạng thái</InputLabel>
               <Select
@@ -209,6 +198,12 @@ const ListCustomers = () => {
                 <MenuItem value="BAN">Vô hiệu hóa</MenuItem>
               </Select>
             </FormControl>
+            <Search
+              placeholder="Số điện thoại"
+              handleSearch={searchData}
+              search={search}
+              setSearch={setSearch}
+            />
           </div>
           {data.length !== 0 ? (
             <div>
