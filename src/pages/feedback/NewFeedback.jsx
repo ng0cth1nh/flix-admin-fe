@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 
 import { useNavigate } from "react-router-dom";
-import Loading from "../../components/loading/Loading";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -14,7 +13,6 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  getImageListItemBarUtilityClass,
 } from "@mui/material";
 import "./NewFeedback.scss";
 import Pattern from "../../constants/Pattern";
