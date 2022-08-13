@@ -21,7 +21,7 @@ export const getStatus = (statusCode) => {
       return "Đang xử lí";
     case "DONE":
       return "Đã hoàn thành";
-    case "CANCELLED":
+    case "REJECTED":
       return "Đã hủy";
     default:
       return "";

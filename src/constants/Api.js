@@ -43,6 +43,8 @@ const ApiContants = {
   SERVICE_SELECT_ALL:"/category/service/all",
   SUBSERVICE_LIST:"/admin/subServices",
   SUBSERVICE_SINGLE:"/admin/subService",
-  SUBSERVICE_SEARCH:"/admin/search/subServices"
+  SUBSERVICE_SEARCH:"/admin/search/subServices",
+  COUNT_WITHDRAW:"/admin/withdraw/pending/count",
+  COUNT_FEEDBACK:"/admin/feedback/pending/count",
 };
 export default ApiContants;

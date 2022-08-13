@@ -39,7 +39,7 @@ export const refreshToken = createAsyncThunk("auth/refreshToken", async () => {
       Authorization: `Bearer ${refresh_token}`,
     },
   });
-  console.log('refresh token success!');
+  console.log("refresh token success!");
   Cookies.set("token", response.data.accessToken, { expires: 1 });
   Cookies.set("refreshToken", response.data.refreshToken, { expires: 1 });
   return response.data;
@@ -57,6 +57,13 @@ export const tryLocalSignIn = createAsyncThunk(
         await dispatch(refreshToken());
       }
     }
+  }
+);
+export const fetchUserProfile = createAsyncThunk(
+  "auth/fetchUserProfile",
+  async ({userAPI},thunkAPI) => {
+    const response = await userAPI.get(ApiContants.ADMIN_PROFILE);
+    return response.data;
   }
 );
 
@@ -122,6 +129,10 @@ const authSlice = createSlice({
       if (action.payload) {
         state.token = action.payload;
       }
+    });
+    builder.addCase(fetchUserProfile.fulfilled, (state, action) => {
+      console.log(action.payload);
+      state.user = action.payload;
     });
   },
 });

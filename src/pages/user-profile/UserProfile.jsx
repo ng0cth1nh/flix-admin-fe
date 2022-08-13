@@ -9,7 +9,8 @@ import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import getErrorMessage from "../../utils/getErrorMessage";
 import Loading from "../../components/loading/Loading";
-import { useNavigate } from "react-router-dom";
+import { fetchUserProfile } from "../../features/auth/authSlice";
+import { useSelector, useDispatch } from "react-redux";
 import MuiFormInput from "../../components/formInput/MuiFormInput";
 const listProfileInput = [
   {
@@ -65,21 +66,22 @@ const listPasswordInput = [
 
 const UserProfile = () => {
   const userAPI = useAxios();
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
   const [avatar, setAvatar] = useState(null);
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
   const [profileValues, setProfileValues] = useState({
     fullName: {
-      value: "",
+      value: user.fullName,
       error: "",
     },
     phone: {
-      value: "",
+      value: user.phone,
       error: "",
     },
     email: {
-      value: "",
+      value: user.email,
       error: "",
     },
   });
@@ -106,18 +108,22 @@ const UserProfile = () => {
   };
   useEffect(() => {
     const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await userAPI.get(ApiContants.ADMIN_PROFILE);
-        const data = response.data;
-        for (const key in profileValues) {
-          profileValues[key].value = data[key];
+      if (!user.fullName) {
+        try {
+          setLoading(true);
+          dispatch(fetchUserProfile({userAPI}));
+          const response = await userAPI.get(ApiContants.ADMIN_PROFILE);
+          const data = response.data;
+          for (const key in profileValues) {
+            profileValues[key].value = data[key];
+          }
+          setAvatarUrl(data.avatarUrl);
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
         }
-        setAvatarUrl(data.avatarUrl);
+      } else {
         setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        navigate("/error");
       }
     };
     fetchData();
@@ -137,6 +143,7 @@ const UserProfile = () => {
           },
         });
         alert("Cập nhật avatar thành công!");
+        dispatch(fetchUserProfile({ userAPI }));
       } catch (error) {
         alert("Cập nhật avatar không thành công do: " + getErrorMessage(error));
       }

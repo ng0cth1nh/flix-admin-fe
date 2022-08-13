@@ -49,25 +49,4 @@
       }
     }
   }
-  .profileMenu {
-    width: 200px;
-    position: absolute;
-    right: 20px;
-    &.notShow {
-      display: none;
-    }
-    ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
-      box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
-      overflow: hidden;
-    }
-    li{
-        padding: 10px 20px;
-        background-color: rgb(255, 255, 255);
-        cursor: pointer;
-    }
-  }
 }

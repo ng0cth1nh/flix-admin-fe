@@ -1,16 +1,38 @@
 import "./navbar.scss";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
-import { Badge } from "@mui/material";
+import { Badge, MenuItem, Menu } from "@mui/material";
 import ConfirmDialog from "../dialog/ConfirmDialog";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
+import useAxios from "../../hooks/useAxios";
+import ApiContants from "../../constants/Api";
+import { useSelector } from "react-redux";
 
 const Navbar = () => {
+  const userAPI= useAxios();
+  const { user } = useSelector((state) => state.auth);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
+  const [feedback, setFeedback] = useState(0);
+  const [withdraw, setWithdraw] = useState(0);
+
+  useEffect(() => {
+    const fetchData= async ()=>{
+      try {
+        const res1 = await userAPI.get(ApiContants.COUNT_FEEDBACK);
+        setFeedback(res1.data.count);
+        const res2 = await userAPI.get(ApiContants.COUNT_WITHDRAW);
+        setWithdraw(res2.data.count);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, []);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -25,9 +47,9 @@ const Navbar = () => {
       <div className="navbar">
         <div className="wrapper">
           <div className="items">
-            <div className="item">
+            <div className="item" onClick={()=> navigate("/withdraws")}>
               <Badge
-                badgeContent={900}
+                badgeContent={withdraw}
                 color="error"
                 sx={{
                   "& .MuiBadge-badge": {
@@ -40,9 +62,9 @@ const Navbar = () => {
                 <NotificationsNoneOutlinedIcon className="icon" />
               </Badge>
             </div>
-            <div className="item">
+            <div className="item"onClick={()=> navigate("/feedbacks")}>
               <Badge
-                badgeContent={900}
+                badgeContent={feedback}
                 color="error"
                 sx={{
                   "& .MuiBadge-badge": {
@@ -60,10 +82,15 @@ const Navbar = () => {
             </div>
             <div className="item">
               <img
-                src="https://images.pexels.com/photos/941693/pexels-photo-941693.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500"
+                src={user.avatarUrl}
                 alt=""
                 className="avatar"
-                onClick={() => {
+                onClick={(e) => {
+                  if (!showProfile) {
+                    setAnchorEl(e.currentTarget);
+                  } else {
+                    setAnchorEl(null);
+                  }
                   setShowProfile(!showProfile);
                 }}
               />
@@ -71,13 +98,25 @@ const Navbar = () => {
           </div>
         </div>
       </div>
-      <div className={`profileMenu ${!showProfile&&'notShow'}`}>
-        <ul>
-          <li onClick={()=> navigate("/userProfile")}>Tài khoản</li>
-          <li onClick={() => setOpen(true)}>Đăng xuất</li>
-        </ul>
-      </div>
-       <ConfirmDialog
+      <Menu
+        anchorEl={anchorEl}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        keepMounted
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "left",
+        }}
+        sx={{ marginTop: "20px", width: "200px" }}
+        open={showProfile}
+        onClose={() => setShowProfile(false)}
+      >
+        <MenuItem onClick={() => navigate("/userProfile")}>Tài khoản</MenuItem>
+        <MenuItem onClick={() => setOpen(true)}>Đăng xuất</MenuItem>
+      </Menu>
+      <ConfirmDialog
         open={open}
         title="Bạn có muốn đăng xuất không?"
         handleClose={handleClose}
