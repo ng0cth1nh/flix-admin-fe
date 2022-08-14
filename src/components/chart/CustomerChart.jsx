@@ -22,12 +22,13 @@ import moment from "moment";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import Loading from "../../components/loading/Loading";
+import { useNavigate } from "react-router-dom";
 
 const CustomerChart = ({ aspect }) => {
   const userAPI = useAxios();
   const [data, setData] = useState(null);
   const [statusFilter, setStatusFilter] = useState("DAY");
-
+  const navigate = useNavigate();
   const [selectedFromDate, setSelectedFromDate] = useState(
     moment().subtract(1, "month")
   );

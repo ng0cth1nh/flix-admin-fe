@@ -22,9 +22,11 @@ import moment from "moment";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import Loading from "../../components/loading/Loading";
+import { useNavigate } from "react-router-dom";
 
 const RepairerChart = ({ aspect }) => {
   const userAPI = useAxios();
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [statusFilter, setStatusFilter] = useState("DAY");
 
