@@ -16,6 +16,7 @@ definitions:
     - step: &build-and-test
         name: Build
         script:
+          - npm install -g yarn
           - yarn install
           - yarn build
           - mkdir packaged
