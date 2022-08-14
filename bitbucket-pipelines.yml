@@ -11,6 +11,7 @@
 
 options:
   docker: true
+  size: 2x
 definitions:
   steps:
     - step: &build-image
@@ -21,9 +22,15 @@ definitions:
           - docker save --output tmp-image.docker flix-admin-fe
         artifacts:
           - tmp-image.docker
+        services:
+          - docker
+        size: 2x 
     - step: &push-gcr-and-deploy
         name: Push to GCR and deploy to Cloud Run
         image: google/cloud-sdk:alpine
+        services:
+          - docker
+        size: 2x
         script:
           - docker load --input ./tmp-image.docker
           # Authenticating with the service account key file
@@ -40,6 +47,9 @@ definitions:
           - docker push ${IMAGE_NAME}
           # Deploy to Cloud Run
           - gcloud run deploy flix --image gcr.io/authentic-reach-351916/flix-admin-fe${SUFFIX} --max-instances 30 --platform managed --region asia-southeast1 --allow-unauthenticated
+  services:
+    docker:
+      memory: 4096
 pipelines:
   tags:
     v*:
