@@ -6,15 +6,32 @@
 
     .top{
         height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        .logo{
-            font-size: 20px;
-            font-weight: bold;
-            color: #0941b0;
-
+        .wrap{
+            justify-content: center;
+      
+            height: 100%;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            .brand{
+                font-size: 20px;
+                font-weight: bold;
+                color: #0941b0;
+                text-align: center;
+                align-self: center;
+            
+                display: inline;
+                margin-top: auto;
+                margin-bottom: auto;
+            };
+            .logo{
+                margin-right: 10px;
+                align-self: center;
+                border-radius: 10px;
+            }
         }
+        
+        
     }
     hr{
         height: 0;

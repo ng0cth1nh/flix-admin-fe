@@ -1,11 +1,7 @@
 import Home from "./pages/main/home/Home";
 import Login from "./pages/auth/login/Login";
 import ForgotPassword from "./pages/auth/forgotPassword/ForgotPassword";
-import {
-  Route,
-  Routes,
-  Navigate,
-} from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import UserProfile from "./pages/user-profile/UserProfile";
 import ListCategories from "./pages/category/ListCategories";
 import SingleCategory from "./pages/category/SingleCategory";
@@ -33,6 +29,8 @@ import CustomRouter from "./customRoutes/customRoutes";
 import history from "./customRoutes/history";
 import Error from "./pages/error/Error";
 import WithdrawRequestDetail from "./pages/request/WithdrawRequestDetail";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 function App() {
   return (
@@ -99,11 +97,7 @@ function App() {
         </Route>
         <Route path="/withdraws">
           <Route index element={<WithdrawRequest />} />
-          <Route
-            path=":withdrawId"
-            exact
-            element={<WithdrawRequestDetail />}
-          />
+          <Route path=":withdrawId" exact element={<WithdrawRequestDetail />} />
         </Route>
         <Route path="/error" exact element={<Error />} />
         <Route path="*" element={<Navigate to="/" replace />} />

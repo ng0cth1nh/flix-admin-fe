@@ -1,9 +1,9 @@
 import "./navbar.scss";
 import { useState, useEffect } from "react";
-import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
-import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
+import CreditCardIcon from "@mui/icons-material/CreditCard";
 import { Badge, MenuItem, Menu } from "@mui/material";
+import FeedbackIcon from "@mui/icons-material/Feedback";
 import ConfirmDialog from "../dialog/ConfirmDialog";
 import { useDispatch } from "react-redux";
 import { logout } from "../../features/auth/authSlice";
@@ -13,7 +13,7 @@ import ApiContants from "../../constants/Api";
 import { useSelector } from "react-redux";
 
 const Navbar = () => {
-  const userAPI= useAxios();
+  const userAPI = useAxios();
   const { user } = useSelector((state) => state.auth);
   const [anchorEl, setAnchorEl] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
@@ -21,7 +21,7 @@ const Navbar = () => {
   const [withdraw, setWithdraw] = useState(0);
 
   useEffect(() => {
-    const fetchData= async ()=>{
+    const fetchData = async () => {
       try {
         const res1 = await userAPI.get(ApiContants.COUNT_FEEDBACK);
         setFeedback(res1.data.count);
@@ -30,7 +30,7 @@ const Navbar = () => {
       } catch (error) {
         console.log(error);
       }
-    }
+    };
     fetchData();
   }, []);
   const dispatch = useDispatch();
@@ -47,7 +47,7 @@ const Navbar = () => {
       <div className="navbar">
         <div className="wrapper">
           <div className="items">
-            <div className="item" onClick={()=> navigate("/withdraws")}>
+            <div className="item" onClick={() => navigate("/withdraws")}>
               <Badge
                 badgeContent={withdraw}
                 color="error"
@@ -59,10 +59,10 @@ const Navbar = () => {
                   },
                 }}
               >
-                <NotificationsNoneOutlinedIcon className="icon" />
+                <CreditCardIcon className="icon" />
               </Badge>
             </div>
-            <div className="item"onClick={()=> navigate("/feedbacks")}>
+            <div className="item" onClick={() => navigate("/feedbacks")}>
               <Badge
                 badgeContent={feedback}
                 color="error"
@@ -74,11 +74,8 @@ const Navbar = () => {
                   },
                 }}
               >
-                <ChatBubbleOutlineOutlinedIcon className="icon" />
+                <FeedbackIcon className="icon" />
               </Badge>
-            </div>
-            <div className="item">
-              <ListOutlinedIcon className="icon" />
             </div>
             <div className="item">
               <img

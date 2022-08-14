@@ -1,39 +1,33 @@
 import { useEffect } from "react";
 import Sidebar from "../../../components/sidebar/Sidebar";
 import Navbar from "../../../components/navbar/Navbar";
-import Widget from "../../../components/widget/Widget";
-import Featured from "../../../components/featured/Featured";
-import Chart from "../../../components/chart/Chart";
-import Table from "../../../components/table/Table";
+import CustomerChart from "../../../components/chart/CustomerChart";
+import RepairerChart from "../../../components/chart/RepairerChart";
+import RequestChart from "../../../components/chart/RequestChart";
+import TransactionChart from "../../../components/chart/TransactionChart";
 import { useDispatch } from "react-redux";
 import { fetchUserProfile } from "../../../features/auth/authSlice";
 import useAxios from "../../../hooks/useAxios";
 import "./home.scss";
 
 const Home = () => {
-  const userAPI= useAxios();
+  const userAPI = useAxios();
   const dispatch = useDispatch();
+
   useEffect(() => {
-    dispatch(fetchUserProfile({userAPI}));
+    dispatch(fetchUserProfile({ userAPI }));
   }, [dispatch]);
+
   return (
     <div className="home">
       <Sidebar />
       <div className="homeContainer">
         <Navbar />
-        <div className="widgets">
-          <Widget type="user" />
-          <Widget type="order" />
-          <Widget type="earning" />
-          <Widget type="balance" />
-        </div>
         <div className="charts">
-          <Featured />
-          <Chart title="Last 6 Months (Revenue)" aspect={2 / 1} />
-        </div>
-        <div className="listContainer">
-          <div className="listTitle">Latest Transactions</div>
-          <Table />
+          <CustomerChart aspect={2 / 1} />
+          <RepairerChart aspect={2 / 1} />
+          <RequestChart aspect={2 / 1} />
+          <TransactionChart aspect={2 / 1} />
         </div>
       </div>
     </div>
