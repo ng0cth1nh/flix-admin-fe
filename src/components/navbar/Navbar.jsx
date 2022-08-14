@@ -10,11 +10,10 @@ import { logout } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
-import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const userAPI = useAxios();
-  const { user } = useSelector((state) => state.auth);
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
   const [feedback, setFeedback] = useState(0);
@@ -27,6 +26,9 @@ const Navbar = () => {
         setFeedback(res1.data.count);
         const res2 = await userAPI.get(ApiContants.COUNT_WITHDRAW);
         setWithdraw(res2.data.count);
+        const response = await userAPI.get(ApiContants.ADMIN_PROFILE);
+        const data = response.data;
+        setAvatarUrl(data.avatarUrl);
       } catch (error) {
         console.log(error);
       }
@@ -79,7 +81,7 @@ const Navbar = () => {
             </div>
             <div className="item">
               <img
-                src={user.avatarUrl}
+                src={avatarUrl}
                 alt=""
                 className="avatar"
                 onClick={(e) => {
