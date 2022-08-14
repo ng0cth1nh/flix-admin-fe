@@ -13,21 +13,8 @@ options:
   docker: true
 definitions:
   steps:
-    - step: &build-and-test
-        name: Build
-        image: node
-        script:
-          - yarn install
-          - yarn build
-          - mkdir packaged
-          - tar -czvf packaged/package-flix-admin-fe.tar.gz -C build .
-        artifacts:
-          - build/**
-        after-script:
-          # Collect checkstyle results, if any, and convert to Bitbucket Code Insights.
-          - pipe: atlassian/checkstyle-report:0.3.0
     - step: &build-image
-        name: Build Docker image
+        name: Build Docker Image
         image: node
         script:
           - docker build -t flix-admin-fe .
