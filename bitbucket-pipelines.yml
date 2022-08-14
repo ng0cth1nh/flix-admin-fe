@@ -15,6 +15,7 @@ definitions:
   steps:
     - step: &build-and-test
         name: Build
+        image: node
         script:
           - npm install -g yarn
           - yarn install
