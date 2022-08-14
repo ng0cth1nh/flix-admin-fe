@@ -16,14 +16,14 @@ definitions:
     - step: &build-and-test
         name: Build
         script:
-          - npm install
-          - npm run-script build
+          - yarn install
+          - yarn build
           - mkdir packaged
           - tar -czvf packaged/package-flix-admin-fe.tar.gz -C build .
         artifacts:
-          - build/** 
+          - build/**
         after-script:
-              # Collect checkstyle results, if any, and convert to Bitbucket Code Insights.
+          # Collect checkstyle results, if any, and convert to Bitbucket Code Insights.
           - pipe: atlassian/checkstyle-report:0.3.0
     - step: &build-image
         name: Build Docker image

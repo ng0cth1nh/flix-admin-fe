@@ -11,7 +11,13 @@ export const getErrorImageSelect = (image) => {
   return "";
 };
 export const getMoneyFormat = (money) => {
-  return parseInt(money).toLocaleString("en-US") + " vnđ";
+  return `${parseInt(money).toLocaleString("en-US").toString()} vnđ`;
+};
+export const getRequestFormat = (money) => {
+  return `${parseInt(money).toLocaleString("en-US").toString()} yêu cầu`;
+};
+export const getAccountFormat = (money) => {
+  return `${parseInt(money).toLocaleString("en-US").toString()} tài khoản`;
 };
 export const getStatus = (statusCode) => {
   switch (statusCode) {

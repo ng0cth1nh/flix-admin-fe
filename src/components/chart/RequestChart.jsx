@@ -22,9 +22,12 @@ import moment from "moment";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import Loading from "../loading/Loading";
+import { useNavigate } from "react-router-dom";
+import { getRequestFormat } from "../../utils/util";
 
 const RequestChart = ({ aspect }) => {
   const userAPI = useAxios();
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [statusFilter, setStatusFilter] = useState("DAY");
 
@@ -139,7 +142,7 @@ const RequestChart = ({ aspect }) => {
             width={720}
             height={360}
             data={data}
-            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            margin={{ top: 20, right: 30, left: 30, bottom: 0 }}
           >
             <CartesianGrid strokeDasharray="10 10" />
             <Line
@@ -170,22 +173,31 @@ const RequestChart = ({ aspect }) => {
             />
 
             <XAxis dataKey="date" />
-            <YAxis />
+            <YAxis tickFormatter={getRequestFormat} />
             <Tooltip
               formatter={(value, b, chartPoint) => {
                 switch (chartPoint.name) {
                   case "totalPendingRequest":
-                    return [value, "Yêu cầu chưa được chấp nhận"];
+                    return [
+                      getRequestFormat(value),
+                      "Yêu cầu chưa được chấp nhận",
+                    ];
                   case "totalCancelRequest":
-                    return [value, "Yêu cầu hủy"];
+                    return [getRequestFormat(value), "Yêu cầu hủy"];
                   case "totalApprovedRequest":
-                    return [value, "Yêu cầu đã được chấp nhận"];
+                    return [
+                      getRequestFormat(value),
+                      "Yêu cầu đã được chấp nhận",
+                    ];
                   case "totalFixingRequest":
-                    return [value, "Yêu cầu đang được sửa"];
+                    return [getRequestFormat(value), "Yêu cầu đang được sửa"];
                   case "totalDoneRequest":
-                    return [value, "Yêu cầu đã xong"];
+                    return [getRequestFormat(value), "Yêu cầu đã xong"];
                   case "totalPaymentWaitingRequest":
-                    return [value, "Yêu cầu đang chờ thanh toán"];
+                    return [
+                      getRequestFormat(value),
+                      "Yêu cầu đang chờ thanh toán",
+                    ];
                   default:
                     return "";
                 }
