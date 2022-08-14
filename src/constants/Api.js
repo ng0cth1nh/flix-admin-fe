@@ -49,6 +49,6 @@ const ApiContants = {
   DASHBOARD_CUSTOMER: "/admin/dashboard/account/customers",
   DASHBOARD_REPAIRER: "/admin/dashboard/account/repairers",
   DASHBOARD_REQUEST: "/admin/dashboard/requests",
-  DASHBOARD_TRANSACTION: "/admin/dashboard/transaction",
+  DASHBOARD_TRANSACTION: "/admin/dashboard/transactions",
 };
 export default ApiContants;
