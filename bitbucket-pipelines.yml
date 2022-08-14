@@ -47,6 +47,5 @@ pipelines:
       - step: *push-gcr-and-deploy
   branches:
     master:
-      - step: *build-and-test
       - step: *build-image
       - step: *push-gcr-and-deploy
