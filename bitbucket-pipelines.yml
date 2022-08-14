@@ -17,7 +17,6 @@ definitions:
         name: Build
         image: node
         script:
-          - npm install -g yarn
           - yarn install
           - yarn build
           - mkdir packaged
