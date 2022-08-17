@@ -9,6 +9,8 @@ import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import getErrorMessage from "../../utils/getErrorMessage";
 import Loading from "../../components/loading/Loading";
+import { fetchUserProfile } from "../../features/auth/authSlice";
+import { useDispatch } from "react-redux";
 import MuiFormInput from "../../components/formInput/MuiFormInput";
 const listProfileInput = [
   {
@@ -39,8 +41,7 @@ const listPasswordInput = [
     id: "oldPassword",
     label: "Mật khẩu cũ",
     pattern: Pattern.PASSWORD,
-    errorMessage:
-      "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
+    errorMessage: "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
     isRequired: true,
     type: "password",
   },
@@ -48,8 +49,7 @@ const listPasswordInput = [
     id: "newPassword",
     label: "Mật khẩu mới",
     pattern: Pattern.PASSWORD,
-    errorMessage:
-      "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
+    errorMessage: "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
     isRequired: true,
     type: "password",
   },
@@ -65,6 +65,7 @@ const listPasswordInput = [
 
 const UserProfile = () => {
   const userAPI = useAxios();
+  const dispatch = useDispatch();
   const [avatar, setAvatar] = useState(null);
   const [loading, setLoading] = useState(true);
   const [avatarUrl, setAvatarUrl] = useState(null);
@@ -104,18 +105,18 @@ const UserProfile = () => {
     setPasswordValues({ ...passwordValues, [id]: { value: text, error } });
   };
   const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await userAPI.get(ApiContants.ADMIN_PROFILE);
-        const data = response.data;
-        for (const key in profileValues) {
-          profileValues[key].value = data[key];
-        }
-        setAvatarUrl(data.avatarUrl);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
+    try {
+      setLoading(true);
+      const response = await userAPI.get(ApiContants.ADMIN_PROFILE);
+      const data = response.data;
+      for (const key in profileValues) {
+        profileValues[key].value = data[key];
       }
+      setAvatarUrl(data.avatarUrl);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
   };
   useEffect(() => {
     fetchData();
@@ -145,6 +146,7 @@ const UserProfile = () => {
       });
       alert("Cập nhật thông tin cá nhân thành công!");
       fetchData();
+      dispatch(fetchUserProfile({ userAPI }));
     } catch (error) {
       alert("Cập nhật thông tin cá nhân thất bại do: ", getErrorMessage(error));
     }

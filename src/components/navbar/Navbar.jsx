@@ -1,11 +1,10 @@
 import "./navbar.scss";
 import { useState, useEffect } from "react";
-import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import { Badge, MenuItem, Menu } from "@mui/material";
 import FeedbackIcon from "@mui/icons-material/Feedback";
 import ConfirmDialog from "../dialog/ConfirmDialog";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import useAxios from "../../hooks/useAxios";
@@ -13,6 +12,7 @@ import ApiContants from "../../constants/Api";
 
 const Navbar = () => {
   const userAPI = useAxios();
+  const { user } = useSelector((state) => state.auth);
   const [avatarUrl, setAvatarUrl] = useState(null);
   const [anchorEl, setAnchorEl] = useState(null);
   const [showProfile, setShowProfile] = useState(false);
@@ -81,7 +81,7 @@ const Navbar = () => {
             </div>
             <div className="item">
               <img
-                src={avatarUrl}
+                src={user.avatarUrl ? user.avatarUrl : avatarUrl}
                 alt=""
                 className="avatar"
                 onClick={(e) => {
