@@ -8,7 +8,7 @@ import Config from "../../constants/Config";
 import Loading from "../../components/loading/Loading";
 import Search from "../../components/search/Search";
 import ApiContants from "../../constants/Api";
-import { formatFromDate } from "../../utils/getFormatDate";
+import { formatFromDateTime } from "../../utils/getFormatDate";
 
 import {
   TableContainer,
@@ -26,6 +26,7 @@ import {
   MenuItem,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import { getMoneyFormat } from "../../utils/util";
 const columns = [
   { id: "index", label: "#", width: "5%", align: "center" },
   {
@@ -51,6 +52,7 @@ const columns = [
     label: "SỐ TIỀN",
     width: "10%",
     align: "center",
+    format: (value) => getMoneyFormat(value),
   },
   {
     id: "transactionType",
@@ -64,7 +66,7 @@ const columns = [
     label: "NGÀY GIAO DỊCH",
     width: "10%",
     align: "center",
-    format: (value) => formatFromDate(value),
+    format: (value) => formatFromDateTime(value),
   },
   {
     id: "status",
@@ -206,14 +208,13 @@ const ListTransactions = () => {
             }}
           >
             <h1>Giao dịch</h1>
-           
           </div>
           <div className="filter">
             <FormControl
               sx={{
                 width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
+                marginRight: 5,
+                backgroundColor: "white",
               }}
             >
               <InputLabel id="status-label">Loại giao dịch</InputLabel>
@@ -241,8 +242,8 @@ const ListTransactions = () => {
             <FormControl
               sx={{
                 width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
+                marginRight: 5,
+                backgroundColor: "white",
               }}
             >
               <InputLabel id="status-label">Trạng thái</InputLabel>
@@ -321,9 +322,11 @@ const ListTransactions = () => {
                                     key={column.id}
                                     align={column.align}
                                   >
-                                    {column.format
-                                      ? column.format(value)
-                                      : value}
+                                    {value
+                                      ? column.format
+                                        ? column.format(value)
+                                        : value
+                                      : "Không có"}
                                   </TableCell>
                                 );
                               }
