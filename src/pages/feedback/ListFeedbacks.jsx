@@ -211,7 +211,6 @@ const ListFeedbacks = () => {
           >
             <h1>Phản hồi</h1>
             <div style={{ display: "flex" }}>
-            
               <Button variant="contained" color="success">
                 <Link
                   to={"/feedbacks/feedback/new"}
@@ -226,8 +225,8 @@ const ListFeedbacks = () => {
             <FormControl
               sx={{
                 width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
+                marginRight: 5,
+                backgroundColor: "white",
               }}
             >
               <InputLabel id="type-label">Loại yêu cầu</InputLabel>
@@ -250,8 +249,8 @@ const ListFeedbacks = () => {
             <FormControl
               sx={{
                 width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
+                marginRight: 5,
+                backgroundColor: "white",
               }}
             >
               <InputLabel id="status-label">Trạng thái</InputLabel>
@@ -270,11 +269,11 @@ const ListFeedbacks = () => {
               </Select>
             </FormControl>
             <Search
-                placeholder="Số điện thoại"
-                handleSearch={searchData}
-                search={search}
-                setSearch={setSearch}
-              />
+              placeholder="Số điện thoại"
+              handleSearch={searchData}
+              search={search}
+              setSearch={setSearch}
+            />
           </div>
           {data.length !== 0 ? (
             <div>
@@ -353,7 +352,7 @@ const ListFeedbacks = () => {
                 onPageChange={handleChangePage}
               />
             </div>
-          ) : loading? null: (
+          ) : loading ? null : (
             <div style={{ display: "flex", alignItems: "center" }}>
               <img
                 src="/nodata.png"

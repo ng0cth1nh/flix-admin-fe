@@ -3,7 +3,6 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import {
   Button,
-  Autocomplete,
   TextField,
   Typography,
   FormControlLabel,
@@ -35,14 +34,12 @@ const listField = [
 ];
 
 const SingleSubService = () => {
-  const { search } = useLocation();
+  const { search, state } = useLocation();
   const id = new URLSearchParams(search).get("id");
   const { categoryId, serviceId } = useParams();
   const userAPI = useAxios();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [services, setServices] = useState([]);
-  const [serviceLabel, setServiceLabel] = useState("");
+  const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState(false);
   const [values, setValues] = useState({
     subServiceName: {
@@ -55,10 +52,6 @@ const SingleSubService = () => {
     },
     description: {
       value: "",
-      error: "",
-    },
-    serviceId: {
-      value: null,
       error: "",
     },
   });
@@ -75,12 +68,15 @@ const SingleSubService = () => {
         await userAPI.post(ApiContants.SUBSERVICE_SINGLE, {
           subServiceName: values.subServiceName.value,
           price: values.price.value,
-          serviceId: values.serviceId.value,
+          serviceId,
           description: values.description.value,
           isActive: status,
         });
         alert("Tạo dịch vụ con thành công!");
-        navigate(`/categories/${categoryId}/services/${values.serviceId.value}/subservices`);
+        navigate(
+          `/categories/${categoryId}/services/${serviceId}/subservices`,
+          { state }
+        );
       } catch (error) {
         alert("Tạo dịch vụ con thất bại do: " + getErrorMessage(error));
       }
@@ -90,33 +86,25 @@ const SingleSubService = () => {
           subServiceId: id,
           subServiceName: values.subServiceName.value,
           price: values.price.value,
-          serviceId: values.serviceId.value,
+          serviceId,
           description: values.description.value,
           isActive: status,
         });
         alert("Cập nhật dịch vụ con thành công!");
-        navigate(`/categories/${categoryId}/services/${serviceId}/subservices`);
+        navigate(
+          `/categories/${categoryId}/services/${serviceId}/subservices`,
+          { state }
+        );
       } catch (error) {
         alert("Cập nhật dịch vụ con thất bại do: " + getErrorMessage(error));
       }
     }
   };
   useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        setLoading(true);
-        const res = await userAPI.get(ApiContants.SERVICE_SELECT_ALL);
-        setServices(res.data.services);
-        console.log("service", res.data);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-      }
-    };
-    fetchServices();
     if (id) {
       const fetchData = async () => {
         try {
+          setLoading(true);
           const res = await userAPI.get(
             ApiContants.SUBSERVICE_SINGLE + `?subServiceId=${id}`
           );
@@ -126,7 +114,9 @@ const SingleSubService = () => {
             values[key].value = data[key];
           }
           setStatus(data.active);
+          setLoading(false);
         } catch (error) {
+          setLoading(false);
           navigate("/error");
         }
       };
@@ -154,36 +144,34 @@ const SingleSubService = () => {
                 />
               ))}
 
-              <Autocomplete
-                value={
-                  serviceLabel !== ""
-                    ? serviceLabel
-                    : id
-                    ? services.filter(
-                        (item) => item.id === values.serviceId.value
-                      )[0].serviceName
-                    : services[0].serviceName
-                }
-                onChange={(event, newValue) => {
-                  setValues({
-                    ...values,
-                    serviceId: { value: newValue.id, error: "" },
-                  });
-                  setServiceLabel(newValue.serviceName);
+              <div
+                style={{
+                  width: "40%",
                 }}
-                id="controllable-states-demo"
-                options={services.map((item) => ({
-                  ...item,
-                  label: item.serviceName,
-                }))}
-                sx={{ width: "40%" }}
-                renderInput={(params) => {
-                  console.log("param", params);
-                  return (
-                    <TextField {...params} label="Dịch vụ" margin="normal" />
-                  );
+              >
+                <TextField
+                  label="Danh mục"
+                  margin="normal"
+                  value={state.categoryName}
+                  sx={{ width: "100%" }}
+                  variant="outlined"
+                  disabled
+                />
+              </div>
+              <div
+                style={{
+                  width: "40%",
                 }}
-              />
+              >
+                <TextField
+                  label="Dịch vụ"
+                  margin="normal"
+                  value={state.serviceName}
+                  sx={{ width: "100%" }}
+                  variant="outlined"
+                  disabled
+                />
+              </div>
               <div
                 style={{
                   width: "40%",
@@ -207,7 +195,7 @@ const SingleSubService = () => {
                 />
               </div>
               <MuiTextAreaInput
-                label="Nội dung"
+                label="Nội dung*"
                 item={values.description}
                 id="description"
                 onChange={onChange}

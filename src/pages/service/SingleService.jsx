@@ -4,7 +4,6 @@ import Navbar from "../../components/navbar/Navbar";
 import {
   TextField,
   Button,
-  Autocomplete,
   Switch,
   Typography,
   FormControlLabel,
@@ -36,18 +35,15 @@ const listField = [
   },
 ];
 const SingleService = () => {
-  const { search } = useLocation();
+  const { search, state } = useLocation();
   const id = new URLSearchParams(search).get("id");
   const { categoryId } = useParams();
-  console.log("id", id);
   const navigate = useNavigate();
   const userAPI = useAxios();
   const [isEdited, setIsEdited] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const [status, setStatus] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [categories, setCategories] = useState([]);
-  const [categoryLabel, setCategoryLabel] = useState("");
+  const [loading, setLoading] = useState(false);
   const [values, setValues] = useState({
     description: {
       value: "",
@@ -59,10 +55,6 @@ const SingleService = () => {
     },
     inspectionPrice: {
       value: "",
-      error: "",
-    },
-    categoryId: {
-      value: null,
       error: "",
     },
   });
@@ -78,7 +70,7 @@ const SingleService = () => {
     formData.append("serviceName", values.serviceName.value);
     formData.append("description", values.description.value);
     formData.append("inspectionPrice", values.inspectionPrice.value);
-    formData.append("categoryId", values.categoryId.value);
+    formData.append("categoryId", categoryId);
     formData.append("isActive", status);
     if (isEdited) {
       formData.append("image", avatar);
@@ -95,7 +87,7 @@ const SingleService = () => {
           },
         });
         alert("Tạo dịch vụ thành công!");
-        navigate(`/categories/${categoryId}/services`);
+        navigate(`/categories/${categoryId}/services`, { state });
       } catch (error) {
         alert("Tạo dịch vụ thất bại do: " + getErrorMessage(error));
       }
@@ -108,7 +100,7 @@ const SingleService = () => {
           },
         });
         alert("Cập nhật dịch vụ thành công!");
-        navigate(`/categories/${values.categoryId.value}/services`);
+        navigate(`/categories/${categoryId}/services`, { state });
       } catch (error) {
         console.log(error);
         alert("Cập nhật dịch vụ thất bại do: " + getErrorMessage(error));
@@ -117,22 +109,10 @@ const SingleService = () => {
   };
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        setLoading(true);
-        const res = await userAPI.get(ApiContants.CATEFORY_ALL);
-        setCategories(res.data.categories);
-        console.log("categories", res.data.categories);
-        setLoading(false);
-      } catch (error) {
-        setLoading(false);
-        navigate("/error");
-      }
-    };
-    fetchCategories();
     if (id) {
       const fetchData = async () => {
         try {
+          setLoading(true);
           const res = await userAPI.get(
             ApiContants.SERVICE_SINGLE + `?serviceId=${id}`
           );
@@ -142,7 +122,9 @@ const SingleService = () => {
           }
           setAvatar(data.image);
           setStatus(data.active);
+          setLoading(false);
         } catch (error) {
+          setLoading(false);
           navigate("/error");
         }
       };
@@ -198,42 +180,20 @@ const SingleService = () => {
                     item={values[input.id]}
                   />
                 ))}
-
-                <Autocomplete
-                  value={
-                    categoryLabel !== ""
-                      ? categoryLabel
-                      : id
-                      ? categories.filter(
-                          (item) => item.id === values.categoryId.value
-                        )[0].categoryName
-                      : categories[0].categoryName
-                  }
-                  onChange={(event, newValue) => {
-                    console.log("new value", newValue);
-                    setValues({
-                      ...values,
-                      categoryId: { value: newValue.id, error: "" },
-                    });
-                    setCategoryLabel(newValue.categoryName);
+                <div
+                  style={{
+                    width: "40%",
                   }}
-                  id="category-select"
-                  options={categories.map((item) => ({
-                    ...item,
-                    label: item.categoryName,
-                  }))}
-                  sx={{ width: "40%" }}
-                  renderInput={(params) => {
-                    return (
-                      <TextField
-                        {...params}
-                        id="cateId"
-                        label="Danh mục"
-                        margin="normal"
-                      />
-                    );
-                  }}
-                />
+                >
+                  <TextField
+                    label="Danh mục"
+                    margin="normal"
+                    value={state.categoryName}
+                    sx={{ width: "100%" }}
+                    variant="outlined"
+                    disabled
+                  />
+                </div>
                 <div
                   style={{
                     width: "40%",

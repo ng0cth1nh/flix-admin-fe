@@ -80,7 +80,7 @@ const BanModal = ({
             />
           </div>
           <MuiTextAreaInput
-            label="Lý do"
+            label="Lý do*"
             item={banReason}
             id="description"
             onChange={onChange}

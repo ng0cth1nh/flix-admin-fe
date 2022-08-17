@@ -14,33 +14,41 @@ const ConfirmDialog = ({
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
-      <DialogTitle
-        id="alert-dialog-title"
-        sx={{ textAlign: "center", marginTop: "50px", width: "85%" }}
-      >
-        {title}
-      </DialogTitle>
-      {children}
-      <DialogActions
-        sx={{
-          marginTop: "30px",
-          marginBottom: "30px",
-          display: "flex",
-          justifyContent: "space-around",
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleConfirm();
         }}
+        style={{alignItems:"center", justifyContent:"center" }}
       >
-        <Button variant="contained" color="error" onClick={handleClose}>
-          Thoát
-        </Button>
-
-        <Button
-          variant="contained"
-          onClick={handleConfirm}
-          disabled={!acceptButtonEnable}
+        <DialogTitle
+          id="alert-dialog-title"
+          sx={{ textAlign: "center", marginTop: "50px", width: "85%" }}
         >
-          Đồng ý
-        </Button>
-      </DialogActions>
+          {title}
+        </DialogTitle>
+        {children}
+        <DialogActions
+          sx={{
+            marginTop: "30px",
+            marginBottom: "30px",
+            display: "flex",
+            justifyContent: "space-around",
+          }}
+        >
+          <Button variant="contained" color="error" onClick={handleClose}>
+            Thoát
+          </Button>
+
+          <Button
+            type="submit"
+            variant="contained"
+            disabled={!acceptButtonEnable}
+          >
+            Đồng ý
+          </Button>
+        </DialogActions>
+      </form>
     </Dialog>
   );
 };

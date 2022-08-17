@@ -90,14 +90,14 @@ const ListCategories = () => {
   const navigate = useNavigate();
   const userAPI = useAxios();
   const [page, setPage] = useState(0);
-
   const [data, setData] = useState([]);
   const [totalRecord, setTotalRecord] = useState(0);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const handleRowClick = (id) => {
-    navigate(`/categories/${id}/services`);
+  const handleRowClick = ({id, categoryName}) => {
+    console.log('categories click row:', categoryName);
+    navigate(`/categories/${id}/services`,{state:{categoryName}});
   };
   const fetchData = async () => {
     try {
@@ -226,7 +226,7 @@ const ListCategories = () => {
                                     key={column.id}
                                     align={column.align}
                                     onClick={() => {
-                                      handleRowClick(row["id"]);
+                                      handleRowClick({id: row["id"], categoryName: row["categoryName"]});
                                     }}
                                   >
                                     {page * Config.ROW_PER_PAGE + index + 1}
@@ -244,7 +244,7 @@ const ListCategories = () => {
                                     onClick={
                                       column.id !== "action"
                                         ? () => {
-                                            handleRowClick(row["id"]);
+                                            handleRowClick({id: row["id"],categoryName: row["categoryName"]});
                                           }
                                         : null
                                     }

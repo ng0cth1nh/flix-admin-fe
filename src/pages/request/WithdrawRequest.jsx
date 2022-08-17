@@ -17,6 +17,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 import useAxios from "../../hooks/useAxios";
@@ -44,6 +45,12 @@ const columns = [
     label: "LOẠI RÚT TIỀN",
     width: "15%",
     align: "center",
+    format: (value) =>
+      value === "BANKING" ? (
+        <Typography>Chuyển khoản</Typography>
+      ) : (
+        <Typography>Tiền mặt</Typography>
+      ),
   },
   {
     id: "transactionCode",
@@ -108,7 +115,6 @@ const WithdrawRequest = () => {
     }
   };
   const searchData = async () => {
-   
     // case both search text and status is null then fetch data by paging
     if (!search.trim() && !typeFilter) {
       setIsSearching(false);
@@ -168,8 +174,8 @@ const WithdrawRequest = () => {
             <FormControl
               sx={{
                 width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
+                marginRight: 5,
+                backgroundColor: "white",
               }}
             >
               <InputLabel id="status-label">Loại rút tiền</InputLabel>

@@ -476,7 +476,7 @@ const RepairerProfile = () => {
                     minRows={5}
                     maxRows={7}
                     aria-label="maximum height"
-                    placeholder="Nội dung"
+                    placeholder="Nội dung*"
                     value={rejectReason}
                     onChange={(e) => {
                       if (

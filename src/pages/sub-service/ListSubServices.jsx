@@ -1,8 +1,8 @@
 import "./ListSubServices.scss";
-import { useState,useEffect } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useLocation } from "react-router-dom";
 import useAxios from "../../hooks/useAxios";
 import Config from "../../constants/Config";
 import Loading from "../../components/loading/Loading";
@@ -48,7 +48,7 @@ const columns = [
     width: "15%",
     align: "center",
     format: (value) =>
-      value ==="ACTIVE"? (
+      value === "ACTIVE" ? (
         <Typography variant="p" sx={{ color: "green" }}>
           Hoạt động
         </Typography>
@@ -68,6 +68,10 @@ const columns = [
         <Link
           to={`/categories/${value.categoryId}/services/${value.serviceId}/subservices/subservice?id=${value.id}`}
           style={{ textDecoration: "none", color: "white" }}
+          state={{
+            categoryName: value.categoryName,
+            serviceName: value.serviceName,
+          }}
         >
           Cập nhật
         </Link>
@@ -84,7 +88,8 @@ const useStyles = makeStyles({
   },
 });
 const ListSubServices = () => {
-  const classes = useStyles();  
+  const { state } = useLocation();
+  const classes = useStyles();
   const navigate = useNavigate();
   const userAPI = useAxios();
   const [page, setPage] = useState(0);
@@ -95,11 +100,12 @@ const ListSubServices = () => {
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
-const fetchData = async () => {
+  const fetchData = async () => {
     try {
       setLoading(true);
       const response = await userAPI.get(
-        ApiContants.SUBSERVICE_LIST + `?pageNumber=${page}&serviceId=${serviceId}`
+        ApiContants.SUBSERVICE_LIST +
+          `?pageNumber=${page}&serviceId=${serviceId}`
       );
       setTotalRecord(response.data.totalRecord);
       setData(response.data.subServices);
@@ -126,7 +132,12 @@ const fetchData = async () => {
       setLoading(true);
       setIsSearching(true);
       const response = await userAPI.get(searchUrl);
-      setData(response.data.subServices.map(item =>({...item, subServiceName:item.name })));
+      setData(
+        response.data.subServices.map((item) => ({
+          ...item,
+          subServiceName: item.name,
+        }))
+      );
       setTotalRecord(response.data.subServices.length);
       setLoading(false);
     } catch (error) {
@@ -159,7 +170,7 @@ const fetchData = async () => {
           >
             <h1>Dịch vụ con</h1>
             <div style={{ display: "flex" }}>
-            <SearchInline
+              <SearchInline
                 placeholder="Tên dịch vụ"
                 handleSearch={searchData}
                 search={search}
@@ -169,6 +180,7 @@ const fetchData = async () => {
                 <Link
                   to={`/categories/${categoryId}/services/${serviceId}/subservices/subservice`}
                   style={{ textDecoration: "none", color: "white" }}
+                  state={state}
                 >
                   Thêm
                 </Link>
@@ -177,23 +189,23 @@ const fetchData = async () => {
           </div>
           {data.length !== 0 ? (
             <div>
-          <TableContainer sx={{ minHeight: "600px", marginTop: "20px"  }}>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHead>
-                <TableRow className={classes.root}>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ width: column.width }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody sx={{ borderWidth: 1 }}>
-                {data
+              <TableContainer sx={{ minHeight: "600px", marginTop: "20px" }}>
+                <Table stickyHeader aria-label="sticky table">
+                  <TableHead>
+                    <TableRow className={classes.root}>
+                      {columns.map((column) => (
+                        <TableCell
+                          key={column.id}
+                          align={column.align}
+                          style={{ width: column.width }}
+                        >
+                          {column.label}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  </TableHead>
+                  <TableBody sx={{ borderWidth: 1 }}>
+                    {data
                       .slice(
                         data.length <= Config.ROW_PER_PAGE
                           ? 0
@@ -202,47 +214,62 @@ const fetchData = async () => {
                           ? Config.ROW_PER_PAGE
                           : page * Config.ROW_PER_PAGE + Config.ROW_PER_PAGE
                       )
-                  .map((row, index) => {
-                    return (
-                      <TableRow
-                        hover
-                        role="checkbox"
-                        tabIndex={-1}
-                        key={row.id}
-                      >
-                        {columns.map((column) => {
-                          if (column.id === "index") {
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {page * Config.ROW_PER_PAGE  + index + 1}
-                              </TableCell>
-                            );
-                          } else {
-                            const value =
-                              column.id === "action"
-                                ? { categoryId, serviceId, id: row["id"] }
-                                : row[column.id];
-                            return (
-                              <TableCell key={column.id} align={column.align}>
-                                {column.format ? column.format(value) : value}
-                              </TableCell>
-                            );
-                          }
-                        })}
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[10]}
-            component="div"
-            count={totalRecord}
-            rowsPerPage={Config.ROW_PER_PAGE}
-            page={page}
-            onPageChange={handleChangePage}
-          />  </div>
+                      .map((row, index) => {
+                        return (
+                          <TableRow
+                            hover
+                            role="checkbox"
+                            tabIndex={-1}
+                            key={row.id}
+                          >
+                            {columns.map((column) => {
+                              if (column.id === "index") {
+                                return (
+                                  <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                  >
+                                    {page * Config.ROW_PER_PAGE + index + 1}
+                                  </TableCell>
+                                );
+                              } else {
+                                const value =
+                                  column.id === "action"
+                                    ? {
+                                        categoryId,
+                                        serviceId,
+                                        categoryName: state.categoryName,
+                                        serviceName: state.serviceName,
+                                        id: row["id"],
+                                      }
+                                    : row[column.id];
+                                return (
+                                  <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                  >
+                                    {column.format
+                                      ? column.format(value)
+                                      : value}
+                                  </TableCell>
+                                );
+                              }
+                            })}
+                          </TableRow>
+                        );
+                      })}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <TablePagination
+                rowsPerPageOptions={[10]}
+                component="div"
+                count={totalRecord}
+                rowsPerPage={Config.ROW_PER_PAGE}
+                page={page}
+                onPageChange={handleChangePage}
+              />{" "}
+            </div>
           ) : loading ? null : (
             <div style={{ display: "flex", alignItems: "center" }}>
               <img

@@ -29,18 +29,30 @@ import CustomRouter from "./customRoutes/customRoutes";
 import history from "./customRoutes/history";
 import Error from "./pages/error/Error";
 import WithdrawRequestDetail from "./pages/request/WithdrawRequestDetail";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-
+import { useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import ListVouchers from "./pages/voucher/ListVouchers";
 function App() {
+  const { token } = useSelector((state) => state.auth);
+  if (!token && !Cookies.get("token")) {
+    console.log("logout");
+    return (
+      <CustomRouter history={history}>
+        <Routes>
+          <Route path="/" index element={<Login />} />
+          <Route path="/forgotpassword" element={<ForgotPassword />} />
+          <Route path="/confirmOTP" element={<ConfirmOTP />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </CustomRouter>
+    );
+  }
   return (
     <CustomRouter history={history}>
       <Routes>
-        <Route path="/" index element={<Login />} />
-        <Route path="/forgotpassword" element={<ForgotPassword />} />
-        <Route path="/confirmOTP" element={<ConfirmOTP />} />
         <Route path="/home" index element={<Home />} />
         <Route path="/userProfile" element={<UserProfile />} />
+        <Route path="/vouchers" element={<ListVouchers />} />
         <Route path="/customers">
           <Route index element={<ListCustomers />} />
           <Route
@@ -76,11 +88,7 @@ function App() {
         <Route path="/feedbacks">
           <Route index element={<ListFeedbacks />} />
           <Route path="feedback/new" exact element={<NewFeedback />} />
-          <Route
-            path="feedback/update"
-            exact
-            element={<UpdateFeedback />}
-          />
+          <Route path="feedback/update" exact element={<UpdateFeedback />} />
           <Route
             path="feedback/view/:feedbackId"
             exact
@@ -100,7 +108,7 @@ function App() {
           <Route path=":withdrawId" exact element={<WithdrawRequestDetail />} />
         </Route>
         <Route path="/error" exact element={<Error />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </CustomRouter>
   );

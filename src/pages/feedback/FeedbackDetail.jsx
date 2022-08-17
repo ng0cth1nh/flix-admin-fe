@@ -108,7 +108,7 @@ const FeedbackDetail = () => {
                   minRows={5}
                   maxRows={7}
                   aria-label="maximum height"
-                  placeholder="Nội dung"
+                  placeholder="Nội dung*"
                   defaultValue={data.description}
                   style={{
                     width: "97%",

@@ -1,0 +1,11 @@
+.list-vouchers {
+  display: flex;
+  .list-vouchers-container {
+    flex: 6;
+    h2 {
+      color: rgb(5, 5, 94);
+      text-align: center;
+      margin-top: 200px;
+    }
+  }
+}

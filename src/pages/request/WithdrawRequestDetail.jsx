@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import { Typography, Button, TextareaAutosize } from "@mui/material";
+import { Typography, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
 import "./WithdrawRequestDetail.scss";
 import ConfirmDialog from "../../components/dialog/ConfirmDialog";
@@ -10,6 +10,7 @@ import ApiContants from "../../constants/Api";
 import Loading from "../../components/loading/Loading";
 import getErrorMessage from "../../utils/getErrorMessage";
 import { getMoneyFormat } from "../../utils/util";
+import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
 const requestInfoField = [
   { id: "repairerName", label: "Tên thợ sửa", value: "" },
   { id: "repairerPhone", label: "Số điện thoại", value: "" },
@@ -40,19 +41,27 @@ const WithdrawRequestDetail = () => {
   const userAPI = useAxios();
   const { withdrawId } = useParams();
   const [open, setOpen] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
+  const [values, setValues] = useState({
+    rejectReason: {
+      value: "",
+      error: "",
+    },
+  });
   const [requestInfo, setRequestInfo] = useState(requestInfoField);
   const [vnPayInfo, setVnPayInfo] = useState(vnpayInfoField);
   const [loading, setLoading] = useState(false);
-  const [acceptButtonEnable, setAcceptButtonEnable]= useState(false);
+  const onChange = (id, text, error) => {
+    setValues({ ...values, [id]: { value: text, error } });
+  };
   const handleClose = () => {
     setOpen(false);
   };
   const handleConfirm = async () => {
+    if (values.rejectReason.error !== "") return;
     try {
       await userAPI.put(ApiContants.REJECT_WITHDRAW, {
         transactionId: withdrawId,
-        reason:rejectReason
+        reason: values.rejectReason.value,
       });
       alert("Yêu cầu rút tiền được từ chối thành công!");
       navigate("/withdraws");
@@ -187,38 +196,17 @@ const WithdrawRequestDetail = () => {
               title="Bạn có muốn hủy yêu cầu rút tiền này không?"
               handleClose={handleClose}
               handleConfirm={handleConfirm}
-              acceptButtonEnable={acceptButtonEnable}
             >
               <div
-                style={{ width: "85%", marginTop: "10px", alignSelf: "center" }}
+                style={{ width: "85%", margin:"auto"}}
               >
-                <Typography sx={{ fontSize: "14px" }}>Lý do</Typography>
-                <TextareaAutosize
-                  minRows={5}
-                  maxRows={7}
-                  aria-label="maximum height"
-                  placeholder="Nội dung"
-                  value={rejectReason}
-                  onChange={(e) => {
-                    if(!e.target.value.trim()||e.target.value.length>2500){
-                      setAcceptButtonEnable(false);
-                    }else{
-                      setAcceptButtonEnable(true);
-                    }
-                    setRejectReason(e.target.value);
-                  }}
-                  style={{
-                    width: "97%",
-                    marginTop: "5px",
-                    padding: "10px",
-                    resize: "none",
-                  }}
+                <MuiTextAreaInput
+                  label="Lý do*"
+                  item={values.rejectReason}
+                  id="rejectReason"
+                  onChange={onChange}
+                  isRequired={true}
                 />
-                {rejectReason.length>2500&&<span style={{
-                    fontSize: "12px",
-                    padding: "3px",
-                    color: "red",
-                }}>Lý do nhập quá dài</span>}
               </div>
             </ConfirmDialog>
           </div>

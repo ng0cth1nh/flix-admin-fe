@@ -30,7 +30,7 @@ const ForgotPassword = () => {
       name: "phone",
       type: "text",
       placeholder: "Nhập số điện thoại",
-      errorMessage: "Số điện thoại không đúng!",
+      errorMessage: "Số điện thoại không hợp lệ!",
       label: "Số điện thoại*",
       pattern: Pattern.PHONE_NUMBER,
       required: true,

@@ -6,7 +6,6 @@ import LoadingState from "../../constants/LoadingState";
 import Cookies from "js-cookie";
 import jwt_decode from "jwt-decode";
 import dayjs from "dayjs";
-import history from "../../customRoutes/history";
 import axios from "axios";
 
 export const login = createAsyncThunk(
@@ -92,7 +91,6 @@ const authSlice = createSlice({
       state.errorMessage = null;
       Cookies.remove("token");
       Cookies.remove("refreshToken");
-      history.replace("/");
     },
   },
   extraReducers: (builder) => {
@@ -114,11 +112,12 @@ const authSlice = createSlice({
       state.loading = LoadingState.PENDING;
     });
     builder.addCase(refreshToken.rejected, (state, action) => {
+      state.user = {};
       state.token = "";
-      state.loading = LoadingState.FAILED;
+      state.loading = LoadingState.IDLE;
+      state.errorMessage = null;
       Cookies.remove("token");
       Cookies.remove("refreshToken");
-      history.replace("/");
     });
     builder.addCase(refreshToken.fulfilled, (state, action) => {
       state.loading = LoadingState.SUCCEEDED;

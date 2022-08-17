@@ -212,10 +212,11 @@ const SingleAccessories = () => {
                 }}
               />
               <MuiTextAreaInput
-                label="Nội dung"
+                label="Nội dung*"
                 item={values.description}
                 id="description"
                 onChange={onChange}
+                isRequired={true}
               />
               <div style={{ width: "100%", display: "flex" }}>
                 <Button

@@ -83,7 +83,7 @@ const UpdateFeedback = () => {
                 </Select>
               </FormControl>
               <MuiTextAreaInput
-                label="Nội dung"
+                label="Nội dung*"
                 item={values.response}
                 id="response"
                 onChange={onChange}

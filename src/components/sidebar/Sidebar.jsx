@@ -33,6 +33,7 @@ const Sidebar = () => {
             width="30"
             className="logo"
             height="30"
+            alt="logo"
             src="https://scontent.fhan2-1.fna.fbcdn.net/v/t1.15752-9/294712496_2058605067656687_3815839386105908437_n.png?_nc_cat=106&ccb=1-7&_nc_sid=ae9488&_nc_ohc=gONZORcMM6oAX-BrCpT&_nc_ht=scontent.fhan2-1.fna&oh=03_AVJ7XBSEbo_ctwV7dlyvE4W-8eyJ25xMeNYDVs7k5B1Mbg&oe=631EE044"
           />
           <div className="brand">Flix Admin</div>
@@ -86,10 +87,12 @@ const Sidebar = () => {
               <span>Linh kiện</span>
             </li>
           </Link>
-          <li>
-            <ConfirmationNumberIcon className="icon" />
-            <span>Phiếu giảm giá</span>
-          </li>
+          <Link to="/vouchers" style={{ textDecoration: "none" }}>
+            <li>
+              <ConfirmationNumberIcon className="icon" />
+              <span>Phiếu giảm giá</span>
+            </li>
+          </Link>
           <Link to="/transactions" style={{ textDecoration: "none" }}>
             <li>
               <PaidIcon className="icon" />

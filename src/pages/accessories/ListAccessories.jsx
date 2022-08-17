@@ -237,6 +237,8 @@ const ListAccessories = () => {
                                       ? column.format
                                         ? column.format(value)
                                         : value
+                                      : column.id === "insuranceTime"
+                                      ? 0
                                       : "Không có"}
                                   </TableCell>
                                 );

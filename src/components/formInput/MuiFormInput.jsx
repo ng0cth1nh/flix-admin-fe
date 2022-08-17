@@ -23,7 +23,7 @@ const MuiFormInput = ({
         onChange={(e) => {
           let text= e.target.value;
           let err="";
-           if (text && !text.match(pattern)) {
+           if (text && !text.trim().match(pattern)) {
             err = errorMessage;
           }
           onChange(id, text, err);

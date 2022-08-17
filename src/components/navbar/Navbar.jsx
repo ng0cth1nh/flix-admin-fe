@@ -117,7 +117,7 @@ const Navbar = () => {
       </Menu>
       <ConfirmDialog
         open={open}
-        title="Bạn có muốn đăng xuất không?"
+        title="Bạn có chắc chắn muốn đăng xuất tài khoản này không?"
         handleClose={handleClose}
         handleConfirm={handleConfirm}
       />

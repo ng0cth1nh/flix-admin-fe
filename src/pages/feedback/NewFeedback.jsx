@@ -25,15 +25,15 @@ const listField = [
   {
     id: "requestCode",
     label: "Mã đặt lịch",
-    pattern: "^.{1,150}$",
-    errorMessage: "Mã đặt lịch có độ dài không quá 150 kí tự!",
+    pattern: "^.{1,12}$",
+    errorMessage: "Mã đặt lịch có độ dài không quá 12 kí tự!",
     isRequired: true,
   },
   {
     id: "phone",
     label: "Số điện thoại",
     pattern: Pattern.PHONE_NUMBER,
-    errorMessage: "Số điện thoại không đúng!",
+    errorMessage: "Số điện thoại không hợp lệ!",
     isRequired: true,
   },
   {
@@ -135,7 +135,7 @@ const NewFeedback = () => {
               </Select>
             </FormControl>
             <MuiTextAreaInput
-              label="Nội dung"
+              label="Nội dung*"
               item={values.description}
               id="description"
               onChange={onChange}

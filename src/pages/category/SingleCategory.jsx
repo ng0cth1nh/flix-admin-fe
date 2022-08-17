@@ -62,6 +62,7 @@ const SingleCategory = () => {
           },
         });
         alert("Tạo danh mục thành công!");
+        navigate("/categories");
       } catch (error) {
         alert("Tạo danh mục thất bại do: " + getErrorMessage(error));
       }
@@ -95,7 +96,6 @@ const SingleCategory = () => {
           }
           setAvatar(data.image);
           setStatus(data.active);
-          console.log(data);
         } catch (error) {
           navigate("/error");
         }

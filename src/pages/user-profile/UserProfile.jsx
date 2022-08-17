@@ -24,14 +24,14 @@ const listProfileInput = [
     id: "phone",
     label: "Số điện thoại",
     pattern: Pattern.PHONE_NUMBER,
-    errorMessage: "Số điện thoại không đúng!",
+    errorMessage: "Số điện thoại không hợp lệ!",
     isRequired: true,
   },
   {
     id: "email",
     label: "Email",
     pattern: Pattern.EMAIL,
-    errorMessage: "Định dạng email không đúng!",
+    errorMessage: "Email không đúng định dạng!",
     isRequired: true,
   },
 ];
@@ -41,7 +41,7 @@ const listPasswordInput = [
     label: "Mật khẩu cũ",
     pattern: Pattern.PASSWORD,
     errorMessage:
-      "Mật khẩu phải từ 6 đến 10 kí tự và bao gồm ít nhất 1 số hoặc 1 kí tự!",
+      "Mật khẩu phải có độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
     isRequired: true,
     type: "password",
   },
@@ -50,7 +50,7 @@ const listPasswordInput = [
     label: "Mật khẩu mới",
     pattern: Pattern.PASSWORD,
     errorMessage:
-      "Mật khẩu phải từ 6 đến 10 kí tự và bao gồm ít nhất 1 số hoặc 1 kí tự!",
+      "Mật khẩu phải có độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
     isRequired: true,
     type: "password",
   },
@@ -111,7 +111,7 @@ const UserProfile = () => {
       if (!user.fullName) {
         try {
           setLoading(true);
-          dispatch(fetchUserProfile({userAPI}));
+          dispatch(fetchUserProfile({ userAPI }));
           const response = await userAPI.get(ApiContants.ADMIN_PROFILE);
           const data = response.data;
           for (const key in profileValues) {
@@ -155,7 +155,7 @@ const UserProfile = () => {
       });
       alert("Cập nhật thông tin cá nhân thành công!");
     } catch (error) {
-      alert("Cập nhật thông tin cá nhân không thành công!");
+      alert("Cập nhật thông tin cá nhân thất bại do: ", getErrorMessage(error));
     }
   };
   const handleSavePassword = async (e) => {
@@ -168,9 +168,9 @@ const UserProfile = () => {
         oldPassword: passwordValues.oldPassword.value,
         newPassword: passwordValues.newPassword.value,
       });
-      alert("Thay đổi mật khẩu thành công!");
+      alert("Đổi mật khẩu thành công!");
     } catch (error) {
-      alert("Thay đổi mật khẩu thất bại do: " + getErrorMessage(error));
+      alert("Đổi mật khẩu thất bại do: " + getErrorMessage(error));
     }
   };
   return (

@@ -34,7 +34,7 @@ const ConfirmOTP = () => {
       type: "password",
       placeholder: "Nhập mật khẩu",
       errorMessage:
-        "Mật khẩu phải từ 6 đến 10 kí tự và bao gồm ít nhất 1 số hoặc 1 kí tự!",
+        "Mật khẩu phải có độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
       label: "Mật khẩu*",
       pattern: Pattern.PASSWORD,
       required: true,
@@ -83,6 +83,7 @@ const ConfirmOTP = () => {
         }
       );
       dispatch(setLoading(LoadingState.SUCCEEDED));
+      alert("Đổi mật khẩu thành công!");
       navigate("/");
     } catch (err) {
       dispatch(setLoading(LoadingState.FAILED));

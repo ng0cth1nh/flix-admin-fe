@@ -41,7 +41,7 @@ const Login = () => {
       name: "phone",
       type: "text",
       placeholder: "Nhập số điện thoại",
-      errorMessage: "Số điện thoại không đúng!",
+      errorMessage: "Số điện thoại không hợp lệ!",
       label: "Số điện thoại*",
       pattern: Pattern.PHONE_NUMBER,
       required: true,
@@ -52,7 +52,7 @@ const Login = () => {
       type: "password",
       placeholder: "Nhập mật khẩu",
       errorMessage:
-        "Mật khẩu phải từ 6 đến 10 kí tự và bao gồm ít nhất 1 số hoặc 1 kí tự!",
+        "Mật khẩu phải có độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
       label: "Mật khẩu*",
       pattern: Pattern.PASSWORD,
       required: true,
