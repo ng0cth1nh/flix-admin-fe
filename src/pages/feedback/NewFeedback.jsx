@@ -27,7 +27,7 @@ const listField = [
     label: "Mã đặt lịch",
     pattern: "^.{1,12}$",
     errorMessage: "Mã đặt lịch có độ dài không quá 12 kí tự!",
-    isRequired: true,
+    isRequired: false,
   },
   {
     id: "phone",
