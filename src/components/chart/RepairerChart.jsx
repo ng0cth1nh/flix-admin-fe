@@ -23,6 +23,7 @@ import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import Loading from "../../components/loading/Loading";
 import { useNavigate } from "react-router-dom";
+import { getAccountFormat } from "../../utils/util";
 
 const RepairerChart = ({ aspect }) => {
   const userAPI = useAxios();
@@ -141,7 +142,7 @@ const RepairerChart = ({ aspect }) => {
             width={720}
             height={360}
             data={data}
-            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            margin={{ top: 20, right: 30, left: 30, bottom: 0 }}
           >
             <CartesianGrid strokeDasharray="10 10" />
             <Line type="monotone" dataKey="totalNewAccount" stroke="#1890ff" />
@@ -158,18 +159,18 @@ const RepairerChart = ({ aspect }) => {
             />
 
             <XAxis dataKey="date" />
-            <YAxis />
+            <YAxis tickFormatter={getAccountFormat} />
             <Tooltip
               formatter={(value, b, chartPoint) => {
                 switch (chartPoint.name) {
                   case "totalNewAccount":
-                    return [value, "Thợ sửa mới"];
+                    return [getAccountFormat(value), "Thợ sửa mới"];
                   case "totalBanAccount":
-                    return [value, "Thợ sửa bị ban"];
+                    return [getAccountFormat(value), "Thợ sửa bị ban"];
                   case "totalRejectedAccount":
-                    return [value, "Thợ sửa bị từ chối"];
+                    return [getAccountFormat(value), "Thợ sửa bị từ chối"];
                   case "totalApprovedAccount":
-                    return [value, "Thợ sửa được xác nhận"];
+                    return [getAccountFormat(value), "Thợ sửa được xác nhận"];
                   default:
                     return "";
                 }

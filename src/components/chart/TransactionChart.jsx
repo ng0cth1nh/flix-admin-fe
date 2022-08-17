@@ -27,7 +27,7 @@ import { getMoneyFormat } from "../../utils/util";
 
 const TransactionChart = ({ aspect }) => {
   const userAPI = useAxios();
-  const navigate= useNavigate();
+  const navigate = useNavigate();
   const [data, setData] = useState(null);
   const [statusFilter, setStatusFilter] = useState("DAY");
 
@@ -143,14 +143,14 @@ const TransactionChart = ({ aspect }) => {
             width={720}
             height={360}
             data={data}
-            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            margin={{ top: 20, right: 30, left: 30, bottom: 0 }}
           >
             <CartesianGrid strokeDasharray="10 10" />
             <Line type="monotone" dataKey="totalProfit" stroke="#2f7d0b" />
             <Line type="monotone" dataKey="totalRevenue" stroke="#3426d1" />
 
             <XAxis dataKey="date" />
-            <YAxis />
+            <YAxis tickFormatter={getMoneyFormat} />
             <Tooltip
               formatter={(value, b, chartPoint) => {
                 switch (chartPoint.name) {

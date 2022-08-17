@@ -11,31 +11,26 @@
 
 options:
   docker: true
+  size: 2x
 definitions:
   steps:
-    - step: &build-and-test
-        name: Build
-        script:
-          - npm install
-          - npm run-script build
-          - mkdir packaged
-          - tar -czvf packaged/package-flix-admin-fe.tar.gz -C build .
-        artifacts:
-          - build/** 
-        after-script:
-              # Collect checkstyle results, if any, and convert to Bitbucket Code Insights.
-          - pipe: atlassian/checkstyle-report:0.3.0
     - step: &build-image
-        name: Build Docker image
+        name: Build Docker Image
         image: node
         script:
           - docker build -t flix-admin-fe .
           - docker save --output tmp-image.docker flix-admin-fe
         artifacts:
           - tmp-image.docker
+        services:
+          - docker
+        size: 2x 
     - step: &push-gcr-and-deploy
         name: Push to GCR and deploy to Cloud Run
         image: google/cloud-sdk:alpine
+        services:
+          - docker
+        size: 2x
         script:
           - docker load --input ./tmp-image.docker
           # Authenticating with the service account key file
@@ -51,7 +46,10 @@ definitions:
           - cat ./gcloud-api-key.json | docker login -u _json_key --password-stdin https://gcr.io
           - docker push ${IMAGE_NAME}
           # Deploy to Cloud Run
-          - gcloud run deploy flix --image gcr.io/authentic-reach-351916/flix-admin-fe${SUFFIX} --max-instances 30 --platform managed --region asia-southeast1 --allow-unauthenticated
+          - gcloud run deploy flix-admin-fe --image gcr.io/authentic-reach-351916/flix-admin-fe${SUFFIX} --max-instances 30 --platform managed --region asia-southeast1 --allow-unauthenticated
+  services:
+    docker:
+      memory: 4096
 pipelines:
   tags:
     v*:
@@ -59,6 +57,5 @@ pipelines:
       - step: *push-gcr-and-deploy
   branches:
     master:
-      - step: *build-and-test
       - step: *build-image
       - step: *push-gcr-and-deploy

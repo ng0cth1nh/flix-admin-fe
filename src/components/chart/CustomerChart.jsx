@@ -21,14 +21,16 @@ import BasicDateRangePicker from "../dateRagePicker/BasicDateRangePicker";
 import moment from "moment";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
-import Loading from "../../components/loading/Loading";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../components/loading/Loading";
+import { getAccountFormat } from "../../utils/util";
 
 const CustomerChart = ({ aspect }) => {
+  const navigate = useNavigate();
   const userAPI = useAxios();
   const [data, setData] = useState(null);
   const [statusFilter, setStatusFilter] = useState("DAY");
-  const navigate = useNavigate();
+
   const [selectedFromDate, setSelectedFromDate] = useState(
     moment().subtract(1, "month")
   );
@@ -141,21 +143,21 @@ const CustomerChart = ({ aspect }) => {
             width={720}
             height={360}
             data={data}
-            margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+            margin={{ top: 20, right: 30, left: 30, bottom: 0 }}
           >
             <CartesianGrid strokeDasharray="10 10" />
             <Line type="monotone" dataKey="totalNewAccount" stroke="#52c41a" />
             <Line type="monotone" dataKey="totalBanAccount" stroke="#ff7a45" />
 
             <XAxis dataKey="date" />
-            <YAxis />
+            <YAxis tickFormatter={getAccountFormat} />
             <Tooltip
               formatter={(value, b, chartPoint) => {
                 switch (chartPoint.name) {
                   case "totalNewAccount":
-                    return [value, "Người dùng mới"];
+                    return [getAccountFormat(value), "Người dùng mới"];
                   case "totalBanAccount":
-                    return [value, "Người dùng bị ban"];
+                    return [getAccountFormat(value), "Người dùng bị ban"];
                   default:
                     return "";
                 }
