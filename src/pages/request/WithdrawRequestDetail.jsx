@@ -18,6 +18,7 @@ const requestInfoField = [
     id: "withdrawType",
     label: "Loại rút tiền",
     value: "",
+    format: (value) => (value === "BANKING" ? "Chuyển khoản" : "Tiền mặt"),
   },
   { id: "transactionCode", label: "Mã giao dịch", value: "" },
   {
@@ -197,9 +198,7 @@ const WithdrawRequestDetail = () => {
               handleClose={handleClose}
               handleConfirm={handleConfirm}
             >
-              <div
-                style={{ width: "85%", margin:"auto"}}
-              >
+              <div style={{ width: "85%", margin: "auto" }}>
                 <MuiTextAreaInput
                   label="Lý do*"
                   item={values.rejectReason}
