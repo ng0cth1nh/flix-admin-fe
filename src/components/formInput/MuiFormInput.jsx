@@ -6,6 +6,7 @@ const MuiFormInput = ({
   isRequired,
   pattern,
   onChange,
+  disabled=false,
   ...props
 }) => {
   return (
@@ -31,6 +32,7 @@ const MuiFormInput = ({
         sx={{ width: "100%" }}
         variant="outlined"
         required={isRequired}
+        disabled={disabled}
       />
       {item.error && (
         <span style={{ fontSize: "12px", color: "red", padding: "3px" }}>

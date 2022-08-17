@@ -46,7 +46,7 @@ const Sidebar = () => {
           <Link to="/home" style={{ textDecoration: "none" }}>
             <li>
               <DashboardIcon className="icon" />
-              <span>Dashboard</span>
+              <span>Bảng tổng hợp</span>
             </li>
           </Link>
           <p className="title">THÔNG TIN KHÁCH HÀNG</p>

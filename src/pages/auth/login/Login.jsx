@@ -52,7 +52,7 @@ const Login = () => {
       type: "password",
       placeholder: "Nhập mật khẩu",
       errorMessage:
-        "Mật khẩu phải có độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
+        "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
       label: "Mật khẩu*",
       pattern: Pattern.PASSWORD,
       required: true,

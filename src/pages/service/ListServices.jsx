@@ -178,7 +178,7 @@ const ListServices = () => {
               marginBottom: "10px",
             }}
           >
-            <h1>Dịch vụ</h1>
+            <h1>{state.categoryName + " > "}Dịch vụ</h1>
             <div style={{ display: "flex" }}>
               <SearchInline
                 placeholder="Tên dịch vụ"

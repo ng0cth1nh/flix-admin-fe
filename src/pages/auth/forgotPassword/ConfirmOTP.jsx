@@ -34,7 +34,7 @@ const ConfirmOTP = () => {
       type: "password",
       placeholder: "Nhập mật khẩu",
       errorMessage:
-        "Mật khẩu phải có độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
+        "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
       label: "Mật khẩu*",
       pattern: Pattern.PASSWORD,
       required: true,
@@ -44,7 +44,7 @@ const ConfirmOTP = () => {
       name: "confirmPassword",
       type: "password",
       placeholder: "Nhập lại mật khẩu",
-      errorMessage: "Mật khẩu nhập lại không khớp!",
+      errorMessage: "Mật khẩu không khớp!",
       label: "Nhập lại mật khẩu",
       pattern: values.password,
       required: true,

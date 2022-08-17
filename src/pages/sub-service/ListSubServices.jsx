@@ -168,7 +168,7 @@ const ListSubServices = () => {
               marginBottom: "10px",
             }}
           >
-            <h1>Dịch vụ con</h1>
+            <h1>{state.categoryName+" > "+ state.serviceName+" > "}Dịch vụ con</h1>
             <div style={{ display: "flex" }}>
               <SearchInline
                 placeholder="Tên dịch vụ"

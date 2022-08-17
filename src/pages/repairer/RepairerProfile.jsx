@@ -430,7 +430,7 @@ const RepairerProfile = () => {
                   }}
                   onClick={handleBan}
                 >
-                  {status ? "Ban" : "Bỏ ban"}
+                  {status ? "Vô hiệu hóa" : "Kích hoạt"}
                 </Button>
               </div>
               <ConfirmDialog

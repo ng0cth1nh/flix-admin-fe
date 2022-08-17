@@ -135,7 +135,7 @@ const NewFeedback = () => {
               </Select>
             </FormControl>
             <MuiTextAreaInput
-              label="Nội dung*"
+              label="Nội dung *"
               item={values.description}
               id="description"
               onChange={onChange}

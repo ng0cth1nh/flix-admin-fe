@@ -9,8 +9,6 @@ import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import getErrorMessage from "../../utils/getErrorMessage";
 import Loading from "../../components/loading/Loading";
-import { fetchUserProfile } from "../../features/auth/authSlice";
-import { useSelector, useDispatch } from "react-redux";
 import MuiFormInput from "../../components/formInput/MuiFormInput";
 const listProfileInput = [
   {
@@ -26,13 +24,14 @@ const listProfileInput = [
     pattern: Pattern.PHONE_NUMBER,
     errorMessage: "Số điện thoại không hợp lệ!",
     isRequired: true,
+    disabled: true,
   },
   {
     id: "email",
     label: "Email",
     pattern: Pattern.EMAIL,
     errorMessage: "Email không đúng định dạng!",
-    isRequired: true,
+    isRequired: false,
   },
 ];
 const listPasswordInput = [
@@ -41,7 +40,7 @@ const listPasswordInput = [
     label: "Mật khẩu cũ",
     pattern: Pattern.PASSWORD,
     errorMessage:
-      "Mật khẩu phải có độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
+      "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
     isRequired: true,
     type: "password",
   },
@@ -50,7 +49,7 @@ const listPasswordInput = [
     label: "Mật khẩu mới",
     pattern: Pattern.PASSWORD,
     errorMessage:
-      "Mật khẩu phải có độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
+      "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
     isRequired: true,
     type: "password",
   },
@@ -58,7 +57,7 @@ const listPasswordInput = [
     id: "reNewPassword",
     label: "Nhập lại mật khẩu",
     pattern: null,
-    errorMessage: "Mật khẩu nhập lại không khớp!",
+    errorMessage: "Mật khẩu không khớp!",
     isRequired: true,
     type: "password",
   },
@@ -66,22 +65,20 @@ const listPasswordInput = [
 
 const UserProfile = () => {
   const userAPI = useAxios();
-  const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
   const [avatar, setAvatar] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl);
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const [profileValues, setProfileValues] = useState({
     fullName: {
-      value: user.fullName,
+      value: "",
       error: "",
     },
     phone: {
-      value: user.phone,
+      value: "",
       error: "",
     },
     email: {
-      value: user.email,
+      value: "",
       error: "",
     },
   });
@@ -106,26 +103,21 @@ const UserProfile = () => {
   const onChangePassword = (id, text, error) => {
     setPasswordValues({ ...passwordValues, [id]: { value: text, error } });
   };
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user.fullName) {
-        try {
-          setLoading(true);
-          dispatch(fetchUserProfile({ userAPI }));
-          const response = await userAPI.get(ApiContants.ADMIN_PROFILE);
-          const data = response.data;
-          for (const key in profileValues) {
-            profileValues[key].value = data[key];
-          }
-          setAvatarUrl(data.avatarUrl);
-          setLoading(false);
-        } catch (error) {
-          setLoading(false);
+  const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await userAPI.get(ApiContants.ADMIN_PROFILE);
+        const data = response.data;
+        for (const key in profileValues) {
+          profileValues[key].value = data[key];
         }
-      } else {
+        setAvatarUrl(data.avatarUrl);
+        setLoading(false);
+      } catch (error) {
         setLoading(false);
       }
-    };
+  };
+  useEffect(() => {
     fetchData();
   }, []);
   const handleSaveProfile = async (e) => {
@@ -142,10 +134,8 @@ const UserProfile = () => {
             "Content-Type": "multipart/form-data",
           },
         });
-        alert("Cập nhật avatar thành công!");
-        dispatch(fetchUserProfile({ userAPI }));
       } catch (error) {
-        alert("Cập nhật avatar không thành công do: " + getErrorMessage(error));
+        alert("Cập nhật avatar thất bại do: " + getErrorMessage(error));
       }
     }
     try {
@@ -154,6 +144,7 @@ const UserProfile = () => {
         email: profileValues.email.value,
       });
       alert("Cập nhật thông tin cá nhân thành công!");
+      fetchData();
     } catch (error) {
       alert("Cập nhật thông tin cá nhân thất bại do: ", getErrorMessage(error));
     }
