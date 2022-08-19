@@ -20,6 +20,7 @@ import Loading from "../../components/loading/Loading";
 import { formatFromDate, formatFromDateTime } from "../../utils/getFormatDate";
 import ConfirmDialog from "../../components/dialog/ConfirmDialog";
 import getErrorMessage from "../../utils/getErrorMessage";
+import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
 const titleStyle = { fontWeight: "bold", fontSize: "15px" };
 const RepairerProfile = () => {
   const { repairerId } = useParams();
@@ -30,12 +31,16 @@ const RepairerProfile = () => {
   const [status, setStatus] = useState(true);
   const [buttonPos, setButtonPos] = useState(0);
   const [banReason, setBanReason] = useState({ value: "", error: "" });
-  const [rejectReason, setRejectReason] = useState("");
   const [loading, setLoading] = useState(true);
   const [willCvUpdate, setWillCvUpdate] = useState("true");
-  const [acceptButtonEnable, setAcceptButtonEnable] = useState(false);
   const [openRejectCv, setOpenRejectCv] = useState(false);
   const [repairer, setRepairer] = useState(null);
+  const [values, setValues] = useState({
+    rejectReason: {
+      value: "",
+      error: "",
+    },
+  });
   const handleSave = (e) => {
     e.preventDefault();
     banRepairer();
@@ -55,6 +60,9 @@ const RepairerProfile = () => {
     } else {
       banRepairer();
     }
+  };
+  const onChange = (id, text, error) => {
+    setValues({ ...values, [id]: { value: text, error } });
   };
   const banRepairer = async () => {
     if (banReason.error === "") {
@@ -80,11 +88,12 @@ const RepairerProfile = () => {
   };
   const changeStatusCVRepairer = async (status) => {
     if (status === "REJECT") {
+      if (values.rejectReason.error !== "") return;
       try {
         await repairerAPI.put(ApiContants.CV_REJECT, {
           repairerId,
-          reason: rejectReason,
-          rejectStatus: willCvUpdate==="true" ? "UPDATING" : "REJECTED",
+          reason: values.rejectReason.value,
+          rejectStatus: willCvUpdate === "true" ? "UPDATING" : "REJECTED",
         });
         setOpenRejectCv(false);
         alert("Từ chối thông tin Cv thợ thành công!");
@@ -438,19 +447,19 @@ const RepairerProfile = () => {
                 title="Bạn có muốn từ chối cv của thợ rút tiền này không?"
                 handleClose={handleRejectCvClose}
                 handleConfirm={handleRejectCvConfirm}
-                acceptButtonEnable={acceptButtonEnable}
               >
                 <div
                   style={{
                     width: "85%",
-                    marginTop: "10px",
-                    alignSelf: "center",
+                    margin: "auto",
                   }}
                 >
                   <RadioGroup
                     aria-labelledby="demo-radio-buttons-group-label"
                     defaultValue={willCvUpdate}
-                    onChange={(e) => {setWillCvUpdate(e.target.value)}}
+                    onChange={(e) => {
+                      setWillCvUpdate(e.target.value);
+                    }}
                     name="radio-buttons-group"
                     row
                   >
@@ -471,42 +480,13 @@ const RepairerProfile = () => {
                       }}
                     />
                   </RadioGroup>
-                  <Typography sx={{ fontSize: "14px" }}>Lý do</Typography>
-                  <TextareaAutosize
-                    minRows={5}
-                    maxRows={7}
-                    aria-label="maximum height"
-                    placeholder="Nội dung*"
-                    value={rejectReason}
-                    onChange={(e) => {
-                      if (
-                        !e.target.value.trim() ||
-                        e.target.value.length > 2500
-                      ) {
-                        setAcceptButtonEnable(false);
-                      } else {
-                        setAcceptButtonEnable(true);
-                      }
-                      setRejectReason(e.target.value);
-                    }}
-                    style={{
-                      width: "97%",
-                      marginTop: "5px",
-                      padding: "10px",
-                      resize: "none",
-                    }}
+                  <MuiTextAreaInput
+                    label="Nội dung*"
+                    item={values.rejectReason}
+                    id="rejectReason"
+                    onChange={onChange}
+                    isRequired={true}
                   />
-                  {rejectReason.length > 2500 && (
-                    <span
-                      style={{
-                        fontSize: "12px",
-                        padding: "3px",
-                        color: "red",
-                      }}
-                    >
-                      Lý do nhập quá dài
-                    </span>
-                  )}
                 </div>
               </ConfirmDialog>
               <BanModal
