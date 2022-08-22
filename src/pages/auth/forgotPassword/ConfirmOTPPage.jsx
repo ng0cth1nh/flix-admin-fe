@@ -65,6 +65,7 @@ const ConfirmOTPPage = () => {
   const handleSubmit = async (e) => {
     console.log("otp: ", values.otp);
     e.preventDefault();
+    // fetch data here
     try {
       dispatch(setLoading(LoadingState.PENDING));
       const response = await authAPI.post(ApiContants.CONFIRM_OTP, {
