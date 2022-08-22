@@ -9,7 +9,7 @@ import ApiContants from "../../constants/Api";
 import useAxios from "../../hooks/useAxios";
 import { getErrorImageSelect } from "../../utils/util";
 import getErrorMessage from "../../utils/getErrorMessage";
-import "./SingleCategory.scss";
+import "./singleCategory.scss";
 const input = {
   id: "categoryName",
   label: "Tên danh mục",
