@@ -1,4 +1,4 @@
-import "./ListSubServices.scss";
+import "./listServices.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -24,8 +24,17 @@ import { getMoneyFormat } from "../../utils/util";
 const columns = [
   { id: "index", label: "#", width: "5%", align: "center" },
   {
-    id: "subServiceName",
-    label: "TÊN DỊCH VỤ CON",
+    id: "image",
+    label: "ẢNH MINH HỌA",
+    width: "15%",
+    align: "center",
+    format: (value) => (
+      <img alt="Ảnh dịch vụ" src={value} style={{ width: 50, height: 50 }} />
+    ),
+  },
+  {
+    id: "serviceName",
+    label: "TÊN DỊCH VỤ",
     width: "15%",
     align: "center",
   },
@@ -39,7 +48,7 @@ const columns = [
   {
     id: "description",
     label: "MÔ TẢ",
-    width: "35%",
+    width: "20%",
     align: "center",
   },
   {
@@ -63,22 +72,23 @@ const columns = [
     label: "THAO TÁC",
     width: "15%",
     align: "center",
-    format: (value) => (
-      <Button variant="contained" sx={{ textTransform: "none" }} size="small">
-        <Link
-          to={`/categories/${value.categoryId}/services/${value.serviceId}/subservices/subservice?id=${value.id}`}
-          style={{ textDecoration: "none", color: "white" }}
-          state={{
-            categoryName: value.categoryName,
-            serviceName: value.serviceName,
-          }}
-        >
-          Cập nhật
-        </Link>
-      </Button>
-    ),
+    format: (value) => {
+      console.log("fucking categoryId:", value.categoryId);
+      return (
+        <Button variant="contained" sx={{ textTransform: "none" }} size="small">
+          <Link
+            to={`/categories/${value.categoryId}/services/service?id=${value.id}`}
+            state={{ categoryName: value.categoryName }}
+            style={{ textDecoration: "none", color: "white" }}
+          >
+            Cập nhật
+          </Link>
+        </Button>
+      );
+    },
   },
 ];
+
 const useStyles = makeStyles({
   root: {
     "& .MuiTableCell-head": {
@@ -87,28 +97,34 @@ const useStyles = makeStyles({
     },
   },
 });
-const ListSubServices = () => {
-  const { state } = useLocation();
+const ListServicesPage = () => {
   const classes = useStyles();
+  const { state } = useLocation();
   const navigate = useNavigate();
   const userAPI = useAxios();
-  const [page, setPage] = useState(0);
-  const { categoryId, serviceId } = useParams();
+  const { categoryId } = useParams();
   const [data, setData] = useState([]);
   const [totalRecord, setTotalRecord] = useState(0);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const [page, setPage] = useState(0);
+  
+  const handleCellClick = ({ id, categoryName, serviceName }) => {
+    navigate(`/categories/${categoryId}/services/${id}/subservices`, {
+      state: { categoryName, serviceName },
+    });
+  };
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const response = await userAPI.get(
-        ApiContants.SUBSERVICE_LIST +
-          `?pageNumber=${page}&serviceId=${serviceId}`
+        ApiContants.SERVICE_LIST +
+          `?pageNumber=${page}&categoryId=${categoryId}`
       );
       setTotalRecord(response.data.totalRecord);
-      setData(response.data.subServices);
+      setData(response.data.services);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -123,22 +139,17 @@ const ListSubServices = () => {
       fetchData();
       return;
     }
-    let searchUrl = ApiContants.SUBSERVICE_SEARCH;
+    let searchUrl = ApiContants.SERVICE_SEARCH;
     if (search.trim()) {
-      searchUrl += `?keyword=${search.trim()}&serviceId=${serviceId}`;
+      searchUrl += `?keyword=${search.trim()}&categoryId=${categoryId}`;
     }
     try {
       setPage(0);
       setLoading(true);
       setIsSearching(true);
       const response = await userAPI.get(searchUrl);
-      setData(
-        response.data.subServices.map((item) => ({
-          ...item,
-          subServiceName: item.name,
-        }))
-      );
-      setTotalRecord(response.data.subServices.length);
+      setData(response.data.services);
+      setTotalRecord(response.data.services.length);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -155,9 +166,9 @@ const ListSubServices = () => {
   }, [page]);
 
   return (
-    <div className="list-subservices">
+    <div className="list-services">
       <Sidebar />
-      <div className="list-subservices-container">
+      <div className="list-services-container">
         <Navbar />
         <div className="table-container">
           <div
@@ -168,7 +179,7 @@ const ListSubServices = () => {
               marginBottom: "10px",
             }}
           >
-            <h1>{state.categoryName+" > "+ state.serviceName+" > "}Dịch vụ con</h1>
+            <h1>{state.categoryName + " > "}Dịch vụ</h1>
             <div style={{ display: "flex" }}>
               <SearchInline
                 placeholder="Tên dịch vụ"
@@ -178,9 +189,9 @@ const ListSubServices = () => {
               />
               <Button variant="contained" color="success">
                 <Link
-                  to={`/categories/${categoryId}/services/${serviceId}/subservices/subservice`}
+                  to={`/categories/${categoryId}/services/service`}
+                  state={{ categoryName: state.categoryName }}
                   style={{ textDecoration: "none", color: "white" }}
-                  state={state}
                 >
                   Thêm
                 </Link>
@@ -219,6 +230,9 @@ const ListSubServices = () => {
                           <TableRow
                             hover
                             role="checkbox"
+                            sx={{
+                              cursor: "pointer",
+                            }}
                             tabIndex={-1}
                             key={row.id}
                           >
@@ -228,6 +242,13 @@ const ListSubServices = () => {
                                   <TableCell
                                     key={column.id}
                                     align={column.align}
+                                    onClick={() => {
+                                      handleCellClick({
+                                        id: row["id"],
+                                        categoryName: state.categoryName,
+                                        serviceName: row["serviceName"],
+                                      });
+                                    }}
                                   >
                                     {page * Config.ROW_PER_PAGE + index + 1}
                                   </TableCell>
@@ -236,10 +257,8 @@ const ListSubServices = () => {
                                 const value =
                                   column.id === "action"
                                     ? {
-                                        categoryId,
-                                        serviceId,
                                         categoryName: state.categoryName,
-                                        serviceName: state.serviceName,
+                                        categoryId,
                                         id: row["id"],
                                       }
                                     : row[column.id];
@@ -247,6 +266,17 @@ const ListSubServices = () => {
                                   <TableCell
                                     key={column.id}
                                     align={column.align}
+                                    onClick={(e) => {
+                                      if (column.id === "action") {
+                                        console.log("go to action");
+                                        e.preventDefault();
+                                      } else
+                                        handleCellClick({
+                                          id: row["id"],
+                                          categoryName: state.categoryName,
+                                          serviceName: row["serviceName"],
+                                        });
+                                    }}
                                   >
                                     {column.format
                                       ? column.format(value)
@@ -268,7 +298,7 @@ const ListSubServices = () => {
                 rowsPerPage={Config.ROW_PER_PAGE}
                 page={page}
                 onPageChange={handleChangePage}
-              />{" "}
+              />
             </div>
           ) : loading ? null : (
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -286,4 +316,4 @@ const ListSubServices = () => {
   );
 };
 
-export default ListSubServices;
+export default ListServicesPage;

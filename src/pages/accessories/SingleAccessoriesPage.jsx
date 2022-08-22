@@ -3,7 +3,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { Button, Autocomplete, TextField } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import "./SingleAccessories.scss";
+import "./singleAccessories.scss";
 import MuiFormInput from "../../components/formInput/MuiFormInput";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
@@ -49,9 +49,11 @@ const listField = [
   },
 ];
 
-const SingleAccessories = () => {
+const SingleAccessoriesPage = () => {
   const userAPI = useAxios();
   const navigate = useNavigate();
+  const { search } = useLocation();
+  const id = new URLSearchParams(search).get("id");
   const [serviceLabel, setServiceLabel] = useState("");
   const [loading, setLoading] = useState(true);
   const [services, setServices] = useState([]);
@@ -85,8 +87,7 @@ const SingleAccessories = () => {
       error: "",
     },
   });
-  const { search } = useLocation();
-  const id = new URLSearchParams(search).get("id");
+  
   const onChange = (id, text, error) => {
     setValues({ ...values, [id]: { value: text, error } });
   };
@@ -240,4 +241,4 @@ const SingleAccessories = () => {
   );
 };
 
-export default SingleAccessories;
+export default SingleAccessoriesPage;

@@ -9,17 +9,16 @@ import {
   FormControl,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./UpdateFeedback.scss";
+import "./updateFeedback.scss";
 import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import getErrorMessage from "../../utils/getErrorMessage";
 
-const UpdateFeedback = () => {
+const UpdateFeedbackPage = () => {
   const { search } = useLocation();
   const feedbackId = new URLSearchParams(search).get("feedbackId");
   const statusId = new URLSearchParams(search).get("statusId");
-  console.log("feedbackId", feedbackId, 'fjdjf',statusId);
   const navigate = useNavigate();
   const userAPI = useAxios();
   const [values, setValues] = useState({
@@ -111,4 +110,4 @@ const UpdateFeedback = () => {
   );
 };
 
-export default UpdateFeedback;
+export default UpdateFeedbackPage;

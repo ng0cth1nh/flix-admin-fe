@@ -14,7 +14,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import "./NewFeedback.scss";
+import "./newFeedback.scss";
 import Pattern from "../../constants/Pattern";
 import MuiFormInput from "../../components/formInput/MuiFormInput";
 import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
@@ -44,7 +44,7 @@ const listField = [
     isRequired: true,
   },
 ];
-const NewFeedback = () => {
+const NewFeedbackPage = () => {
   const userAPI = useAxios();
   const navigate = useNavigate();
   const [values, setValues] = useState({
@@ -67,8 +67,8 @@ const NewFeedback = () => {
   });
   const [listImage, setListImage] = useState([]);
   const [requestTypeId, setRequestTypeId] = useState("REQUEST");
-  const handleChange = (event) => {
-    setRequestTypeId(event.target.value);
+  const handleChange = (e) => {
+    setRequestTypeId(e.target.value);
   };
   const onChange = (id, text, error) => {
     setValues({ ...values, [id]: { value: text, error } });
@@ -226,4 +226,4 @@ const NewFeedback = () => {
   );
 };
 
-export default NewFeedback;
+export default NewFeedbackPage;

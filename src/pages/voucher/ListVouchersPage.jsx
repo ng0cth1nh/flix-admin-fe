@@ -1,7 +1,7 @@
-import "./ListVoucher.scss";
+import "./listVoucher.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-const ListVouchers = () => {
+const ListVouchersPage = () => {
   return (
     <div className="list-vouchers">
       <Sidebar />
@@ -13,4 +13,4 @@ const ListVouchers = () => {
   );
 };
 
-export default ListVouchers;
+export default ListVouchersPage;

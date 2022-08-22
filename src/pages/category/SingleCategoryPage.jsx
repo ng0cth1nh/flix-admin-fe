@@ -9,7 +9,7 @@ import ApiContants from "../../constants/Api";
 import useAxios from "../../hooks/useAxios";
 import { getErrorImageSelect } from "../../utils/util";
 import getErrorMessage from "../../utils/getErrorMessage";
-import "./SingleCategory.scss";
+import "./singleCategory.scss";
 const input = {
   id: "categoryName",
   label: "Tên danh mục",
@@ -17,8 +17,10 @@ const input = {
   errorMessage: "Tên danh mục có độ dài không quá 150 kí tự!",
   isRequired: true,
 };
-const SingleCategory = () => {
+const SingleCategoryPage = () => {
   const userAPI = useAxios();
+  const { search } = useLocation();
+  const id = new URLSearchParams(search).get("id");
   const navigate = useNavigate();
   const [isEdited, setIsEdited] = useState(false);
   const [avatar, setAvatar] = useState(null);
@@ -33,8 +35,7 @@ const SingleCategory = () => {
       error: "",
     },
   });
-  const { search } = useLocation();
-  const id = new URLSearchParams(search).get("id");
+
   const onChange = (id, text, error) => {
     setValues({ ...values, [id]: { value: text, error } });
   };
@@ -197,4 +198,4 @@ const SingleCategory = () => {
   );
 };
 
-export default SingleCategory;
+export default SingleCategoryPage;

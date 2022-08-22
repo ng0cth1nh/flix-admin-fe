@@ -14,7 +14,7 @@ import {
 } from "../../../features/auth/authSlice";
 import Pattern from "../../../constants/Pattern";
 
-const Login = () => {
+const LoginPage = () => {
   const authAPI = useAxios();
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -110,4 +110,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginPage;

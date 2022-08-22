@@ -1,13 +1,10 @@
-import "./ListAccessories.scss";
-import { useState, useEffect } from "react";
+import "./listCustomers.scss";
+import { useState } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
-import useAxios from "../../hooks/useAxios";
 import { Link, useNavigate } from "react-router-dom";
+import useAxios from "../../hooks/useAxios";
 import Config from "../../constants/Config";
-import Loading from "../../components/loading/Loading";
-import SearchInline from "../../components/search/SearchInline";
-import ApiContants from "../../constants/Api";
 
 import {
   TableContainer,
@@ -18,66 +15,73 @@ import {
   TableBody,
   TablePagination,
   Button,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import { getMoneyFormat } from "../../utils/util";
+import ApiContants from "../../constants/Api";
+import { useEffect } from "react";
+import Loading from "../../components/loading/Loading";
+import Search from "../../components/search/Search";
 const columns = [
-  { id: "index", label: "#", width: "5%", align: "center" },
+  { id: "index", label: "#", width: "10%", align: "center" },
   {
-    id: "name",
-    label: "TÊN LINH KIỆN",
+    id: "avatar",
+    label: "ẢNH ĐẠI DIỆN",
+    width: "15%",
+    align: "center",
+    format: (value) => (
+      <img alt="category" src={value} style={{ width: 50, height: 50 }} />
+    ),
+  },
+  {
+    id: "customerName",
+    label: "TÊN KHÁCH HÀNG",
+    width: "30%",
+    align: "center",
+  },
+  {
+    id: "customerPhone",
+    label: "SỐ ĐIỆN THOẠI",
     width: "15%",
     align: "center",
   },
   {
-    id: "price",
-    label: "GIÁ LINH KIỆN",
-    width: "10%",
-    align: "center",
-    format: (value) => getMoneyFormat(value),
-  },
-  {
-    id: "insuranceTime",
-    label: "BẢO HÀNH",
-    width: "10%",
-    align: "center",
-  },
-  {
-    id: "manufacture",
-    label: "NHÀ SẢN XUẤT",
-    width: "10%",
-    align: "center",
-  },
-  {
-    id: "country",
-    label: "NƠI SẢN XUẤT",
+    id: "status",
+    label: "TRẠNG THÁI",
     width: "15%",
     align: "center",
-  },
-  {
-    id: "description",
-    label: "MÔ TẢ",
-    width: "25%",
-    align: "center",
+    format: (value) =>
+      value === "ACTIVE" ? (
+        <Typography variant="p" sx={{ color: "green" }}>
+          Hoạt động
+        </Typography>
+      ) : (
+        <Typography variant="p" sx={{ color: "red" }}>
+          Vô hiệu hóa
+        </Typography>
+      ),
   },
   {
     id: "action",
     label: "THAO TÁC",
-    width: "10%",
+    width: "15%",
     align: "center",
     format: (value) => (
       <Button variant="contained" sx={{ textTransform: "none" }} size="small">
         <Link
-          to={`/accessories/single?id=${value}`}
+          to={`/customers/profile/${value}`}
           style={{ textDecoration: "none", color: "white" }}
         >
-          Cập nhật
+          Xem chi tiết
         </Link>
       </Button>
     ),
   },
 ];
-
 const useStyles = makeStyles({
   root: {
     "& .MuiTableCell-head": {
@@ -86,25 +90,29 @@ const useStyles = makeStyles({
     },
   },
 });
-const ListAccessories = () => {
+const ListCustomersPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const userAPI = useAxios();
+  const customerAPI = useAxios();
   const [page, setPage] = useState(0);
   const [data, setData] = useState([]);
   const [totalRecord, setTotalRecord] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+
+  const handleChangeStatusFilter = (event) => {
+    setStatusFilter(event.target.value);
+  };
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await userAPI.get(
-        ApiContants.ACCESSORIES_LIST + `?pageNumber=${page}`
+      const response = await customerAPI.get(
+        ApiContants.FETCH_LIST_CUSTOMER + `?pageNumber=${page}`
       );
       setTotalRecord(response.data.totalRecord);
-      setData(response.data.accessoryList);
-      console.log(response.data.accessoryList);
+      setData(response.data.customerList);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -113,45 +121,50 @@ const ListAccessories = () => {
   };
   const searchData = async () => {
     // case both search text and status is null then fetch data by paging
-    if (!search.trim()) {
+    if (!search.trim() && !statusFilter) {
       setIsSearching(false);
       setPage(0);
       fetchData();
       return;
     }
-    let searchUrl = ApiContants.ACCESSORY_SEARCH;
+    let searchUrl = ApiContants.SEARCH_CUSTOMER;
+    let flag = false;
     if (search.trim()) {
       searchUrl += `?keyword=${search.trim()}`;
+      flag = true;
     }
-    console.log(searchUrl);
+    if (statusFilter) {
+      searchUrl += (flag ? "&" : "?") + `status=${statusFilter}`;
+    }
     try {
       setPage(0);
       setLoading(true);
       setIsSearching(true);
-      const response = await userAPI.get(searchUrl);
-      setData(response.data.accessories);
-      setTotalRecord(response.data.accessories.length);
+      const response = await customerAPI.get(searchUrl);
+      setData(response.data.customers);
+      console.log(response.data.customers.length);
+      setTotalRecord(response.data.customers.length);
       setLoading(false);
     } catch (error) {
       setLoading(false);
       navigate("/error");
     }
   };
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
+
   useEffect(() => {
     if (!isSearching) {
       fetchData();
     }
   }, [page]);
-
+  const handleChangePage = async (event, newPage) => {
+    setPage(newPage);
+  };
   return (
-    <div className="withdraw-request">
+    <div className="list-customers">
       <Sidebar />
-      <div className="withdraw-request-container">
+      <div className="list-customers-container">
         <Navbar />
-        <div className="table-container">
+        <div className="table-container" style={{ opacity: loading ? 0.5 : 1 }}>
           <div
             style={{
               display: "flex",
@@ -160,23 +173,36 @@ const ListAccessories = () => {
               marginBottom: "10px",
             }}
           >
-            <h1>Linh kiện</h1>
-            <div style={{ display: "flex" }}>
-              <SearchInline
-                placeholder="Tên linh kiện"
-                handleSearch={searchData}
-                search={search}
-                setSearch={setSearch}
-              />
-              <Button variant="contained" color="success">
-                <Link
-                  to="/accessories/single"
-                  style={{ textDecoration: "none", color: "white" }}
-                >
-                  Thêm
-                </Link>
-              </Button>
-            </div>
+            <h1>Khách hàng</h1>
+         
+          </div>
+          <div className="filter">
+            <FormControl
+              sx={{
+                width: "200px",
+                marginRight:5,
+                backgroundColor:'white'
+              }}
+            >
+              <InputLabel id="status-label">Trạng thái</InputLabel>
+              <Select
+                labelId="status-label"
+                id="statusFilter"
+                value={statusFilter}
+                label="Trạng thái"
+                onChange={handleChangeStatusFilter}
+              >
+                <MenuItem value="">Tất cả</MenuItem>
+                <MenuItem value="ACTIVE">Hoạt động</MenuItem>
+                <MenuItem value="BAN">Vô hiệu hóa</MenuItem>
+              </Select>
+            </FormControl>
+            <Search
+              placeholder="Số điện thoại"
+              handleSearch={searchData}
+              search={search}
+              setSearch={setSearch}
+            />
           </div>
           {data.length !== 0 ? (
             <div>
@@ -233,13 +259,9 @@ const ListAccessories = () => {
                                     key={column.id}
                                     align={column.align}
                                   >
-                                    {value
-                                      ? column.format
-                                        ? column.format(value)
-                                        : value
-                                      : column.id === "insuranceTime"
-                                      ? 0
-                                      : "Không có"}
+                                    {column.format
+                                      ? column.format(value)
+                                      : value}
                                   </TableCell>
                                 );
                               }
@@ -275,4 +297,4 @@ const ListAccessories = () => {
   );
 };
 
-export default ListAccessories;
+export default ListCustomersPage;

@@ -14,10 +14,10 @@ import Loading from "../../components/loading/Loading";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import Config from "../../constants/Config"
-import "./FeedbackDetail.scss";
+import "./feedbackDetail.scss";
 import { getStatus } from "../../utils/util";
 import { formatFromDateTime } from "../../utils/getFormatDate";
-const FeedbackDetail = () => {
+const FeedbackDetailPage = () => {
   const { feedbackId } = useParams();
   const navigate = useNavigate();
   const userAPI = useAxios();
@@ -273,4 +273,4 @@ const FeedbackDetail = () => {
   );
 };
 
-export default FeedbackDetail;
+export default FeedbackDetailPage;

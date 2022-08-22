@@ -8,7 +8,7 @@ import ApiContants from "../../constants/Api";
 import Loading from "../../components/loading/Loading";
 import Config from "../../constants/Config";
 import { formatFromDate } from "../../utils/getFormatDate";
-import "./TransactionDetail.scss";
+import "./transactionDetail.scss";
 import { getMoneyFormat } from "../../utils/util";
 const transactionInfoField = [
   { id: "fullName", label: "Họ và tên", value: "" },
@@ -68,7 +68,7 @@ const vnpayTransactionField = [
   { id: "cardType", label: "Loại thẻ/tài khoản", value: "" },
   { id: "orderInfo", value: "" },
 ];
-const TransactionDetail = () => {
+const TransactionDetailPage = () => {
   const navigate = useNavigate();
   const userAPI = useAxios();
   const [buttonPos, setButtonPos] = useState(0);
@@ -241,4 +241,4 @@ const TransactionDetail = () => {
   );
 };
 
-export default TransactionDetail;
+export default TransactionDetailPage;

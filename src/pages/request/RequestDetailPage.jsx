@@ -8,7 +8,7 @@ import Loading from "../../components/loading/Loading";
 import {formatFromDateTime } from "../../utils/getFormatDate";
 
 import { useParams, useNavigate } from "react-router-dom";
-import "./RequestDetail.scss";
+import "./requestDetail.scss";
 import { getMoneyFormat } from "../../utils/util";
 const requestInfoField = [
   { id: "requestCode", label: "Mã yêu cầu", value: "" },
@@ -82,7 +82,7 @@ const listTotal = [
   { id: "actualPrice", label: "Tổng thanh toán", value: "" },
 ];
 
-const RequestDetail = () => {
+const RequestDetailPage = () => {
   const { requestId } = useParams();
   const navigate = useNavigate();
   const userAPI = useAxios();
@@ -449,4 +449,4 @@ const RequestDetail = () => {
   );
 };
 
-export default RequestDetail;
+export default RequestDetailPage;

@@ -1,14 +1,8 @@
-import "./ListRequests.scss";
+import "./withdrawRequest.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
-import { Link, useNavigate } from "react-router-dom";
-import useAxios from "../../hooks/useAxios";
-import Config from "../../constants/Config";
-import Loading from "../../components/loading/Loading";
-import Search from "../../components/search/Search";
-import ApiContants from "../../constants/Api";
-import { formatFromDateTime } from "../../utils/getFormatDate";
+import { useNavigate } from "react-router-dom";
 
 import {
   TableContainer,
@@ -19,102 +13,65 @@ import {
   TableBody,
   TablePagination,
   Button,
-  Typography,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
+  Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+import useAxios from "../../hooks/useAxios";
+import ApiContants from "../../constants/Api";
+import Config from "../../constants/Config";
+import Loading from "../../components/loading/Loading";
+import Search from "../../components/search/Search";
+import { getMoneyFormat } from "../../utils/util";
 const columns = [
-  { id: "index", label: "#", width: "10%", align: "center" },
-  {
-    id: "requestCode",
-    label: "MÃ YÊU CẦU",
-    width: "10%",
-    align: "center",
-  },
-  {
-    id: "customerName",
-    label: "TÊN KHÁCH HÀNG",
-    width: "10%",
-    align: "center",
-  },
-  {
-    id: "customerPhone",
-    label: "SỐ ĐIỆN THOẠI KHÁCH",
-    width: "15%",
-    align: "center",
-  },
+  { id: "index", label: "#", width: "5%", align: "center" },
   {
     id: "repairerName",
-    label: "TÊN THỢ",
-    width: "10%",
+    label: "TÊN THỢ SỬA",
+    width: "20%",
     align: "center",
   },
   {
     id: "repairerPhone",
-    label: "SỐ ĐIỆN THOẠI THỢ",
-    width: "10%",
+    label: "SỐ ĐIỆN THOẠI",
+    width: "15%",
     align: "center",
   },
   {
-    id: "createdAt",
-    label: "NGÀY TẠO",
-    width: "10%",
-    align: "center",
-    format: (value) => formatFromDateTime(value),
-  },
-  {
-    id: "status",
-    label: "TRẠNG THÁI",
-    width: "10%",
+    id: "withdrawType",
+    label: "LOẠI RÚT TIỀN",
+    width: "15%",
     align: "center",
     format: (value) =>
-      value === "PENDING" ? (
-        <Typography variant="p" sx={{ color: "orange" }}>
-          Đang đợi
-        </Typography>
-      ) : value === "APPROVED" ? (
-        <Typography variant="p" sx={{ color: "blue" }}>
-          Đã chấp nhận
-        </Typography>
-      ) : value === "FIXING" ? (
-        <Typography variant="p" sx={{ color: "purple" }}>
-          Đang sửa
-        </Typography>
-      ) : value === "PAYMENT_WAITING" ? (
-        <Typography variant="p" sx={{ color: "teal" }}>
-          Chờ thanh toán
-        </Typography>
-      ) : value === "DONE" ? (
-        <Typography variant="p" sx={{ color: "green" }}>
-          Hoàn thành
-        </Typography>
+      value === "BANKING" ? (
+        <Typography>Chuyển khoản</Typography>
       ) : (
-        <Typography variant="p" sx={{ color: "red" }}>
-          Đã hủy
-        </Typography>
+        <Typography>Tiền mặt</Typography>
       ),
+  },
+  {
+    id: "transactionCode",
+    label: "MÃ GIAO DỊCH",
+    width: "15%",
+    align: "center",
+  },
+  {
+    id: "amount",
+    label: "SỐ TIỀN",
+    width: "10%",
+    align: "center",
+    format: (value) => getMoneyFormat(value),
   },
   {
     id: "action",
     label: "THAO TÁC",
-    width: "15%",
+    width: "20%",
     align: "center",
-    format: (value) => (
-      <Button variant="contained" sx={{ textTransform: "none" }} size="small">
-        <Link
-          to={`/requests/${value}`}
-          style={{ textDecoration: "none", color: "white" }}
-        >
-          Xem chi tiết
-        </Link>
-      </Button>
-    ),
   },
 ];
-
 const useStyles = makeStyles({
   root: {
     "& .MuiTableCell-head": {
@@ -123,29 +80,33 @@ const useStyles = makeStyles({
     },
   },
 });
-const ListRequests = () => {
+const WithdrawRequestPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const userAPI = useAxios();
   const [page, setPage] = useState(0);
-  const [statusFilter, setStatusFilter] = useState("");
   const [data, setData] = useState([]);
   const [totalRecord, setTotalRecord] = useState(0);
+  const [typeFilter, setTypeFilter] = useState("");
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
+  const handleRowClick = (id) => {
+    navigate(`/repairers/profile/${id}`);
+  };
 
-  const handleChangeStatusFilter = (event) => {
-    setStatusFilter(event.target.value);
+  const handleChangeTypeFilter = (event) => {
+    setTypeFilter(event.target.value);
   };
   const fetchData = async () => {
     try {
       setLoading(true);
       const response = await userAPI.get(
-        ApiContants.REQUEST_LIST + `?pageNumber=${page}`
+        ApiContants.FETCH_LIST_WITHDRAW + `?pageNumber=${page}`
       );
       setTotalRecord(response.data.totalRecord);
-      setData(response.data.requestList);
+      console.log(response.data.withdrawList);
+      setData(response.data.withdrawList);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -154,20 +115,20 @@ const ListRequests = () => {
   };
   const searchData = async () => {
     // case both search text and status is null then fetch data by paging
-    if (!search.trim() && !statusFilter) {
+    if (!search.trim() && !typeFilter) {
       setIsSearching(false);
       setPage(0);
       fetchData();
       return;
     }
-    let searchUrl = ApiContants.REQUEST_SEARCH;
+    let searchUrl = ApiContants.SEARCH_WITHDRAW;
     let flag = false;
     if (search.trim()) {
       searchUrl += `?keyword=${search.trim()}`;
       flag = true;
     }
-    if (statusFilter) {
-      searchUrl += (flag ? "&" : "?") + `status=${statusFilter}`;
+    if (typeFilter) {
+      searchUrl += (flag ? "&" : "?") + `withdrawType=${typeFilter}`;
     }
     console.log(searchUrl);
     try {
@@ -175,9 +136,8 @@ const ListRequests = () => {
       setLoading(true);
       setIsSearching(true);
       const response = await userAPI.get(searchUrl);
-      console.log(response.data);
-      setData(response.data.requestList);
-      setTotalRecord(response.data.requestList.length);
+      setData(response.data.withdrawList);
+      setTotalRecord(response.data.withdrawList.length);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -190,15 +150,13 @@ const ListRequests = () => {
       fetchData();
     }
   }, [page]);
-
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = async (event, newPage) => {
     setPage(newPage);
   };
-
   return (
-    <div className="list-requests">
+    <div className="withdraw-request">
       <Sidebar />
-      <div className="list-requests-container">
+      <div className="withdraw-request-container">
         <Navbar />
         <div className="table-container">
           <div
@@ -209,37 +167,31 @@ const ListRequests = () => {
               marginBottom: "10px",
             }}
           >
-            <h1>Yêu cầu</h1>
-          
+            <h1>Yêu cầu rút tiền</h1>
           </div>
           <div className="filter">
             <FormControl
               sx={{
                 width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
+                marginRight: 5,
+                backgroundColor: "white",
               }}
             >
-              {/* // PENDING,APPROVED,FIXING,CANCEL,PAYMENT_WAITING,DONE */}
-              <InputLabel id="status-label">Trạng thái</InputLabel>
+              <InputLabel id="status-label">Loại rút tiền</InputLabel>
               <Select
                 labelId="status-label"
-                id="statusFilter"
-                value={statusFilter}
-                label="Trạng thái"
-                onChange={handleChangeStatusFilter}
+                id="typeFilter"
+                value={typeFilter}
+                label="Loại rút tiền"
+                onChange={handleChangeTypeFilter}
               >
                 <MenuItem value={""}>Tất cả</MenuItem>
-                <MenuItem value={"PENDING"}>Đang đợi</MenuItem>
-                <MenuItem value={"APPROVED"}>Đã chấp nhận</MenuItem>
-                <MenuItem value={"FIXING"}>Đang sửa</MenuItem>
-                <MenuItem value={"CANCELLED"}>Đã hủy</MenuItem>
-                <MenuItem value={"PAYMENT_WAITING"}>Chờ thanh toán</MenuItem>
-                <MenuItem value={"DONE"}>Hoàn thành</MenuItem>
+                <MenuItem value={"CASH"}>Tiền mặt</MenuItem>
+                <MenuItem value={"BANKING"}>Chuyển khoản</MenuItem>
               </Select>
             </FormControl>
             <Search
-              placeholder="Mã yêu cầu"
+              placeholder="Mã giao dịch"
               handleSearch={searchData}
               search={search}
               setSearch={setSearch}
@@ -277,6 +229,9 @@ const ListRequests = () => {
                           <TableRow
                             hover
                             role="checkbox"
+                            sx={{
+                              cursor: "pointer",
+                            }}
                             tabIndex={-1}
                             key={row.id}
                           >
@@ -286,6 +241,9 @@ const ListRequests = () => {
                                   <TableCell
                                     key={column.id}
                                     align={column.align}
+                                    onClick={() => {
+                                      handleRowClick(row["repairerId"]);
+                                    }}
                                   >
                                     {page * Config.ROW_PER_PAGE + index + 1}
                                   </TableCell>
@@ -296,7 +254,18 @@ const ListRequests = () => {
                                     key={column.id}
                                     align={column.align}
                                   >
-                                    {column.format(row["requestCode"])}
+                                    <Button
+                                      variant="contained"
+                                      sx={{ textTransform: "none" }}
+                                      size="small"
+                                      onClick={() =>
+                                        navigate(
+                                          `/withdraws/${row.transactionId}`
+                                        )
+                                      }
+                                    >
+                                      Xem chi tiết
+                                    </Button>
                                   </TableCell>
                                 );
                               } else {
@@ -305,12 +274,13 @@ const ListRequests = () => {
                                   <TableCell
                                     key={column.id}
                                     align={column.align}
+                                    onClick={() => {
+                                      handleRowClick(row["repairerId"]);
+                                    }}
                                   >
-                                    {value
-                                      ? column.format
-                                        ? column.format(value)
-                                        : value
-                                      : "Không có"}
+                                    {column.format
+                                      ? column.format(value)
+                                      : value}
                                   </TableCell>
                                 );
                               }
@@ -330,7 +300,7 @@ const ListRequests = () => {
                 onPageChange={handleChangePage}
               />
             </div>
-          ) : loading ? null : (
+          ) : (
             <div style={{ display: "flex", alignItems: "center" }}>
               <img
                 src="/nodata.png"
@@ -346,4 +316,4 @@ const ListRequests = () => {
   );
 };
 
-export default ListRequests;
+export default WithdrawRequestPage;

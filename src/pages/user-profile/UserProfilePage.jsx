@@ -63,7 +63,7 @@ const listPasswordInput = [
   },
 ];
 
-const UserProfile = () => {
+const UserProfilePage = () => {
   const userAPI = useAxios();
   const dispatch = useDispatch();
   const [avatar, setAvatar] = useState(null);
@@ -261,4 +261,4 @@ const UserProfile = () => {
   );
 };
 
-export default UserProfile;
+export default UserProfilePage;

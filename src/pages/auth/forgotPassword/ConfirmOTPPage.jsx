@@ -1,23 +1,26 @@
 import FormInput from "../../../components/formInput/FormInput";
 import { useState, useEffect } from "react";
-import "./forgotPassword.scss";
-import { Link, useNavigate } from "react-router-dom";
+import "./confirmOTP.scss";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import useAxios from "../../../hooks/useAxios";
 import { useSelector, useDispatch } from "react-redux";
 import { setErrorMessage, setLoading } from "../../../features/auth/authSlice";
-import useAxios from "../../../hooks/useAxios";
 import ApiContants from "../../../constants/Api";
-import getErrorMessage from "../../../utils/getErrorMessage";
 import LoadingState from "../../../constants/LoadingState";
+import getErrorMessage from "../../../utils/getErrorMessage";
 import Loading from "../../../components/loading/Loading";
 import Pattern from "../../../constants/Pattern";
 
-const ForgotPassword = () => {
-  const authAPI = useAxios();
-  const { errorMessage, loading } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
+const ConfirmOTPPage = () => {
   const navigate = useNavigate();
+  const authAPI = useAxios();
+  const dispatch = useDispatch();
+  const { state } = useLocation();
+  const { errorMessage, loading } = useSelector((state) => state.auth);
   const [values, setValues] = useState({
-    phone: "",
+    password: "",
+    confirmPassword: "",
+    otp: "",
   });
   useEffect(() => {
     dispatch(setErrorMessage(null));
@@ -26,27 +29,62 @@ const ForgotPassword = () => {
 
   const inputs = [
     {
+      id: 2,
+      name: "password",
+      type: "password",
+      placeholder: "Nhập mật khẩu",
+      errorMessage:
+        "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
+      label: "Mật khẩu*",
+      pattern: Pattern.PASSWORD,
+      required: true,
+    },
+    {
+      id: 5,
+      name: "confirmPassword",
+      type: "password",
+      placeholder: "Nhập lại mật khẩu",
+      errorMessage: "Mật khẩu không khớp!",
+      label: "Nhập lại mật khẩu",
+      pattern: values.password,
+      required: true,
+      isLast: true,
+    },
+    {
       id: 1,
-      name: "phone",
+      name: "otp",
       type: "text",
-      placeholder: "Nhập số điện thoại",
-      errorMessage: "Số điện thoại không hợp lệ!",
-      label: "Số điện thoại*",
-      pattern: Pattern.PHONE_NUMBER,
+      placeholder: "Nhập mã OTP",
+      errorMessage: "Mã OTP gồm 6 số!",
+      label: "Mã OTP*",
+      pattern: Pattern.OTP,
       required: true,
     },
   ];
 
   const handleSubmit = async (e) => {
+    console.log("otp: ", values.otp);
     e.preventDefault();
     try {
       dispatch(setLoading(LoadingState.PENDING));
-      await authAPI.post(ApiContants.SEND_OTP, {
-        phone: values.phone,
-        roleType: "ADMIN",
+      const response = await authAPI.post(ApiContants.CONFIRM_OTP, {
+        phone: state.phone,
+        otp: values.otp,
       });
+      await authAPI.put(
+        ApiContants.CHANGE_PASSWORD,
+        {
+          newPassword: values.password,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${response.data.accessToken}`,
+          },
+        }
+      );
       dispatch(setLoading(LoadingState.SUCCEEDED));
-      navigate("/confirmOTP", { state: { phone: values.phone } });
+      alert("Đổi mật khẩu thành công!");
+      navigate("/");
     } catch (err) {
       dispatch(setLoading(LoadingState.FAILED));
       dispatch(setErrorMessage(getErrorMessage(err)));
@@ -58,7 +96,7 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="forgotpassword">
+    <div className="confirm-otp">
       <form
         onSubmit={handleSubmit}
         className="form"
@@ -77,7 +115,7 @@ const ForgotPassword = () => {
         {errorMessage && (
           <p style={{ color: "red", fontSize: "12px" }}>{errorMessage}</p>
         )}
-        <input type="submit" className="button" value="Tiếp tục" />
+        <button className="button">Đổi mật khẩu</button>
         <Link to="/" style={{ textDecoration: "none" }}>
           <p className="link">Đăng nhập</p>
         </Link>
@@ -86,4 +124,4 @@ const ForgotPassword = () => {
   );
 };
 
-export default ForgotPassword;
+export default ConfirmOTPPage;

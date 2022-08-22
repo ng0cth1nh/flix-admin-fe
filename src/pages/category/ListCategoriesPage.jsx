@@ -1,4 +1,4 @@
-import "./ListCategories.scss";
+import "./listCategories.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -85,7 +85,7 @@ const useStyles = makeStyles({
     },
   },
 });
-const ListCategories = () => {
+const ListCategoriesPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const userAPI = useAxios();
@@ -96,7 +96,6 @@ const ListCategories = () => {
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const handleRowClick = ({id, categoryName}) => {
-    console.log('categories click row:', categoryName);
     navigate(`/categories/${id}/services`,{state:{categoryName}});
   };
   const fetchData = async () => {
@@ -140,7 +139,7 @@ const ListCategories = () => {
       navigate("/error");
     }
   };
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (e, newPage) => {
     setPage(newPage);
   };
   useEffect(() => {
@@ -287,4 +286,4 @@ const ListCategories = () => {
   );
 };
 
-export default ListCategories;
+export default ListCategoriesPage;

@@ -3,14 +3,14 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { Button, Switch, Typography, FormControlLabel } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-import "./CustomerProfile.scss";
+import "./customerProfile.scss";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import Loading from "../../components/loading/Loading";
 import { formatFromDate, formatFromDateTime } from "../../utils/getFormatDate";
 import BanModal from "../../components/modal/BanModal";
 const titleStyle = { fontWeight: "bold", fontSize: "15px" };
-const CustomerProfile = () => {
+const CustomerProfilePage = () => {
   const { customerId } = useParams();
   const customerAPI = useAxios();
   const navigate = useNavigate();
@@ -52,9 +52,9 @@ const CustomerProfile = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleSwitchChange = (event) => {
+  const handleSwitchChange = (e) => {
     if (!isEdited) {
-      setStatus(event.target.checked);
+      setStatus(e.target.checked);
       setIsEdited(true);
     }
   };
@@ -206,4 +206,4 @@ const CustomerProfile = () => {
   );
 };
 
-export default CustomerProfile;
+export default CustomerProfilePage;

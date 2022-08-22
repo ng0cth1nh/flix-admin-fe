@@ -1,4 +1,4 @@
-import "./ListFeedbacks.scss";
+import "./listRepairers.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -8,8 +8,6 @@ import Config from "../../constants/Config";
 import Loading from "../../components/loading/Loading";
 import Search from "../../components/search/Search";
 import ApiContants from "../../constants/Api";
-import { formatFromDateTime } from "../../utils/getFormatDate";
-
 import {
   TableContainer,
   Table,
@@ -27,43 +25,27 @@ import {
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
 const columns = [
-  { id: "index", label: "#", width: "5%", align: "center" },
+  { id: "index", label: "#", width: "10%", align: "center" },
   {
-    id: "phone",
-    label: "SỐ ĐIỆN THOẠI",
-    width: "20%",
-    align: "center",
-  },
-  {
-    id: "feedbackType",
-    label: "LOẠI YÊU CẦU",
+    id: "avatar",
+    label: "ẢNH ĐẠI DIỆN",
     width: "15%",
     align: "center",
-    format: (val) =>
-      val === "REQUEST"
-        ? "Yêu cầu"
-        : val === "VOUCHER"
-        ? "Phiếu giảm giá"
-        : val === "INSURANCE"
-        ? "Bảo hành"
-        : val === "INVOICE"
-        ? "Hóa đơn"
-        : val === "COMMENT"
-        ? "Bình luận"
-        : "Tài khoản",
+    format: (value) => (
+      <img alt="category" src={value} style={{ width: 50, height: 50 }} />
+    ),
   },
   {
-    id: "title",
-    label: "TIÊU ĐỀ",
+    id: "repairerName",
+    label: "TÊN THỢ",
     width: "20%",
     align: "center",
   },
   {
-    id: "createdAt",
-    label: "NGÀY TẠO",
-    width: "`10%",
+    id: "repairerPhone",
+    label: "SỐ ĐIỆN THOẠI",
+    width: "10%",
     align: "center",
-    format: (val) => formatFromDateTime(val),
   },
   {
     id: "status",
@@ -71,17 +53,33 @@ const columns = [
     width: "15%",
     align: "center",
     format: (value) =>
+      value === "ACTIVE" ? (
+        <Typography variant="p" sx={{ color: "green" }}>
+          Hoạt động
+        </Typography>
+      ) : (
+        <Typography variant="p" sx={{ color: "red" }}>
+          Vô hiệu hóa
+        </Typography>
+      ),
+  },
+  {
+    id: "cvStatus",
+    label: "XÁC THỰC",
+    width: "15%",
+    align: "center",
+    format: (value) =>
       value === "PENDING" ? (
         <Typography variant="p" sx={{ color: "orange" }}>
           Đang đợi
         </Typography>
-      ) : value === "PROCESSING" ? (
+      ) : value === "UPDATING" ? (
         <Typography variant="p" sx={{ color: "blue" }}>
           Đang xử lí
         </Typography>
-      ) : value === "DONE" ? (
+      ) : value === "ACCEPTED" ? (
         <Typography variant="p" sx={{ color: "green" }}>
-          Đã hoàn thành
+          Đã xác thực
         </Typography>
       ) : (
         <Typography variant="p" sx={{ color: "red" }}>
@@ -97,7 +95,7 @@ const columns = [
     format: (value) => (
       <Button variant="contained" sx={{ textTransform: "none" }} size="small">
         <Link
-          to={`/feedbacks/feedback/view/${value}`}
+          to={`/repairers/profile/${value}`}
           style={{ textDecoration: "none", color: "white" }}
         >
           Xem chi tiết
@@ -115,13 +113,14 @@ const useStyles = makeStyles({
     },
   },
 });
-const ListFeedbacks = () => {
+const ListRepairersPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const userAPI = useAxios();
+  const repairerAPI = useAxios();
+
   const [page, setPage] = useState(0);
   const [statusFilter, setStatusFilter] = useState("");
-  const [typeFilter, setTypeFilter] = useState("");
+  const [verifyTypeFilter, setVerifyTypeFilter] = useState("");
   const [data, setData] = useState([]);
   const [totalRecord, setTotalRecord] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -131,18 +130,18 @@ const ListFeedbacks = () => {
   const handleChangeStatusFilter = (event) => {
     setStatusFilter(event.target.value);
   };
-  const handleChangeTypeFilter = (event) => {
-    setTypeFilter(event.target.value);
+  const handleChangeVerifyFilter = (event) => {
+    setVerifyTypeFilter(event.target.value);
   };
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await userAPI.get(
-        ApiContants.FEEDBACK_LIST + `?pageNumber=${page}`
+      const response = await repairerAPI.get(
+        ApiContants.FETCH_LIST_REPAIRER + `?pageNumber=${page}`
       );
       setTotalRecord(response.data.totalRecord);
-      setData(response.data.feedbackList);
-      console.log(response.data.feedbackList);
+      setData(response.data.repairerList);
+      console.log("status", response.data.repairerList[0].cvStatus);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -151,33 +150,33 @@ const ListFeedbacks = () => {
   };
   const searchData = async () => {
     // case both search text and status is null then fetch data by paging
-    if (!search.trim() && !statusFilter && !typeFilter) {
+    if (!search.trim() && !statusFilter && !verifyTypeFilter) {
       setIsSearching(false);
       setPage(0);
       fetchData();
       return;
     }
-    let searchUrl = ApiContants.FEEDBACK_SEARCH;
+    let searchUrl = ApiContants.SEARCH_REPAIRER;
     let flag = false;
     if (search.trim()) {
       searchUrl += `?keyword=${search.trim()}`;
       flag = true;
     }
     if (statusFilter) {
-      searchUrl += (flag ? "&" : "?") + `status=${statusFilter}`;
+      searchUrl += (flag ? "&" : "?") + `accountState=${statusFilter}`;
       flag = true;
     }
-    if (typeFilter) {
-      searchUrl += (flag ? "&" : "?") + `feedbackType=${typeFilter}`;
+    if (verifyTypeFilter) {
+      searchUrl += (flag ? "&" : "?") + `cvStatus=${verifyTypeFilter}`;
     }
+    console.log(searchUrl);
     try {
       setPage(0);
       setLoading(true);
       setIsSearching(true);
-      const response = await userAPI.get(searchUrl);
-      setData(response.data.feedbackList);
-      console.log(response.data);
-      setTotalRecord(response.data.feedbackList.length);
+      const response = await repairerAPI.get(searchUrl);
+      setData(response.data.repairers);
+      setTotalRecord(response.data.repairers.length);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -191,14 +190,14 @@ const ListFeedbacks = () => {
     }
   }, [page]);
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (e, newPage) => {
     setPage(newPage);
   };
 
   return (
-    <div className="list-feedbacks">
+    <div className="list-repairers">
       <Sidebar />
-      <div className="list-feedbacks-container">
+      <div className="list-repairers-container">
         <Navbar />
         <div className="table-container">
           <div
@@ -209,48 +208,14 @@ const ListFeedbacks = () => {
               marginBottom: "10px",
             }}
           >
-            <h1>Phản hồi</h1>
-            <div style={{ display: "flex" }}>
-              <Button variant="contained" color="success">
-                <Link
-                  to={"/feedbacks/feedback/new"}
-                  style={{ textDecoration: "none", color: "white" }}
-                >
-                  Thêm
-                </Link>
-              </Button>
-            </div>
+            <h1>Thợ sửa chữa</h1>
           </div>
           <div className="filter">
             <FormControl
               sx={{
                 width: "200px",
-                marginRight: 5,
-                backgroundColor: "white",
-              }}
-            >
-              <InputLabel id="type-label">Loại yêu cầu</InputLabel>
-              <Select
-                labelId="type-label"
-                id="typeFilter"
-                value={typeFilter}
-                label="Loại yêu cầu"
-                onChange={handleChangeTypeFilter}
-              >
-                <MenuItem value={""}>Tất cả</MenuItem>
-                <MenuItem value={"REQUEST"}>Yêu cầu</MenuItem>
-                <MenuItem value={"VOUCHER"}>Phiếu giảm giá</MenuItem>
-                <MenuItem value={"INSURANCE"}>Bảo hành</MenuItem>
-                <MenuItem value={"INVOICE"}>Hóa đơn</MenuItem>
-                <MenuItem value={"COMMENT"}>Bình luận</MenuItem>
-                <MenuItem value={"ACCOUNT"}>Tài khoản</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl
-              sx={{
-                width: "200px",
-                marginRight: 5,
-                backgroundColor: "white",
+                marginRight:5,
+                backgroundColor:'white'
               }}
             >
               <InputLabel id="status-label">Trạng thái</InputLabel>
@@ -261,11 +226,31 @@ const ListFeedbacks = () => {
                 label="Trạng thái"
                 onChange={handleChangeStatusFilter}
               >
-                <MenuItem value={""}>Tất cả</MenuItem>
-                <MenuItem value={"PENDING"}>Đang đợi</MenuItem>
-                <MenuItem value={"PROCESSING"}>Đang xử lí</MenuItem>
-                <MenuItem value={"DONE"}>Đã hoàn thành</MenuItem>
-                <MenuItem value={"REJECTED"}>Đã hủy</MenuItem>
+                <MenuItem value="">Tất cả</MenuItem>
+                <MenuItem value="ACTIVE">Hoạt động</MenuItem>
+                <MenuItem value="BAN">Vô hiệu hóa</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl
+              sx={{
+                width: "200px",
+                marginRight:5,
+                backgroundColor:'white'
+              }}
+            >
+              <InputLabel id="verify-label">Xác thực</InputLabel>
+              <Select
+                labelId="verify-label"
+                id="verifyFilter"
+                value={verifyTypeFilter}
+                label="Xác thực"
+                onChange={handleChangeVerifyFilter}
+              >
+                <MenuItem value="">Tất cả</MenuItem>
+                <MenuItem value="PENDING">Đang đợi</MenuItem>
+                <MenuItem value="UPDATING">Đang xử lí</MenuItem>
+                <MenuItem value="ACCEPTED">Đã xác thực</MenuItem>
+                <MenuItem value="REJECTED">Đã hủy</MenuItem>
               </Select>
             </FormControl>
             <Search
@@ -368,4 +353,4 @@ const ListFeedbacks = () => {
   );
 };
 
-export default ListFeedbacks;
+export default ListRepairersPage;

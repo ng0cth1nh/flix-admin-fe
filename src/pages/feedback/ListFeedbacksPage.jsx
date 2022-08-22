@@ -1,10 +1,14 @@
-import "./ListCustomers.scss";
-import { useState } from "react";
+import "./listFeedbacks.scss";
+import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import { Link, useNavigate } from "react-router-dom";
 import useAxios from "../../hooks/useAxios";
 import Config from "../../constants/Config";
+import Loading from "../../components/loading/Loading";
+import Search from "../../components/search/Search";
+import ApiContants from "../../constants/Api";
+import { formatFromDateTime } from "../../utils/getFormatDate";
 
 import {
   TableContainer,
@@ -22,32 +26,44 @@ import {
   MenuItem,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import ApiContants from "../../constants/Api";
-import { useEffect } from "react";
-import Loading from "../../components/loading/Loading";
-import Search from "../../components/search/Search";
 const columns = [
-  { id: "index", label: "#", width: "10%", align: "center" },
+  { id: "index", label: "#", width: "5%", align: "center" },
   {
-    id: "avatar",
-    label: "ẢNH ĐẠI DIỆN",
-    width: "15%",
-    align: "center",
-    format: (value) => (
-      <img alt="category" src={value} style={{ width: 50, height: 50 }} />
-    ),
-  },
-  {
-    id: "customerName",
-    label: "TÊN KHÁCH HÀNG",
-    width: "30%",
-    align: "center",
-  },
-  {
-    id: "customerPhone",
+    id: "phone",
     label: "SỐ ĐIỆN THOẠI",
+    width: "20%",
+    align: "center",
+  },
+  {
+    id: "feedbackType",
+    label: "LOẠI YÊU CẦU",
     width: "15%",
     align: "center",
+    format: (val) =>
+      val === "REQUEST"
+        ? "Yêu cầu"
+        : val === "VOUCHER"
+        ? "Phiếu giảm giá"
+        : val === "INSURANCE"
+        ? "Bảo hành"
+        : val === "INVOICE"
+        ? "Hóa đơn"
+        : val === "COMMENT"
+        ? "Bình luận"
+        : "Tài khoản",
+  },
+  {
+    id: "title",
+    label: "TIÊU ĐỀ",
+    width: "20%",
+    align: "center",
+  },
+  {
+    id: "createdAt",
+    label: "NGÀY TẠO",
+    width: "`10%",
+    align: "center",
+    format: (val) => formatFromDateTime(val),
   },
   {
     id: "status",
@@ -55,13 +71,21 @@ const columns = [
     width: "15%",
     align: "center",
     format: (value) =>
-      value === "ACTIVE" ? (
+      value === "PENDING" ? (
+        <Typography variant="p" sx={{ color: "orange" }}>
+          Đang đợi
+        </Typography>
+      ) : value === "PROCESSING" ? (
+        <Typography variant="p" sx={{ color: "blue" }}>
+          Đang xử lí
+        </Typography>
+      ) : value === "DONE" ? (
         <Typography variant="p" sx={{ color: "green" }}>
-          Hoạt động
+          Đã hoàn thành
         </Typography>
       ) : (
         <Typography variant="p" sx={{ color: "red" }}>
-          Vô hiệu hóa
+          Đã hủy
         </Typography>
       ),
   },
@@ -73,7 +97,7 @@ const columns = [
     format: (value) => (
       <Button variant="contained" sx={{ textTransform: "none" }} size="small">
         <Link
-          to={`/customers/profile/${value}`}
+          to={`/feedbacks/feedback/view/${value}`}
           style={{ textDecoration: "none", color: "white" }}
         >
           Xem chi tiết
@@ -82,6 +106,7 @@ const columns = [
     ),
   },
 ];
+
 const useStyles = makeStyles({
   root: {
     "& .MuiTableCell-head": {
@@ -90,29 +115,34 @@ const useStyles = makeStyles({
     },
   },
 });
-const ListCustomers = () => {
+const ListFeedbacksPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const customerAPI = useAxios();
+  const userAPI = useAxios();
   const [page, setPage] = useState(0);
+  const [statusFilter, setStatusFilter] = useState("");
+  const [typeFilter, setTypeFilter] = useState("");
   const [data, setData] = useState([]);
   const [totalRecord, setTotalRecord] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
 
   const handleChangeStatusFilter = (event) => {
     setStatusFilter(event.target.value);
   };
+  const handleChangeTypeFilter = (event) => {
+    setTypeFilter(event.target.value);
+  };
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await customerAPI.get(
-        ApiContants.FETCH_LIST_CUSTOMER + `?pageNumber=${page}`
+      const response = await userAPI.get(
+        ApiContants.FEEDBACK_LIST + `?pageNumber=${page}`
       );
       setTotalRecord(response.data.totalRecord);
-      setData(response.data.customerList);
+      setData(response.data.feedbackList);
+      console.log(response.data.feedbackList);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -121,13 +151,13 @@ const ListCustomers = () => {
   };
   const searchData = async () => {
     // case both search text and status is null then fetch data by paging
-    if (!search.trim() && !statusFilter) {
+    if (!search.trim() && !statusFilter && !typeFilter) {
       setIsSearching(false);
       setPage(0);
       fetchData();
       return;
     }
-    let searchUrl = ApiContants.SEARCH_CUSTOMER;
+    let searchUrl = ApiContants.FEEDBACK_SEARCH;
     let flag = false;
     if (search.trim()) {
       searchUrl += `?keyword=${search.trim()}`;
@@ -135,16 +165,19 @@ const ListCustomers = () => {
     }
     if (statusFilter) {
       searchUrl += (flag ? "&" : "?") + `status=${statusFilter}`;
+      flag = true;
     }
-    console.log(searchUrl);
+    if (typeFilter) {
+      searchUrl += (flag ? "&" : "?") + `feedbackType=${typeFilter}`;
+    }
     try {
       setPage(0);
       setLoading(true);
       setIsSearching(true);
-      const response = await customerAPI.get(searchUrl);
-      setData(response.data.customers);
-      console.log(response.data.customers.length);
-      setTotalRecord(response.data.customers.length);
+      const response = await userAPI.get(searchUrl);
+      setData(response.data.feedbackList);
+      console.log(response.data);
+      setTotalRecord(response.data.feedbackList.length);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -157,15 +190,17 @@ const ListCustomers = () => {
       fetchData();
     }
   }, [page]);
-  const handleChangePage = async (event, newPage) => {
+
+  const handleChangePage = (e, newPage) => {
     setPage(newPage);
   };
+
   return (
-    <div className="list-customers">
+    <div className="list-feedbacks">
       <Sidebar />
-      <div className="list-customers-container">
+      <div className="list-feedbacks-container">
         <Navbar />
-        <div className="table-container" style={{ opacity: loading ? 0.5 : 1 }}>
+        <div className="table-container">
           <div
             style={{
               display: "flex",
@@ -174,15 +209,48 @@ const ListCustomers = () => {
               marginBottom: "10px",
             }}
           >
-            <h1>Khách hàng</h1>
-         
+            <h1>Phản hồi</h1>
+            <div style={{ display: "flex" }}>
+              <Button variant="contained" color="success">
+                <Link
+                  to={"/feedbacks/feedback/new"}
+                  style={{ textDecoration: "none", color: "white" }}
+                >
+                  Thêm
+                </Link>
+              </Button>
+            </div>
           </div>
           <div className="filter">
             <FormControl
               sx={{
                 width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
+                marginRight: 5,
+                backgroundColor: "white",
+              }}
+            >
+              <InputLabel id="type-label">Loại yêu cầu</InputLabel>
+              <Select
+                labelId="type-label"
+                id="typeFilter"
+                value={typeFilter}
+                label="Loại yêu cầu"
+                onChange={handleChangeTypeFilter}
+              >
+                <MenuItem value={""}>Tất cả</MenuItem>
+                <MenuItem value={"REQUEST"}>Yêu cầu</MenuItem>
+                <MenuItem value={"VOUCHER"}>Phiếu giảm giá</MenuItem>
+                <MenuItem value={"INSURANCE"}>Bảo hành</MenuItem>
+                <MenuItem value={"INVOICE"}>Hóa đơn</MenuItem>
+                <MenuItem value={"COMMENT"}>Bình luận</MenuItem>
+                <MenuItem value={"ACCOUNT"}>Tài khoản</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl
+              sx={{
+                width: "200px",
+                marginRight: 5,
+                backgroundColor: "white",
               }}
             >
               <InputLabel id="status-label">Trạng thái</InputLabel>
@@ -193,9 +261,11 @@ const ListCustomers = () => {
                 label="Trạng thái"
                 onChange={handleChangeStatusFilter}
               >
-                <MenuItem value="">Tất cả</MenuItem>
-                <MenuItem value="ACTIVE">Hoạt động</MenuItem>
-                <MenuItem value="BAN">Vô hiệu hóa</MenuItem>
+                <MenuItem value={""}>Tất cả</MenuItem>
+                <MenuItem value={"PENDING"}>Đang đợi</MenuItem>
+                <MenuItem value={"PROCESSING"}>Đang xử lí</MenuItem>
+                <MenuItem value={"DONE"}>Đã hoàn thành</MenuItem>
+                <MenuItem value={"REJECTED"}>Đã hủy</MenuItem>
               </Select>
             </FormControl>
             <Search
@@ -298,4 +368,4 @@ const ListCustomers = () => {
   );
 };
 
-export default ListCustomers;
+export default ListFeedbacksPage;

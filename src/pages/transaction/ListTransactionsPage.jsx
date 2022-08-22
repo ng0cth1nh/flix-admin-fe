@@ -1,4 +1,4 @@
-import "./ListTransactions.scss";
+import "./listTransactions.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -114,7 +114,7 @@ const useStyles = makeStyles({
     },
   },
 });
-const ListTransactions = () => {
+const ListTransactionsPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const userAPI = useAxios();
@@ -362,4 +362,4 @@ const ListTransactions = () => {
   );
 };
 
-export default ListTransactions;
+export default ListTransactionsPage;

@@ -1,8 +1,13 @@
-import "./WithdrawRequest.scss";
+import "./listAccessories.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
-import { useNavigate } from "react-router-dom";
+import useAxios from "../../hooks/useAxios";
+import { Link, useNavigate } from "react-router-dom";
+import Config from "../../constants/Config";
+import Loading from "../../components/loading/Loading";
+import SearchInline from "../../components/search/SearchInline";
+import ApiContants from "../../constants/Api";
 
 import {
   TableContainer,
@@ -13,65 +18,66 @@ import {
   TableBody,
   TablePagination,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Typography,
 } from "@mui/material";
 import { makeStyles } from "@mui/styles";
-import useAxios from "../../hooks/useAxios";
-import ApiContants from "../../constants/Api";
-import Config from "../../constants/Config";
-import Loading from "../../components/loading/Loading";
-import Search from "../../components/search/Search";
 import { getMoneyFormat } from "../../utils/util";
 const columns = [
   { id: "index", label: "#", width: "5%", align: "center" },
   {
-    id: "repairerName",
-    label: "TÊN THỢ SỬA",
-    width: "20%",
-    align: "center",
-  },
-  {
-    id: "repairerPhone",
-    label: "SỐ ĐIỆN THOẠI",
+    id: "name",
+    label: "TÊN LINH KIỆN",
     width: "15%",
     align: "center",
   },
   {
-    id: "withdrawType",
-    label: "LOẠI RÚT TIỀN",
-    width: "15%",
-    align: "center",
-    format: (value) =>
-      value === "BANKING" ? (
-        <Typography>Chuyển khoản</Typography>
-      ) : (
-        <Typography>Tiền mặt</Typography>
-      ),
-  },
-  {
-    id: "transactionCode",
-    label: "MÃ GIAO DỊCH",
-    width: "15%",
-    align: "center",
-  },
-  {
-    id: "amount",
-    label: "SỐ TIỀN",
+    id: "price",
+    label: "GIÁ LINH KIỆN",
     width: "10%",
     align: "center",
     format: (value) => getMoneyFormat(value),
   },
   {
-    id: "action",
-    label: "THAO TÁC",
-    width: "20%",
+    id: "insuranceTime",
+    label: "BẢO HÀNH",
+    width: "10%",
     align: "center",
   },
+  {
+    id: "manufacture",
+    label: "NHÀ SẢN XUẤT",
+    width: "10%",
+    align: "center",
+  },
+  {
+    id: "country",
+    label: "NƠI SẢN XUẤT",
+    width: "15%",
+    align: "center",
+  },
+  {
+    id: "description",
+    label: "MÔ TẢ",
+    width: "25%",
+    align: "center",
+  },
+  {
+    id: "action",
+    label: "THAO TÁC",
+    width: "10%",
+    align: "center",
+    format: (value) => (
+      <Button variant="contained" sx={{ textTransform: "none" }} size="small">
+        <Link
+          to={`/accessories/single?id=${value}`}
+          style={{ textDecoration: "none", color: "white" }}
+        >
+          Cập nhật
+        </Link>
+      </Button>
+    ),
+  },
 ];
+
 const useStyles = makeStyles({
   root: {
     "& .MuiTableCell-head": {
@@ -80,34 +86,25 @@ const useStyles = makeStyles({
     },
   },
 });
-const WithdrawRequest = () => {
+const ListAccessoriesPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const userAPI = useAxios();
   const [page, setPage] = useState(0);
   const [data, setData] = useState([]);
   const [totalRecord, setTotalRecord] = useState(0);
-  const [typeFilter, setTypeFilter] = useState("");
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const handleRowClick = (id) => {
-    console.log("repairerId:", id);
-    navigate(`/repairers/profile/${id}`);
-  };
-
-  const handleChangeTypeFilter = (event) => {
-    setTypeFilter(event.target.value);
-  };
   const fetchData = async () => {
     try {
       setLoading(true);
       const response = await userAPI.get(
-        ApiContants.FETCH_LIST_WITHDRAW + `?pageNumber=${page}`
+        ApiContants.ACCESSORIES_LIST + `?pageNumber=${page}`
       );
       setTotalRecord(response.data.totalRecord);
-      console.log(response.data.withdrawList);
-      setData(response.data.withdrawList);
+      setData(response.data.accessoryList);
+      console.log(response.data.accessoryList);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -116,20 +113,15 @@ const WithdrawRequest = () => {
   };
   const searchData = async () => {
     // case both search text and status is null then fetch data by paging
-    if (!search.trim() && !typeFilter) {
+    if (!search.trim()) {
       setIsSearching(false);
       setPage(0);
       fetchData();
       return;
     }
-    let searchUrl = ApiContants.SEARCH_WITHDRAW;
-    let flag = false;
+    let searchUrl = ApiContants.ACCESSORY_SEARCH;
     if (search.trim()) {
       searchUrl += `?keyword=${search.trim()}`;
-      flag = true;
-    }
-    if (typeFilter) {
-      searchUrl += (flag ? "&" : "?") + `withdrawType=${typeFilter}`;
     }
     console.log(searchUrl);
     try {
@@ -137,23 +129,23 @@ const WithdrawRequest = () => {
       setLoading(true);
       setIsSearching(true);
       const response = await userAPI.get(searchUrl);
-      setData(response.data.withdrawList);
-      setTotalRecord(response.data.withdrawList.length);
+      setData(response.data.accessories);
+      setTotalRecord(response.data.accessories.length);
       setLoading(false);
     } catch (error) {
       setLoading(false);
       navigate("/error");
     }
   };
-
+  const handleChangePage = (e, newPage) => {
+    setPage(newPage);
+  };
   useEffect(() => {
     if (!isSearching) {
       fetchData();
     }
   }, [page]);
-  const handleChangePage = async (event, newPage) => {
-    setPage(newPage);
-  };
+
   return (
     <div className="withdraw-request">
       <Sidebar />
@@ -168,35 +160,23 @@ const WithdrawRequest = () => {
               marginBottom: "10px",
             }}
           >
-            <h1>Yêu cầu rút tiền</h1>
-          </div>
-          <div className="filter">
-            <FormControl
-              sx={{
-                width: "200px",
-                marginRight: 5,
-                backgroundColor: "white",
-              }}
-            >
-              <InputLabel id="status-label">Loại rút tiền</InputLabel>
-              <Select
-                labelId="status-label"
-                id="typeFilter"
-                value={typeFilter}
-                label="Loại rút tiền"
-                onChange={handleChangeTypeFilter}
-              >
-                <MenuItem value={""}>Tất cả</MenuItem>
-                <MenuItem value={"CASH"}>Tiền mặt</MenuItem>
-                <MenuItem value={"BANKING"}>Chuyển khoản</MenuItem>
-              </Select>
-            </FormControl>
-            <Search
-              placeholder="Mã giao dịch"
-              handleSearch={searchData}
-              search={search}
-              setSearch={setSearch}
-            />
+            <h1>Linh kiện</h1>
+            <div style={{ display: "flex" }}>
+              <SearchInline
+                placeholder="Tên linh kiện"
+                handleSearch={searchData}
+                search={search}
+                setSearch={setSearch}
+              />
+              <Button variant="contained" color="success">
+                <Link
+                  to="/accessories/single"
+                  style={{ textDecoration: "none", color: "white" }}
+                >
+                  Thêm
+                </Link>
+              </Button>
+            </div>
           </div>
           {data.length !== 0 ? (
             <div>
@@ -230,9 +210,6 @@ const WithdrawRequest = () => {
                           <TableRow
                             hover
                             role="checkbox"
-                            sx={{
-                              cursor: "pointer",
-                            }}
                             tabIndex={-1}
                             key={row.id}
                           >
@@ -242,46 +219,27 @@ const WithdrawRequest = () => {
                                   <TableCell
                                     key={column.id}
                                     align={column.align}
-                                    onClick={() => {
-                                      handleRowClick(row["repairerId"]);
-                                    }}
                                   >
                                     {page * Config.ROW_PER_PAGE + index + 1}
                                   </TableCell>
                                 );
-                              } else if (column.id === "action") {
-                                return (
-                                  <TableCell
-                                    key={column.id}
-                                    align={column.align}
-                                  >
-                                    <Button
-                                      variant="contained"
-                                      sx={{ textTransform: "none" }}
-                                      size="small"
-                                      onClick={() =>
-                                        navigate(
-                                          `/withdraws/${row.transactionId}`
-                                        )
-                                      }
-                                    >
-                                      Xem chi tiết
-                                    </Button>
-                                  </TableCell>
-                                );
                               } else {
-                                const value = row[column.id];
+                                const value =
+                                  column.id === "action"
+                                    ? row["id"]
+                                    : row[column.id];
                                 return (
                                   <TableCell
                                     key={column.id}
                                     align={column.align}
-                                    onClick={() => {
-                                      handleRowClick(row["repairerId"]);
-                                    }}
                                   >
-                                    {column.format
-                                      ? column.format(value)
-                                      : value}
+                                    {value
+                                      ? column.format
+                                        ? column.format(value)
+                                        : value
+                                      : column.id === "insuranceTime"
+                                      ? 0
+                                      : "Không có"}
                                   </TableCell>
                                 );
                               }
@@ -301,7 +259,7 @@ const WithdrawRequest = () => {
                 onPageChange={handleChangePage}
               />
             </div>
-          ) : (
+          ) : loading ? null : (
             <div style={{ display: "flex", alignItems: "center" }}>
               <img
                 src="/nodata.png"
@@ -317,4 +275,4 @@ const WithdrawRequest = () => {
   );
 };
 
-export default WithdrawRequest;
+export default ListAccessoriesPage;

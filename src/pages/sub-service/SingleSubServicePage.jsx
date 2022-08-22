@@ -15,7 +15,7 @@ import Loading from "../../components/loading/Loading";
 import getErrorMessage from "../../utils/getErrorMessage";
 import MuiFormInput from "../../components/formInput/MuiFormInput";
 import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
-import "./SingleSubService.scss";
+import "./singleSubService.scss";
 const listField = [
   {
     id: "subServiceName",
@@ -33,7 +33,7 @@ const listField = [
   },
 ];
 
-const SingleSubService = () => {
+const SingleSubServicePage = () => {
   const { search, state } = useLocation();
   const id = new URLSearchParams(search).get("id");
   const { categoryId, serviceId } = useParams();
@@ -222,4 +222,4 @@ const SingleSubService = () => {
   );
 };
 
-export default SingleSubService;
+export default SingleSubServicePage;

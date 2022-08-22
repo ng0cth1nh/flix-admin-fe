@@ -3,7 +3,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { Typography, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import "./WithdrawRequestDetail.scss";
+import "./withdrawRequestDetail.scss";
 import ConfirmDialog from "../../components/dialog/ConfirmDialog";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
@@ -37,7 +37,7 @@ const vnpayInfoField = [
     value: "",
   },
 ];
-const WithdrawRequestDetail = () => {
+const WithdrawRequestDetailPage = () => {
   const navigate = useNavigate();
   const userAPI = useAxios();
   const { withdrawId } = useParams();
@@ -215,4 +215,4 @@ const WithdrawRequestDetail = () => {
   );
 };
 
-export default WithdrawRequestDetail;
+export default WithdrawRequestDetailPage;

@@ -1,4 +1,4 @@
-import "./ListServices.scss";
+import "./listSubServices.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -24,17 +24,8 @@ import { getMoneyFormat } from "../../utils/util";
 const columns = [
   { id: "index", label: "#", width: "5%", align: "center" },
   {
-    id: "image",
-    label: "ẢNH MINH HỌA",
-    width: "15%",
-    align: "center",
-    format: (value) => (
-      <img alt="Ảnh dịch vụ" src={value} style={{ width: 50, height: 50 }} />
-    ),
-  },
-  {
-    id: "serviceName",
-    label: "TÊN DỊCH VỤ",
+    id: "subServiceName",
+    label: "TÊN DỊCH VỤ CON",
     width: "15%",
     align: "center",
   },
@@ -48,7 +39,7 @@ const columns = [
   {
     id: "description",
     label: "MÔ TẢ",
-    width: "20%",
+    width: "35%",
     align: "center",
   },
   {
@@ -72,23 +63,22 @@ const columns = [
     label: "THAO TÁC",
     width: "15%",
     align: "center",
-    format: (value) => {
-      console.log("fucking categoryId:", value.categoryId);
-      return (
-        <Button variant="contained" sx={{ textTransform: "none" }} size="small">
-          <Link
-            to={`/categories/${value.categoryId}/services/service?id=${value.id}`}
-            state={{ categoryName: value.categoryName }}
-            style={{ textDecoration: "none", color: "white" }}
-          >
-            Cập nhật
-          </Link>
-        </Button>
-      );
-    },
+    format: (value) => (
+      <Button variant="contained" sx={{ textTransform: "none" }} size="small">
+        <Link
+          to={`/categories/${value.categoryId}/services/${value.serviceId}/subservices/subservice?id=${value.id}`}
+          style={{ textDecoration: "none", color: "white" }}
+          state={{
+            categoryName: value.categoryName,
+            serviceName: value.serviceName,
+          }}
+        >
+          Cập nhật
+        </Link>
+      </Button>
+    ),
   },
 ];
-
 const useStyles = makeStyles({
   root: {
     "& .MuiTableCell-head": {
@@ -97,33 +87,28 @@ const useStyles = makeStyles({
     },
   },
 });
-const ListServices = () => {
-  const classes = useStyles();
+const ListSubServicesPage = () => {
   const { state } = useLocation();
+  const classes = useStyles();
   const navigate = useNavigate();
   const userAPI = useAxios();
+  const { categoryId, serviceId } = useParams();
+  const [page, setPage] = useState(0);
   const [data, setData] = useState([]);
   const [totalRecord, setTotalRecord] = useState(0);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const [page, setPage] = useState(0);
-  const { categoryId } = useParams();
-  const handleCellClick = ({ id, categoryName, serviceName }) => {
-    navigate(`/categories/${categoryId}/services/${id}/subservices`, {
-      state: { categoryName, serviceName },
-    });
-  };
 
   const fetchData = async () => {
     try {
       setLoading(true);
       const response = await userAPI.get(
-        ApiContants.SERVICE_LIST +
-          `?pageNumber=${page}&categoryId=${categoryId}`
+        ApiContants.SUBSERVICE_LIST +
+          `?pageNumber=${page}&serviceId=${serviceId}`
       );
       setTotalRecord(response.data.totalRecord);
-      setData(response.data.services);
+      setData(response.data.subServices);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -138,24 +123,29 @@ const ListServices = () => {
       fetchData();
       return;
     }
-    let searchUrl = ApiContants.SERVICE_SEARCH;
+    let searchUrl = ApiContants.SUBSERVICE_SEARCH;
     if (search.trim()) {
-      searchUrl += `?keyword=${search.trim()}&categoryId=${categoryId}`;
+      searchUrl += `?keyword=${search.trim()}&serviceId=${serviceId}`;
     }
     try {
       setPage(0);
       setLoading(true);
       setIsSearching(true);
       const response = await userAPI.get(searchUrl);
-      setData(response.data.services);
-      setTotalRecord(response.data.services.length);
+      setData(
+        response.data.subServices.map((item) => ({
+          ...item,
+          subServiceName: item.name,
+        }))
+      );
+      setTotalRecord(response.data.subServices.length);
       setLoading(false);
     } catch (error) {
       setLoading(false);
       navigate("/error");
     }
   };
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (e, newPage) => {
     setPage(newPage);
   };
   useEffect(() => {
@@ -165,9 +155,9 @@ const ListServices = () => {
   }, [page]);
 
   return (
-    <div className="list-services">
+    <div className="list-subservices">
       <Sidebar />
-      <div className="list-services-container">
+      <div className="list-subservices-container">
         <Navbar />
         <div className="table-container">
           <div
@@ -178,7 +168,7 @@ const ListServices = () => {
               marginBottom: "10px",
             }}
           >
-            <h1>{state.categoryName + " > "}Dịch vụ</h1>
+            <h1>{state.categoryName+" > "+ state.serviceName+" > "}Dịch vụ con</h1>
             <div style={{ display: "flex" }}>
               <SearchInline
                 placeholder="Tên dịch vụ"
@@ -188,9 +178,9 @@ const ListServices = () => {
               />
               <Button variant="contained" color="success">
                 <Link
-                  to={`/categories/${categoryId}/services/service`}
-                  state={{ categoryName: state.categoryName }}
+                  to={`/categories/${categoryId}/services/${serviceId}/subservices/subservice`}
                   style={{ textDecoration: "none", color: "white" }}
+                  state={state}
                 >
                   Thêm
                 </Link>
@@ -229,9 +219,6 @@ const ListServices = () => {
                           <TableRow
                             hover
                             role="checkbox"
-                            sx={{
-                              cursor: "pointer",
-                            }}
                             tabIndex={-1}
                             key={row.id}
                           >
@@ -241,13 +228,6 @@ const ListServices = () => {
                                   <TableCell
                                     key={column.id}
                                     align={column.align}
-                                    onClick={() => {
-                                      handleCellClick({
-                                        id: row["id"],
-                                        categoryName: state.categoryName,
-                                        serviceName: row["serviceName"],
-                                      });
-                                    }}
                                   >
                                     {page * Config.ROW_PER_PAGE + index + 1}
                                   </TableCell>
@@ -256,8 +236,10 @@ const ListServices = () => {
                                 const value =
                                   column.id === "action"
                                     ? {
-                                        categoryName: state.categoryName,
                                         categoryId,
+                                        serviceId,
+                                        categoryName: state.categoryName,
+                                        serviceName: state.serviceName,
                                         id: row["id"],
                                       }
                                     : row[column.id];
@@ -265,17 +247,6 @@ const ListServices = () => {
                                   <TableCell
                                     key={column.id}
                                     align={column.align}
-                                    onClick={(e) => {
-                                      if (column.id === "action") {
-                                        console.log("go to action");
-                                        e.preventDefault();
-                                      } else
-                                        handleCellClick({
-                                          id: row["id"],
-                                          categoryName: state.categoryName,
-                                          serviceName: row["serviceName"],
-                                        });
-                                    }}
                                   >
                                     {column.format
                                       ? column.format(value)
@@ -297,7 +268,7 @@ const ListServices = () => {
                 rowsPerPage={Config.ROW_PER_PAGE}
                 page={page}
                 onPageChange={handleChangePage}
-              />
+              />{" "}
             </div>
           ) : loading ? null : (
             <div style={{ display: "flex", alignItems: "center" }}>
@@ -315,4 +286,4 @@ const ListServices = () => {
   );
 };
 
-export default ListServices;
+export default ListSubServicesPage;

@@ -1,26 +1,23 @@
 import FormInput from "../../../components/formInput/FormInput";
 import { useState, useEffect } from "react";
-import "./ConfirmOTP.scss";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import useAxios from "../../../hooks/useAxios";
+import "./forgotPassword.scss";
+import { Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { setErrorMessage, setLoading } from "../../../features/auth/authSlice";
+import useAxios from "../../../hooks/useAxios";
 import ApiContants from "../../../constants/Api";
-import LoadingState from "../../../constants/LoadingState";
 import getErrorMessage from "../../../utils/getErrorMessage";
+import LoadingState from "../../../constants/LoadingState";
 import Loading from "../../../components/loading/Loading";
 import Pattern from "../../../constants/Pattern";
 
-const ConfirmOTP = () => {
-  const { state } = useLocation();
-  const navigate = useNavigate();
+const ForgotPasswordPage = () => {
   const authAPI = useAxios();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { errorMessage, loading } = useSelector((state) => state.auth);
   const [values, setValues] = useState({
-    password: "",
-    confirmPassword: "",
-    otp: "",
+    phone: "",
   });
   useEffect(() => {
     dispatch(setErrorMessage(null));
@@ -29,62 +26,27 @@ const ConfirmOTP = () => {
 
   const inputs = [
     {
-      id: 2,
-      name: "password",
-      type: "password",
-      placeholder: "Nhập mật khẩu",
-      errorMessage:
-        "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
-      label: "Mật khẩu*",
-      pattern: Pattern.PASSWORD,
-      required: true,
-    },
-    {
-      id: 5,
-      name: "confirmPassword",
-      type: "password",
-      placeholder: "Nhập lại mật khẩu",
-      errorMessage: "Mật khẩu không khớp!",
-      label: "Nhập lại mật khẩu",
-      pattern: values.password,
-      required: true,
-      isLast: true,
-    },
-    {
       id: 1,
-      name: "otp",
+      name: "phone",
       type: "text",
-      placeholder: "Nhập mã OTP",
-      errorMessage: "Mã OTP gồm 6 số!",
-      label: "Mã OTP*",
-      pattern: Pattern.OTP,
+      placeholder: "Nhập số điện thoại",
+      errorMessage: "Số điện thoại không hợp lệ!",
+      label: "Số điện thoại*",
+      pattern: Pattern.PHONE_NUMBER,
       required: true,
     },
   ];
 
   const handleSubmit = async (e) => {
-    console.log("otp: ", values.otp);
     e.preventDefault();
     try {
       dispatch(setLoading(LoadingState.PENDING));
-      const response = await authAPI.post(ApiContants.CONFIRM_OTP, {
-        phone: state.phone,
-        otp: values.otp,
+      await authAPI.post(ApiContants.SEND_OTP, {
+        phone: values.phone,
+        roleType: "ADMIN",
       });
-      await authAPI.put(
-        ApiContants.CHANGE_PASSWORD,
-        {
-          newPassword: values.password,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${response.data.accessToken}`,
-          },
-        }
-      );
       dispatch(setLoading(LoadingState.SUCCEEDED));
-      alert("Đổi mật khẩu thành công!");
-      navigate("/");
+      navigate("/confirmOTP", { state: { phone: values.phone } });
     } catch (err) {
       dispatch(setLoading(LoadingState.FAILED));
       dispatch(setErrorMessage(getErrorMessage(err)));
@@ -96,7 +58,7 @@ const ConfirmOTP = () => {
   };
 
   return (
-    <div className="confirm-otp">
+    <div className="forgotpassword">
       <form
         onSubmit={handleSubmit}
         className="form"
@@ -115,7 +77,7 @@ const ConfirmOTP = () => {
         {errorMessage && (
           <p style={{ color: "red", fontSize: "12px" }}>{errorMessage}</p>
         )}
-        <button className="button">Đổi mật khẩu</button>
+        <input type="submit" className="button" value="Tiếp tục" />
         <Link to="/" style={{ textDecoration: "none" }}>
           <p className="link">Đăng nhập</p>
         </Link>
@@ -124,4 +86,4 @@ const ConfirmOTP = () => {
   );
 };
 
-export default ConfirmOTP;
+export default ForgotPasswordPage;

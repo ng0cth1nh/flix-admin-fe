@@ -1,4 +1,4 @@
-import "./ListRepairers.scss";
+import "./listRequests.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -8,6 +8,8 @@ import Config from "../../constants/Config";
 import Loading from "../../components/loading/Loading";
 import Search from "../../components/search/Search";
 import ApiContants from "../../constants/Api";
+import { formatFromDateTime } from "../../utils/getFormatDate";
+
 import {
   TableContainer,
   Table,
@@ -27,59 +29,67 @@ import { makeStyles } from "@mui/styles";
 const columns = [
   { id: "index", label: "#", width: "10%", align: "center" },
   {
-    id: "avatar",
-    label: "ẢNH ĐẠI DIỆN",
-    width: "15%",
-    align: "center",
-    format: (value) => (
-      <img alt="category" src={value} style={{ width: 50, height: 50 }} />
-    ),
-  },
-  {
-    id: "repairerName",
-    label: "TÊN THỢ",
-    width: "20%",
-    align: "center",
-  },
-  {
-    id: "repairerPhone",
-    label: "SỐ ĐIỆN THOẠI",
+    id: "requestCode",
+    label: "MÃ YÊU CẦU",
     width: "10%",
     align: "center",
   },
   {
-    id: "status",
-    label: "TRẠNG THÁI",
-    width: "15%",
+    id: "customerName",
+    label: "TÊN KHÁCH HÀNG",
+    width: "10%",
     align: "center",
-    format: (value) =>
-      value === "ACTIVE" ? (
-        <Typography variant="p" sx={{ color: "green" }}>
-          Hoạt động
-        </Typography>
-      ) : (
-        <Typography variant="p" sx={{ color: "red" }}>
-          Vô hiệu hóa
-        </Typography>
-      ),
   },
   {
-    id: "cvStatus",
-    label: "XÁC THỰC",
+    id: "customerPhone",
+    label: "SỐ ĐIỆN THOẠI KHÁCH",
     width: "15%",
+    align: "center",
+  },
+  {
+    id: "repairerName",
+    label: "TÊN THỢ",
+    width: "10%",
+    align: "center",
+  },
+  {
+    id: "repairerPhone",
+    label: "SỐ ĐIỆN THOẠI THỢ",
+    width: "10%",
+    align: "center",
+  },
+  {
+    id: "createdAt",
+    label: "NGÀY TẠO",
+    width: "10%",
+    align: "center",
+    format: (value) => formatFromDateTime(value),
+  },
+  {
+    id: "status",
+    label: "TRẠNG THÁI",
+    width: "10%",
     align: "center",
     format: (value) =>
       value === "PENDING" ? (
         <Typography variant="p" sx={{ color: "orange" }}>
           Đang đợi
         </Typography>
-      ) : value === "UPDATING" ? (
+      ) : value === "APPROVED" ? (
         <Typography variant="p" sx={{ color: "blue" }}>
-          Đang xử lí
+          Đã chấp nhận
         </Typography>
-      ) : value === "ACCEPTED" ? (
+      ) : value === "FIXING" ? (
+        <Typography variant="p" sx={{ color: "purple" }}>
+          Đang sửa
+        </Typography>
+      ) : value === "PAYMENT_WAITING" ? (
+        <Typography variant="p" sx={{ color: "teal" }}>
+          Chờ thanh toán
+        </Typography>
+      ) : value === "DONE" ? (
         <Typography variant="p" sx={{ color: "green" }}>
-          Đã xác thực
+          Hoàn thành
         </Typography>
       ) : (
         <Typography variant="p" sx={{ color: "red" }}>
@@ -95,7 +105,7 @@ const columns = [
     format: (value) => (
       <Button variant="contained" sx={{ textTransform: "none" }} size="small">
         <Link
-          to={`/repairers/profile/${value}`}
+          to={`/requests/${value}`}
           style={{ textDecoration: "none", color: "white" }}
         >
           Xem chi tiết
@@ -113,14 +123,12 @@ const useStyles = makeStyles({
     },
   },
 });
-const ListRepairers = () => {
+const ListRequestsPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
-  const repairerAPI = useAxios();
-
+  const userAPI = useAxios();
   const [page, setPage] = useState(0);
   const [statusFilter, setStatusFilter] = useState("");
-  const [verifyTypeFilter, setVerifyTypeFilter] = useState("");
   const [data, setData] = useState([]);
   const [totalRecord, setTotalRecord] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -130,18 +138,14 @@ const ListRepairers = () => {
   const handleChangeStatusFilter = (event) => {
     setStatusFilter(event.target.value);
   };
-  const handleChangeVerifyFilter = (event) => {
-    setVerifyTypeFilter(event.target.value);
-  };
   const fetchData = async () => {
     try {
       setLoading(true);
-      const response = await repairerAPI.get(
-        ApiContants.FETCH_LIST_REPAIRER + `?pageNumber=${page}`
+      const response = await userAPI.get(
+        ApiContants.REQUEST_LIST + `?pageNumber=${page}`
       );
       setTotalRecord(response.data.totalRecord);
-      setData(response.data.repairerList);
-      console.log("status", response.data.repairerList[0].cvStatus);
+      setData(response.data.requestList);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -150,33 +154,30 @@ const ListRepairers = () => {
   };
   const searchData = async () => {
     // case both search text and status is null then fetch data by paging
-    if (!search.trim() && !statusFilter && !verifyTypeFilter) {
+    if (!search.trim() && !statusFilter) {
       setIsSearching(false);
       setPage(0);
       fetchData();
       return;
     }
-    let searchUrl = ApiContants.SEARCH_REPAIRER;
+    let searchUrl = ApiContants.REQUEST_SEARCH;
     let flag = false;
     if (search.trim()) {
       searchUrl += `?keyword=${search.trim()}`;
       flag = true;
     }
     if (statusFilter) {
-      searchUrl += (flag ? "&" : "?") + `accountState=${statusFilter}`;
-      flag = true;
-    }
-    if (verifyTypeFilter) {
-      searchUrl += (flag ? "&" : "?") + `cvStatus=${verifyTypeFilter}`;
+      searchUrl += (flag ? "&" : "?") + `status=${statusFilter}`;
     }
     console.log(searchUrl);
     try {
       setPage(0);
       setLoading(true);
       setIsSearching(true);
-      const response = await repairerAPI.get(searchUrl);
-      setData(response.data.repairers);
-      setTotalRecord(response.data.repairers.length);
+      const response = await userAPI.get(searchUrl);
+      console.log(response.data);
+      setData(response.data.requestList);
+      setTotalRecord(response.data.requestList.length);
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -190,14 +191,14 @@ const ListRepairers = () => {
     }
   }, [page]);
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (e, newPage) => {
     setPage(newPage);
   };
 
   return (
-    <div className="list-repairers">
+    <div className="list-requests">
       <Sidebar />
-      <div className="list-repairers-container">
+      <div className="list-requests-container">
         <Navbar />
         <div className="table-container">
           <div
@@ -208,7 +209,8 @@ const ListRepairers = () => {
               marginBottom: "10px",
             }}
           >
-            <h1>Thợ sửa chữa</h1>
+            <h1>Yêu cầu</h1>
+          
           </div>
           <div className="filter">
             <FormControl
@@ -218,6 +220,7 @@ const ListRepairers = () => {
                 backgroundColor:'white'
               }}
             >
+              {/* // PENDING,APPROVED,FIXING,CANCEL,PAYMENT_WAITING,DONE */}
               <InputLabel id="status-label">Trạng thái</InputLabel>
               <Select
                 labelId="status-label"
@@ -226,35 +229,17 @@ const ListRepairers = () => {
                 label="Trạng thái"
                 onChange={handleChangeStatusFilter}
               >
-                <MenuItem value="">Tất cả</MenuItem>
-                <MenuItem value="ACTIVE">Hoạt động</MenuItem>
-                <MenuItem value="BAN">Vô hiệu hóa</MenuItem>
-              </Select>
-            </FormControl>
-            <FormControl
-              sx={{
-                width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
-              }}
-            >
-              <InputLabel id="verify-label">Xác thực</InputLabel>
-              <Select
-                labelId="verify-label"
-                id="verifyFilter"
-                value={verifyTypeFilter}
-                label="Xác thực"
-                onChange={handleChangeVerifyFilter}
-              >
-                <MenuItem value="">Tất cả</MenuItem>
-                <MenuItem value="PENDING">Đang đợi</MenuItem>
-                <MenuItem value="UPDATING">Đang xử lí</MenuItem>
-                <MenuItem value="ACCEPTED">Đã xác thực</MenuItem>
-                <MenuItem value="REJECTED">Đã hủy</MenuItem>
+                <MenuItem value={""}>Tất cả</MenuItem>
+                <MenuItem value={"PENDING"}>Đang đợi</MenuItem>
+                <MenuItem value={"APPROVED"}>Đã chấp nhận</MenuItem>
+                <MenuItem value={"FIXING"}>Đang sửa</MenuItem>
+                <MenuItem value={"CANCELLED"}>Đã hủy</MenuItem>
+                <MenuItem value={"PAYMENT_WAITING"}>Chờ thanh toán</MenuItem>
+                <MenuItem value={"DONE"}>Hoàn thành</MenuItem>
               </Select>
             </FormControl>
             <Search
-              placeholder="Số điện thoại"
+              placeholder="Mã yêu cầu"
               handleSearch={searchData}
               search={search}
               setSearch={setSearch}
@@ -305,19 +290,27 @@ const ListRepairers = () => {
                                     {page * Config.ROW_PER_PAGE + index + 1}
                                   </TableCell>
                                 );
-                              } else {
-                                const value =
-                                  column.id === "action"
-                                    ? row["id"]
-                                    : row[column.id];
+                              } else if (column.id === "action") {
                                 return (
                                   <TableCell
                                     key={column.id}
                                     align={column.align}
                                   >
-                                    {column.format
-                                      ? column.format(value)
-                                      : value}
+                                    {column.format(row["requestCode"])}
+                                  </TableCell>
+                                );
+                              } else {
+                                const value = row[column.id];
+                                return (
+                                  <TableCell
+                                    key={column.id}
+                                    align={column.align}
+                                  >
+                                    {value
+                                      ? column.format
+                                        ? column.format(value)
+                                        : value
+                                      : "Không có"}
                                   </TableCell>
                                 );
                               }
@@ -353,4 +346,4 @@ const ListRepairers = () => {
   );
 };
 
-export default ListRepairers;
+export default ListRequestsPage;

@@ -14,7 +14,7 @@ import { MapInteractionCSS } from "react-map-interaction";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import { useParams, useNavigate } from "react-router-dom";
-import "./RepairerProfile.scss";
+import "./repairerProfile.scss";
 import BanModal from "../../components/modal/BanModal";
 import Loading from "../../components/loading/Loading";
 import { formatFromDate, formatFromDateTime } from "../../utils/getFormatDate";
@@ -22,7 +22,7 @@ import ConfirmDialog from "../../components/dialog/ConfirmDialog";
 import getErrorMessage from "../../utils/getErrorMessage";
 import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
 const titleStyle = { fontWeight: "bold", fontSize: "15px" };
-const RepairerProfile = () => {
+const RepairerProfilePage = () => {
   const { repairerId } = useParams();
   const repairerAPI = useAxios();
   const navigate = useNavigate();
@@ -506,4 +506,4 @@ const RepairerProfile = () => {
   );
 };
 
-export default RepairerProfile;
+export default RepairerProfilePage;

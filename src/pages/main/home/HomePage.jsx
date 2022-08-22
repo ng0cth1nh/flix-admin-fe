@@ -10,7 +10,7 @@ import { fetchUserProfile } from "../../../features/auth/authSlice";
 import useAxios from "../../../hooks/useAxios";
 import "./home.scss";
 
-const Home = () => {
+const HomePage = () => {
   const userAPI = useAxios();
   const dispatch = useDispatch();
 
@@ -34,4 +34,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;
