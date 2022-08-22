@@ -3,7 +3,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { Button, Switch, Typography, FormControlLabel } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
-import "./customerProfile.scss";
+import "./CustomerProfile.scss";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import Loading from "../../components/loading/Loading";

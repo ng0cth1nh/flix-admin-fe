@@ -9,7 +9,7 @@ import {
   FormControl,
 } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
-import "./updateFeedback.scss";
+import "./UpdateFeedback.scss";
 import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";

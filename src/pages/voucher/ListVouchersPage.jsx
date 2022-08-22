@@ -1,4 +1,4 @@
-import "./listVoucher.scss";
+import "./ListVoucher.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 const ListVouchersPage = () => {

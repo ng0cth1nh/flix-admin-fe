@@ -3,7 +3,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { Typography, Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router-dom";
-import "./withdrawRequestDetail.scss";
+import "./WithdrawRequestDetail.scss";
 import ConfirmDialog from "../../components/dialog/ConfirmDialog";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";

@@ -14,7 +14,7 @@ import { MapInteractionCSS } from "react-map-interaction";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import { useParams, useNavigate } from "react-router-dom";
-import "./repairerProfile.scss";
+import "./RepairerProfile.scss";
 import BanModal from "../../components/modal/BanModal";
 import Loading from "../../components/loading/Loading";
 import { formatFromDate, formatFromDateTime } from "../../utils/getFormatDate";

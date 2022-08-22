@@ -1,4 +1,4 @@
-import "./listTransactions.scss";
+import "./ListTransactions.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";

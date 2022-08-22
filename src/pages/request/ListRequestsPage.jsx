@@ -1,4 +1,4 @@
-import "./listRequests.scss";
+import "./ListRequests.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -210,14 +210,13 @@ const ListRequestsPage = () => {
             }}
           >
             <h1>Yêu cầu</h1>
-          
           </div>
           <div className="filter">
             <FormControl
               sx={{
                 width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
+                marginRight: 5,
+                backgroundColor: "white",
               }}
             >
               {/* // PENDING,APPROVED,FIXING,CANCEL,PAYMENT_WAITING,DONE */}

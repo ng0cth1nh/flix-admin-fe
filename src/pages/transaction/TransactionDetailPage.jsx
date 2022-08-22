@@ -8,7 +8,7 @@ import ApiContants from "../../constants/Api";
 import Loading from "../../components/loading/Loading";
 import Config from "../../constants/Config";
 import { formatFromDate } from "../../utils/getFormatDate";
-import "./transactionDetail.scss";
+import "./TransactionDetail.scss";
 import { getMoneyFormat } from "../../utils/util";
 const transactionInfoField = [
   { id: "fullName", label: "Họ và tên", value: "" },

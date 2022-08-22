@@ -1,4 +1,4 @@
-import "./listRepairers.scss";
+import "./ListRepairers.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -214,8 +214,8 @@ const ListRepairersPage = () => {
             <FormControl
               sx={{
                 width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
+                marginRight: 5,
+                backgroundColor: "white",
               }}
             >
               <InputLabel id="status-label">Trạng thái</InputLabel>
@@ -234,8 +234,8 @@ const ListRepairersPage = () => {
             <FormControl
               sx={{
                 width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
+                marginRight: 5,
+                backgroundColor: "white",
               }}
             >
               <InputLabel id="verify-label">Xác thực</InputLabel>

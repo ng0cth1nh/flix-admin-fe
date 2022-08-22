@@ -1,6 +1,6 @@
 import FormInput from "../../../components/formInput/FormInput";
 import { useState, useEffect } from "react";
-import "./confirmOTP.scss";
+import "./ConfirmOTP.scss";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAxios from "../../../hooks/useAxios";
 import { useSelector, useDispatch } from "react-redux";
@@ -33,8 +33,7 @@ const ConfirmOTPPage = () => {
       name: "password",
       type: "password",
       placeholder: "Nhập mật khẩu",
-      errorMessage:
-        "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
+      errorMessage: "Độ dài từ 6 đến 10 ký tự, bao gồm chữ và số!",
       label: "Mật khẩu*",
       pattern: Pattern.PASSWORD,
       required: true,

@@ -15,7 +15,7 @@ import Loading from "../../components/loading/Loading";
 import getErrorMessage from "../../utils/getErrorMessage";
 import MuiFormInput from "../../components/formInput/MuiFormInput";
 import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";
-import "./singleSubService.scss";
+import "./SingleSubService.scss";
 const listField = [
   {
     id: "subServiceName",

@@ -15,7 +15,7 @@ import ApiContants from "../../constants/Api";
 import useAxios from "../../hooks/useAxios";
 import { getErrorImageSelect } from "../../utils/util";
 import getErrorMessage from "../../utils/getErrorMessage";
-import "./singleService.scss";
+import "./SingleService.scss";
 import Loading from "../../components/loading/Loading";
 
 const listField = [

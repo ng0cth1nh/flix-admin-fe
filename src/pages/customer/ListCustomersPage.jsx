@@ -1,4 +1,4 @@
-import "./listCustomers.scss";
+import "./ListCustomers.scss";
 import { useState } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -174,14 +174,13 @@ const ListCustomersPage = () => {
             }}
           >
             <h1>Khách hàng</h1>
-         
           </div>
           <div className="filter">
             <FormControl
               sx={{
                 width: "200px",
-                marginRight:5,
-                backgroundColor:'white'
+                marginRight: 5,
+                backgroundColor: "white",
               }}
             >
               <InputLabel id="status-label">Trạng thái</InputLabel>

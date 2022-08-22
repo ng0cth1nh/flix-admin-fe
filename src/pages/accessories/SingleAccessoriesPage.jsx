@@ -3,7 +3,7 @@ import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { Button, Autocomplete, TextField } from "@mui/material";
 import { useLocation, useNavigate } from "react-router-dom";
-import "./singleAccessories.scss";
+import "./SingleAccessories.scss";
 import MuiFormInput from "../../components/formInput/MuiFormInput";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { Button } from "@mui/material";
-import "./userProfile.scss";
+import "./UserProfile.scss";
 import Pattern from "../../constants/Pattern";
 import { getErrorImageSelect } from "../../utils/util";
 import useAxios from "../../hooks/useAxios";

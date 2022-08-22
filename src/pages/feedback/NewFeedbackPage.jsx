@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 import { useNavigate } from "react-router-dom";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
@@ -14,7 +13,7 @@ import {
   Select,
   MenuItem,
 } from "@mui/material";
-import "./newFeedback.scss";
+import "./NewFeedback.scss";
 import Pattern from "../../constants/Pattern";
 import MuiFormInput from "../../components/formInput/MuiFormInput";
 import MuiTextAreaInput from "../../components/formInput/MuiTextAreaInput";

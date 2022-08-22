@@ -1,4 +1,4 @@
-import "./listCategories.scss";
+import "./ListCategories.scss";
 import { useState, useEffect } from "react";
 import Navbar from "../../components/navbar/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
@@ -95,8 +95,8 @@ const ListCategoriesPage = () => {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [isSearching, setIsSearching] = useState(false);
-  const handleRowClick = ({id, categoryName}) => {
-    navigate(`/categories/${id}/services`,{state:{categoryName}});
+  const handleRowClick = ({ id, categoryName }) => {
+    navigate(`/categories/${id}/services`, { state: { categoryName } });
   };
   const fetchData = async () => {
     try {
@@ -225,7 +225,10 @@ const ListCategoriesPage = () => {
                                     key={column.id}
                                     align={column.align}
                                     onClick={() => {
-                                      handleRowClick({id: row["id"], categoryName: row["categoryName"]});
+                                      handleRowClick({
+                                        id: row["id"],
+                                        categoryName: row["categoryName"],
+                                      });
                                     }}
                                   >
                                     {page * Config.ROW_PER_PAGE + index + 1}
@@ -243,7 +246,10 @@ const ListCategoriesPage = () => {
                                     onClick={
                                       column.id !== "action"
                                         ? () => {
-                                            handleRowClick({id: row["id"],categoryName: row["categoryName"]});
+                                            handleRowClick({
+                                              id: row["id"],
+                                              categoryName: row["categoryName"],
+                                            });
                                           }
                                         : null
                                     }

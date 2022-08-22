@@ -13,8 +13,8 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import Loading from "../../components/loading/Loading";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
-import Config from "../../constants/Config"
-import "./feedbackDetail.scss";
+import Config from "../../constants/Config";
+import "./FeedbackDetail.scss";
 import { getStatus } from "../../utils/util";
 import { formatFromDateTime } from "../../utils/getFormatDate";
 const FeedbackDetailPage = () => {
@@ -130,10 +130,11 @@ const FeedbackDetailPage = () => {
                     width: "100%",
                     display: "flex",
                     marginTop: "20px",
-
                   }}
                 >
-                  <Typography sx={{ fontSize: "14px", fontWeight: "bold", width: "40%" }}>
+                  <Typography
+                    sx={{ fontSize: "14px", fontWeight: "bold", width: "40%" }}
+                  >
                     Tệp đính kèm
                   </Typography>
                   {data.images.length === 0 && (
@@ -155,10 +156,11 @@ const FeedbackDetailPage = () => {
                   width: "100%",
                   display: "flex",
                   marginTop: "20px",
-
                 }}
               >
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold", width: "40%"  }}>
+                <Typography
+                  sx={{ fontSize: "14px", fontWeight: "bold", width: "40%" }}
+                >
                   Trạng thái
                 </Typography>
                 <Typography style={{ fontWeight: "bold" }}>
@@ -181,7 +183,9 @@ const FeedbackDetailPage = () => {
                     alignItems: "center",
                   }}
                 >
-                  <Typography sx={{ fontSize: "14px", fontWeight: "bold", width: "40%"  }}>
+                  <Typography
+                    sx={{ fontSize: "14px", fontWeight: "bold", width: "40%" }}
+                  >
                     Phản hồi
                   </Typography>
                   {data.responses.length === 0 && (
@@ -229,7 +233,9 @@ const FeedbackDetailPage = () => {
                   display: "flex",
                 }}
               >
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold", width: "40%"  }}>
+                <Typography
+                  sx={{ fontSize: "14px", fontWeight: "bold", width: "40%" }}
+                >
                   Ngày tạo phản hồi
                 </Typography>
                 <Typography>{formatFromDateTime(data.createdAt)}</Typography>
@@ -241,7 +247,9 @@ const FeedbackDetailPage = () => {
                   display: "flex",
                 }}
               >
-                <Typography sx={{ fontSize: "14px", fontWeight: "bold", width: "40%"  }}>
+                <Typography
+                  sx={{ fontSize: "14px", fontWeight: "bold", width: "40%" }}
+                >
                   Ngày cập nhật gần nhất
                 </Typography>
                 <Typography>{formatFromDateTime(data.updatedAt)}</Typography>

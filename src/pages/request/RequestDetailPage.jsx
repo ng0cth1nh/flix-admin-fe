@@ -5,10 +5,10 @@ import { Typography, TextareaAutosize } from "@mui/material";
 import useAxios from "../../hooks/useAxios";
 import ApiContants from "../../constants/Api";
 import Loading from "../../components/loading/Loading";
-import {formatFromDateTime } from "../../utils/getFormatDate";
+import { formatFromDateTime } from "../../utils/getFormatDate";
 
 import { useParams, useNavigate } from "react-router-dom";
-import "./requestDetail.scss";
+import "./RequestDetail.scss";
 import { getMoneyFormat } from "../../utils/util";
 const requestInfoField = [
   { id: "requestCode", label: "Mã yêu cầu", value: "" },
