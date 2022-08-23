@@ -160,6 +160,22 @@ const RepairerProfilePage = () => {
                   {formatFromDateTime(repairer.createdAt)}
                 </Typography>
               </div>
+              {repairer.acceptedAccountAt && (
+                <div
+                  style={{
+                    display: "flex",
+                    width: "300px",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <Typography sx={titleStyle}>
+                    Ngày xác thực tài khoản
+                  </Typography>
+                  <Typography>
+                    {formatFromDateTime(repairer.acceptedAccountAt)}
+                  </Typography>
+                </div>
+              )}
             </div>
             <div className="category-information">
               <div style={{ display: "flex", justifyContent: "space-between" }}>
