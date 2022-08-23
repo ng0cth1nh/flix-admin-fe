@@ -87,7 +87,7 @@ const SingleAccessoriesPage = () => {
       error: "",
     },
   });
-  
+
   const onChange = (id, text, error) => {
     setValues({ ...values, [id]: { value: text, error } });
   };
@@ -138,7 +138,10 @@ const SingleAccessoriesPage = () => {
         setLoading(true);
         const res = await userAPI.get(ApiContants.SERVICE_SELECT_ALL);
         setServices(res.data.services);
-        console.log("service", res.data);
+        setValues({
+          ...values,
+          serviceId: { value: res.data.services[0], error: "" },
+        });
         setLoading(false);
       } catch (error) {
         setLoading(false);
@@ -152,7 +155,6 @@ const SingleAccessoriesPage = () => {
             ApiContants.ACCESSORY_SINGLE + `?accessoryId=${id}`
           );
           const data = res.data;
-          console.log("data", data);
           for (const key in values) {
             values[key].value = data[key];
           }
