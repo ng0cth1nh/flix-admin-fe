@@ -140,7 +140,7 @@ const SingleAccessoriesPage = () => {
         setServices(res.data.services);
         setValues({
           ...values,
-          serviceId: { value: res.data.services[0], error: "" },
+          serviceId: { value: res.data.services[0].id, error: "" },
         });
         setLoading(false);
       } catch (error) {
@@ -155,9 +155,11 @@ const SingleAccessoriesPage = () => {
             ApiContants.ACCESSORY_SINGLE + `?accessoryId=${id}`
           );
           const data = res.data;
+          const valuesCopy = { ...values };
           for (const key in values) {
-            values[key].value = data[key];
+            valuesCopy[key].value = data[key];
           }
+          setValues(valuesCopy);
         } catch (error) {
           navigate("/error");
         }
