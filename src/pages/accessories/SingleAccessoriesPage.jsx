@@ -155,7 +155,7 @@ const SingleAccessoriesPage = () => {
             ApiContants.ACCESSORY_SINGLE + `?accessoryId=${id}`
           );
           const data = res.data;
-          const valuesCopy= {...values};
+          const valuesCopy = { ...values };
           for (const key in values) {
             valuesCopy[key].value = data[key];
           }
