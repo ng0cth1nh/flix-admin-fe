@@ -42,6 +42,7 @@ const WithdrawRequestDetailPage = () => {
   const userAPI = useAxios();
   const { withdrawId } = useParams();
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [values, setValues] = useState({
     rejectReason: {
       value: "",
@@ -54,10 +55,17 @@ const WithdrawRequestDetailPage = () => {
   const onChange = (id, text, error) => {
     setValues({ ...values, [id]: { value: text, error } });
   };
-  const handleClose = () => {
+  const handleRejectClose = () => {
     setOpen(false);
   };
-  const handleConfirm = async () => {
+  const handleConfirmClose = () => {
+    setConfirmOpen(false);
+  };
+  const handleConfirm = () => {
+    handleAccept();
+    setConfirmOpen(false);
+  };
+  const handleConfirmReject = async () => {
     if (values.rejectReason.error !== "") return;
     try {
       await userAPI.put(ApiContants.REJECT_WITHDRAW, {
@@ -176,7 +184,7 @@ const WithdrawRequestDetailPage = () => {
                 sx={{ textTransform: "none", marginRight: "30px" }}
                 size="small"
                 color="success"
-                onClick={handleAccept}
+                onClick={() => setConfirmOpen(true)}
               >
                 Chấp nhận
               </Button>
@@ -195,8 +203,8 @@ const WithdrawRequestDetailPage = () => {
             <ConfirmDialog
               open={open}
               title="Bạn có muốn hủy yêu cầu rút tiền này không?"
-              handleClose={handleClose}
-              handleConfirm={handleConfirm}
+              handleClose={handleRejectClose}
+              handleConfirm={handleConfirmReject}
             >
               <div style={{ width: "85%", margin: "auto" }}>
                 <MuiTextAreaInput
@@ -208,6 +216,12 @@ const WithdrawRequestDetailPage = () => {
                 />
               </div>
             </ConfirmDialog>
+            <ConfirmDialog
+              open={confirmOpen}
+              title="Bạn có chắc chắn phê duyệt yêu cầu này?"
+              handleClose={handleConfirmClose}
+              handleConfirm={handleConfirm}
+            />
           </div>
         )}
       </div>
