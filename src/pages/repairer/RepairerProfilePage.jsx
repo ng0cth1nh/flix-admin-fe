@@ -165,6 +165,7 @@ const RepairerProfilePage = () => {
                   style={{
                     display: "flex",
                     width: "300px",
+                    marginTop:"10px",
                     justifyContent: "space-between",
                   }}
                 >

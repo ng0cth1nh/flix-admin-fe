@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
-import { Button, Switch, Typography, FormControlLabel } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import { useParams, useNavigate } from "react-router-dom";
 import "./CustomerProfile.scss";
 import useAxios from "../../hooks/useAxios";
@@ -22,11 +22,10 @@ const CustomerProfilePage = () => {
     value: "",
     error: "",
   });
-  const [isEdited, setIsEdited] = useState(false);
   const saveCustomer = async () => {
-    if (isEdited && banReason.error === "") {
+    if (banReason.error === "") {
       try {
-        if (status) {
+        if (!status) {
           await customerAPI.delete(
             ApiContants.BAN_USER + `?phone=${customer.customerPhone}`
           );
@@ -52,14 +51,8 @@ const CustomerProfilePage = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const handleSwitchChange = (e) => {
-    if (!isEdited) {
-      setStatus(e.target.checked);
-      setIsEdited(true);
-    }
-  };
   const handleSaveCustomer = async () => {
-    if (!status) {
+    if (status) {
       setOpen(true);
     } else {
       saveCustomer();
@@ -158,25 +151,6 @@ const CustomerProfilePage = () => {
                   {customer.address}
                 </Typography>
               </div>
-
-              <div className="row-field">
-                <Typography
-                  sx={{
-                    alignSelf: "center",
-                    fontWeight: "bold",
-                    fontSize: "15px",
-                  }}
-                  className="row-title"
-                >
-                  Trạng thái:{" "}
-                </Typography>
-                <FormControlLabel
-                  control={
-                    <Switch checked={status} onChange={handleSwitchChange} />
-                  }
-                  label={status ? "Hoạt động" : "Vô hiệu hóa"}
-                />
-              </div>
               <div style={{ width: "100%", display: "flex" }}>
                 <Button
                   variant="contained"
@@ -184,9 +158,11 @@ const CustomerProfilePage = () => {
                     textTransform: "none",
                     margin: "40px 20px 0px auto",
                   }}
-                  onClick={handleSaveCustomer}
+                  onClick={()=>{
+                    handleSaveCustomer();
+                  }}
                 >
-                  Lưu
+                  {status?"Vô hiệu hóa":"Kích hoạt"}
                 </Button>
               </div>
               <BanModal
