@@ -329,7 +329,7 @@ const RepairerProfilePage = () => {
                         return (
                           <a
                             href={image}
-                            style={{ textDecoration: "none", color: "inherit" }}
+                            style={{ textDecoration: "none", color: "inherit",marginRight:"10px" }}
                           >
                             <div className="file-container" key={index}>
                               <FolderIcon sx={{ marginRight: "10px" }} />
